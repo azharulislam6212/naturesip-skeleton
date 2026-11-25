@@ -1,0 +1,36 @@
+{% doc %}
+  The theme's stylesheets, rendered once in <head> after `theme-styles`.
+  Sections never load their own CSS: every file below is linked here so the
+  browser fetches them in parallel at the start, instead of discovering
+  render-blocking stylesheets one by one while it parses the body.
+
+  base.css          reset, tokens, layout, shared components, section styles
+  header.css        header, announcement bar, mobile menu
+  footer.css        footer
+  product-card.css  product cards
+  carousel.css      slider component and slideshow
+  search.css        search modal, predictive search, search page
+  rtl.css           right-to-left languages only
+
+  The layer order is declared inline at the top of <head> in each layout:
+  reset, tokens, base, layout, components, sections, utilities.
+
+  @param {string} [context] - 'minimal' for pages without header and footer (password, gift card).
+
+  @example
+  {% render 'stylesheets' %}
+{% enddoc %}
+
+{%- capture direction -%}{% render 'text-direction' %}{%- endcapture -%}
+
+{{ 'base.css' | asset_url | stylesheet_tag }}
+{%- unless context == 'minimal' %}
+  {{ 'header.css' | asset_url | stylesheet_tag }}
+  {{ 'footer.css' | asset_url | stylesheet_tag }}
+  {{ 'product-card.css' | asset_url | stylesheet_tag }}
+  {{ 'carousel.css' | asset_url | stylesheet_tag }}
+  {{ 'search.css' | asset_url | stylesheet_tag }}
+{%- endunless %}
+{%- if direction == 'rtl' %}
+  {{ 'rtl.css' | asset_url | stylesheet_tag }}
+{%- endif %}

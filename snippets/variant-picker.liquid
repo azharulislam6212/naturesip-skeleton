@@ -24,22 +24,40 @@
       -%}
 
       {%- if style == 'dropdown' and use_swatch == false -%}
+        {%- liquid
+          assign option_label = option.name | escape
+          assign select_id = 'Option-' | append: option_id
+          assign select_name = 'option-' | append: option_id
+          assign selected_label = ''
+        -%}
+        {%- capture option_tags -%}
+          {%- for value in option.values -%}
+            {%- capture value_label -%}
+              {{- value | escape -}}
+              {%- unless value.available %} — {{ 'products.product.unavailable' | t }}{% endunless -%}
+            {%- endcapture -%}
+            {%- if value.selected -%}
+              {%- assign selected_label = value_label -%}
+            {%- endif -%}
+            <option
+              value="{{ value | escape }}"
+              data-option-value-id="{{ value.id }}"
+              {% if value.selected %}
+                selected
+              {% endif %}
+            >
+              {{- value_label -}}
+            </option>
+          {%- endfor -%}
+        {%- endcapture -%}
         <div class="field">
-          <label class="field__label" for="Option-{{ option_id }}">{{ option.name | escape }}</label>
-          <select class="select" id="Option-{{ option_id }}" name="option-{{ option_id }}">
-            {%- for value in option.values -%}
-              <option
-                value="{{ value | escape }}"
-                data-option-value-id="{{ value.id }}"
-                {% if value.selected %}
-                  selected
-                {% endif %}
-              >
-                {{- value | escape -}}
-                {%- unless value.available %} — {{ 'products.product.unavailable' | t }}{% endunless -%}
-              </option>
-            {%- endfor -%}
-          </select>
+          {% render 'custom-select',
+            id: select_id,
+            name: select_name,
+            label: option_label,
+            options: option_tags,
+            selected_label: selected_label
+          %}
         </div>
       {%- else -%}
         <fieldset class="option-list">

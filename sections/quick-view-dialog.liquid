@@ -1,7 +1,6 @@
 {%- comment -%} Holds the quick view modal. Content comes from sections/quick-view.liquid. {%- endcomment -%}
 
 {%- if settings.card_quick_action != 'none' -%}
-  {{ 'section-product.css' | asset_url | stylesheet_tag: preload: false }}
   <quick-view-dialog>
     <dialog class="modal quick-view color-{{ section.settings.color_scheme.id }}" ref="dialog" aria-label="{{ 'products.product.quick_view' | t }}" data-lenis-prevent>
       <button class="icon-button modal__close" type="button" ref="close">

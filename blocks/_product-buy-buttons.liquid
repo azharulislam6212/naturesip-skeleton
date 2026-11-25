@@ -13,6 +13,13 @@
   assign selected_plan = product.selected_selling_plan
 -%}
 
+{%- if product == blank -%}
+  {%- comment -%} No product chosen yet (featured product): a preview of the button only. {%- endcomment -%}
+  <div class="buy-buttons spacing-style" style="{%- render 'spacing-style', settings: block.settings -%}" {{ block.shopify_attributes }}>
+    {%- assign add_label = 'products.product.add_to_cart' | t -%}
+    {% render 'button', label: add_label, icon: block.settings.button_icon, size: 'large', class: 'buy-buttons__add', attributes: 'disabled' %}
+  </div>
+{%- else -%}
 <div
   class="buy-buttons spacing-style"
   style="{%- render 'spacing-style', settings: block.settings -%}"
@@ -92,7 +99,15 @@
             assign add_attributes = 'name="add" aria-disabled="true" data-unavailable'
           endif
         -%}
-        {% render 'button', label: add_label, type: 'submit', icon: block.settings.button_icon, size: 'large', class: 'buy-buttons__add', attributes: add_attributes %}
+        {%- liquid
+          # With a dynamic checkout button ("Buy it now") that one is the primary
+          # action, so Add to cart steps down to secondary.
+          assign add_variant = 'primary'
+          if block.settings.show_dynamic_checkout and product.selling_plan_groups.size == 0
+            assign add_variant = 'secondary'
+          endif
+        -%}
+        {% render 'button', label: add_label, type: 'submit', variant: add_variant, icon: block.settings.button_icon, size: 'large', class: 'buy-buttons__add', attributes: add_attributes %}
       </div>
 
       {%- if block.settings.show_dynamic_checkout and product.selling_plan_groups.size == 0 -%}
@@ -124,6 +139,7 @@
     {%- endif -%}
   </noscript>
 </div>
+{%- endif -%}
 
 {% schema %}
 {

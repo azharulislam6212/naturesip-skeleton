@@ -1,23 +1,12 @@
 /* Footer. */
-@layer components {
+@layer sections {
   .footer {
     position: relative;
   }
 
-  .footer[data-shape-top='wave'] {
-    margin-block-start: 3rem;
-  }
-
-  .footer[data-shape-top='wave'] > .section-surface__background {
-    inset-block-start: -2.9rem;
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 48' preserveAspectRatio='none'%3E%3Cpath d='M0 48V24C120 0 240 0 360 18s240 30 360 6S960-6 1080 14s240 26 360 2v32Z'/%3E%3C/svg%3E"), linear-gradient(#000, #000);
-    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 48' preserveAspectRatio='none'%3E%3Cpath d='M0 48V24C120 0 240 0 360 18s240 30 360 6S960-6 1080 14s240 26 360 2v32Z'/%3E%3C/svg%3E"), linear-gradient(#000, #000);
-    -webkit-mask-size: 100% 3rem, 100% calc(100% - 3rem + 1px);
-    mask-size: 100% 3rem, 100% calc(100% - 3rem + 1px);
-    -webkit-mask-position: top, bottom;
-    mask-position: top, bottom;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
+  /* The top shape cuts into the footer itself: nothing is overlapped. */
+  .footer[data-shape-top] {
+    margin-block-start: 0;
   }
 
   .footer__inner {

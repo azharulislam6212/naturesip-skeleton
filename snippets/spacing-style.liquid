@@ -1,7 +1,9 @@
 {% doc %}
   Writes the padding custom properties read by `.spacing-style`: desktop
   values from 750px up, mobile values below. Output goes inside a `style`
-  attribute. Missing settings resolve to 0.
+  attribute. Every value is always written (missing settings as 0), so a
+  nested block never picks up its parent's padding, even in browsers that
+  ignore the `inherits: false` @property rules in base.css.
 
   Setting ids: padding_top, padding_bottom, padding_left, padding_right,
   plus the same with a `_mobile` suffix.
@@ -19,8 +21,6 @@
 {%- for side in sides -%}
   {%- for device in devices -%}
     {%- assign key = 'padding_' | append: side | append: device -%}
-    {%- if settings[key] != blank -%}
-      --padding-{{ side }}{{ device | replace: '_', '-' }}: {{ settings[key] }}px;
-    {%- endif -%}
+    --padding-{{ side }}{{ device | replace: '_', '-' }}: {{ settings[key] | default: 0 }}px;
   {%- endfor -%}
 {%- endfor -%}

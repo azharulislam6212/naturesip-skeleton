@@ -1,0 +1,28 @@
+{% doc %}
+  Shape divider attributes for a section's top and bottom edge. Output goes
+  inside the opening tag of a `.section-surface` (or the slideshow). Writes
+  nothing for an edge set to 'none'.
+
+  Shapes: wave, waves, curve, arch, slant, triangle, zigzag, scallop.
+  Sizes:  small, medium, large.
+
+  CSS (assets/base.css, "Section surfaces & shapes") masks the background
+  layer with the chosen shapes and lets the section overlap its neighbour by
+  the shape height, adding the same padding so content keeps its place.
+
+  Reads: shape_top, shape_bottom, shape_size
+
+  @param {object} settings - section.settings
+
+  @example
+  <section class="section section-surface" {% render 'shape-attributes', settings: section.settings %}>
+{% enddoc %}
+
+{%- liquid
+  assign top = settings.shape_top | default: 'none'
+  assign bottom = settings.shape_bottom | default: 'none'
+  assign size = settings.shape_size | default: 'medium'
+-%}
+{%- if top != 'none' %} data-shape-top="{{ top }}"{% endif -%}
+{%- if bottom != 'none' %} data-shape-bottom="{{ bottom }}"{% endif -%}
+{%- if top != 'none' or bottom != 'none' %} data-shape-size="{{ size }}"{% endif -%}

@@ -3,14 +3,12 @@
   numbered or "load more" pagination.
 {%- endcomment -%}
 
-{{ 'section-collection.css' | asset_url | stylesheet_tag }}
-
 {%- liquid
   assign s = section.settings
 -%}
 
 <section class="section section-surface color-{{ s.color_scheme.id }} spacing-style" style="{%- render 'spacing-style', settings: s -%}">
-  <div class="section-surface__background" aria-hidden="true"></div>
+  {% render 'background' %}
 
   {%- if s.show_banner -%}
     <div class="collection-banner{% if s.show_image and collection.image %} collection-banner--image{% endif %}">

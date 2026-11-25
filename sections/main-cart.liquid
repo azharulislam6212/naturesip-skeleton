@@ -1,10 +1,8 @@
 {%- comment -%} Cart page: line items beside the order summary. Re-rendered after every cart change. {%- endcomment -%}
 
-{{ 'component-cart.css' | asset_url | stylesheet_tag }}
-
 {%- assign s = section.settings -%}
 <section class="section section-surface color-{{ s.color_scheme.id }} spacing-style" style="{%- render 'spacing-style', settings: s -%}" data-cart-section="{{ section.id }}">
-  <div class="section-surface__background" aria-hidden="true"></div>
+  {% render 'background' %}
   <div class="cart-page">
     <h1 class="type-heading type-{{ s.title_size | replace: '_', '-' }} cart-page__title">{{ 'cart.title' | t }}</h1>
     {%- if cart.item_count > 0 -%}

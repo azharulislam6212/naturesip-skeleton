@@ -41,11 +41,8 @@
 -%}
 
 <div
-  class="button-block spacing-style{% if s.width == 'custom' %} block-width-custom{% elsif full_width %} block-width-fill{% endif %}"
-  style="
-    {%- render 'spacing-style', settings: s -%}
-    {%- if s.width == 'custom' %}--block-width: {{ s.custom_width }}%; --block-width-mobile: {{ s.custom_width_mobile }}%;{% endif -%}
-  "
+  class="button-block spacing-style size-style"
+  style="{%- render 'spacing-style', settings: s -%} {% render 'size-style', settings: s %}"
   {% render 'animation-attributes', animation: s.animation, delay: s.animation_delay %}
   {{ block.shopify_attributes }}
 >

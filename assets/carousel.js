@@ -21,13 +21,26 @@ export class SliderComponent extends Component {
     return /** @type {HTMLElement[]} */ ([...(this.refs.track?.children ?? [])]);
   }
 
+  /** True when the track lays slides out right to left (RTL languages). */
+  get #rtl() {
+    return getComputedStyle(this.refs.track).direction === 'rtl';
+  }
+
+  /**
+   * Inline-start edge of an element: left in LTR, right in RTL.
+   * @param {Element} element
+   */
+  #startEdge(element) {
+    const rect = element.getBoundingClientRect();
+    return this.#rtl ? rect.right : rect.left;
+  }
+
   get currentIndex() {
-    const track = this.refs.track;
-    const start = track.getBoundingClientRect().left;
+    const start = this.#startEdge(this.refs.track);
     let best = 0;
     let bestDistance = Infinity;
     this.slides.forEach((slide, index) => {
-      const distance = Math.abs(slide.getBoundingClientRect().left - start);
+      const distance = Math.abs(this.#startEdge(slide) - start);
       if (distance < bestDistance) {
         best = index;
         bestDistance = distance;
@@ -57,15 +70,17 @@ export class SliderComponent extends Component {
   step(direction) {
     const track = this.refs.track;
     const page = track.clientWidth;
-    track.scrollBy({ left: direction * page * (document.dir === 'rtl' ? -1 : 1), behavior: 'smooth' });
+    track.scrollBy({ left: direction * page * (this.#rtl ? -1 : 1), behavior: 'smooth' });
   }
 
   /** @param {number} index */
   goTo(index, behavior = /** @type {ScrollBehavior} */ ('smooth')) {
     const slide = this.slides[index];
     if (!slide) return;
+    // Scroll by the gap between the slide's start edge and the track's, which
+    // is correct in both directions (RTL scrollLeft runs negative).
     const track = this.refs.track;
-    track.scrollTo({ left: slide.offsetLeft - track.offsetLeft, behavior });
+    track.scrollBy({ left: this.#startEdge(slide) - this.#startEdge(track), behavior });
   }
 
   update() {

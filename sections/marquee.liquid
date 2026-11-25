@@ -3,8 +3,6 @@
   focus and with its pause button; static under prefers-reduced-motion.
 {%- endcomment -%}
 
-{{ 'section-content.css' | asset_url | stylesheet_tag }}
-
 {%- assign s = section.settings -%}
 <section
   class="section section--full-width marquee-section color-{{ s.color_scheme.id }} spacing-style"

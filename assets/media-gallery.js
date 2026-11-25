@@ -25,8 +25,11 @@ class MediaGallery extends Component {
       event.preventDefault();
       this.#zoom(/** @type {HTMLAnchorElement} */ (link));
     });
-    this.listen(this, 'pointerenter', () => preloadZoom(), { once: true });
-    this.listen(this, 'focusin', () => preloadZoom(), { once: true });
+    const stylesheet = this.dataset.zoomStylesheet;
+    if (stylesheet) {
+      this.listen(this, 'pointerenter', () => preloadZoom(stylesheet), { once: true });
+      this.listen(this, 'focusin', () => preloadZoom(stylesheet), { once: true });
+    }
 
     this.listen(document, VariantChangeEvent.eventName, (event) => {
       const { variant, sectionId } = event.detail;
@@ -75,6 +78,7 @@ class MediaGallery extends Component {
   #zoom(link) {
     const items = /** @type {HTMLAnchorElement[]} */ ([...this.querySelectorAll('[data-zoom-item]')]);
     openZoom(items, items.indexOf(link), {
+      stylesheet: this.dataset.zoomStylesheet,
       onChange: (index) => this.select(items[index]?.closest('[data-media-id]')?.getAttribute('data-media-id') ?? undefined),
     });
   }

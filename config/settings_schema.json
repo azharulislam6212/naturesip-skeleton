@@ -1497,6 +1497,12 @@
         "unit": "px",
         "default": 12,
         "label": "t:settings_schema.layout.radius_input"
+      },
+      {
+        "type": "checkbox",
+        "id": "scroll_to_top",
+        "label": "t:settings_schema.layout.scroll_to_top",
+        "default": true
       }
     ]
   },

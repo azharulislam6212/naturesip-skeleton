@@ -21,10 +21,12 @@
       "@theme/morph": "{{ 'morph.js' | asset_url }}",
       "@theme/section-renderer": "{{ 'section-renderer.js' | asset_url }}",
       "@theme/dialog": "{{ 'dialog.js' | asset_url }}",
+      "@theme/custom-select": "{{ 'custom-select.js' | asset_url }}",
       "@theme/carousel": "{{ 'carousel.js' | asset_url }}",
       "@theme/motion-engine": "{{ 'motion-engine.js' | asset_url }}",
       "@theme/animations": "{{ 'animations.js' | asset_url }}",
       "@theme/smooth-scroll": "{{ 'smooth-scroll.js' | asset_url }}",
+      "@theme/scroll-to-top": "{{ 'scroll-to-top.js' | asset_url }}",
       "@theme/page-transition": "{{ 'page-transition.js' | asset_url }}",
       "@theme/motion": "{{ 'motion.js' | asset_url }}",
       "@theme/lenis": "{{ 'lenis.js' | asset_url }}",
@@ -33,7 +35,7 @@
       "@theme/header": "{{ 'header.js' | asset_url }}",
       "@theme/predictive-search": "{{ 'predictive-search.js' | asset_url }}",
       "@theme/cart-drawer": "{{ 'cart-drawer.js' | asset_url }}",
-      "@theme/cart-items": "{{ 'cart-items.js' | asset_url }}",
+      "@theme/cart": "{{ 'cart.js' | asset_url }}",
       "@theme/product-form": "{{ 'product-form.js' | asset_url }}",
       "@theme/variant-picker": "{{ 'variant-picker.js' | asset_url }}",
       "@theme/media-gallery": "{{ 'media-gallery.js' | asset_url }}",
@@ -72,9 +74,6 @@
       predictiveSearch: {{ settings.predictive_search | json }},
       predictiveSearchLimit: 4
     },
-    assets: {
-      photoswipeCss: {{ 'vendor-photoswipe.css' | asset_url | json }}
-    },
     strings: {
       close: {{ 'accessibility.close' | t | json }},
       next: {{ 'accessibility.next' | t | json }},
@@ -111,7 +110,7 @@
     {%- when 'collection', 'search' -%}
       <link rel="modulepreload" href="{{ 'facets.js' | asset_url }}" fetchpriority="low">
     {%- when 'cart' -%}
-      <link rel="modulepreload" href="{{ 'cart-items.js' | asset_url }}" fetchpriority="low">
+      <link rel="modulepreload" href="{{ 'cart.js' | asset_url }}" fetchpriority="low">
   {%- endcase -%}
 {%- endunless -%}
 

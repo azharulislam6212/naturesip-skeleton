@@ -42,15 +42,35 @@
     </div>
   </div>
   <div class="contact__row">
+    {%- liquid
+      assign country_label = 'customer.addresses.country' | t
+      assign search_placeholder = 'localization.search_placeholder' | t
+      assign province_label = 'customer.addresses.province' | t
+      assign country_select_id = 'AddressCountry-' | append: id
+      assign province_select_id = 'AddressProvince-' | append: id
+      assign country_default = form.country | escape
+      assign province_default = form.province | escape
+      assign country_attributes = 'data-address-country autocomplete="country" data-default="' | append: country_default | append: '"'
+      assign province_attributes = 'data-address-province autocomplete="address-level1" data-default="' | append: province_default | append: '"'
+    -%}
     <div class="field">
-      <label class="field__label" for="AddressCountry-{{ id }}">{{ 'customer.addresses.country' | t }}</label>
-      <select class="select" id="AddressCountry-{{ id }}" name="address[country]" ref="country" data-default="{{ form.country }}" autocomplete="country">
-        {{ all_country_option_tags }}
-      </select>
+      {% render 'custom-select',
+        id: country_select_id,
+        name: 'address[country]',
+        label: country_label,
+        options: all_country_option_tags,
+        attributes: country_attributes,
+        searchable: true,
+        search_placeholder: search_placeholder
+      %}
     </div>
     <div class="field" ref="provinceWrapper">
-      <label class="field__label" for="AddressProvince-{{ id }}">{{ 'customer.addresses.province' | t }}</label>
-      <select class="select" id="AddressProvince-{{ id }}" name="address[province]" ref="province" data-default="{{ form.province }}" autocomplete="address-level1"></select>
+      {% render 'custom-select',
+        id: province_select_id,
+        name: 'address[province]',
+        label: province_label,
+        attributes: province_attributes
+      %}
     </div>
   </div>
   <div class="field">

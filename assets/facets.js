@@ -3,6 +3,10 @@
  * <facets-form>: collection and search filtering, sorting and pagination
  * without page reloads. Builds the URL from the form, renders the section for
  * that URL, morphs the results, and keeps browser history in sync.
+ *
+ * <price-range>: two range thumbs over one track, kept in step with the
+ * From / To number inputs (which carry the form values). Moving either one
+ * fires `input`, so the facets form applies the filter as usual.
  */
 import { Component, defineElement } from '@theme/component';
 import { FilterUpdateEvent } from '@theme/events';
@@ -79,4 +83,53 @@ class FacetsForm extends Component {
   }
 }
 
+class PriceRange extends Component {
+  mount() {
+    const { minRange, maxRange, minInput, maxInput } = this.refs;
+    if (!minRange || !maxRange || !minInput || !maxInput) return;
+    this.listen(minRange, 'input', () => this.#fromRange(minRange));
+    this.listen(maxRange, 'input', () => this.#fromRange(maxRange));
+    this.listen(minInput, 'input', () => this.#fromInputs());
+    this.listen(maxInput, 'input', () => this.#fromInputs());
+  }
+
+  /** @param {HTMLInputElement} moved */
+  #fromRange(moved) {
+    const { minRange, maxRange, minInput, maxInput } = this.refs;
+    let min = Number(minRange.value);
+    let max = Number(maxRange.value);
+    // Thumbs never cross: the one being dragged stops at the other.
+    if (min > max) {
+      if (moved === minRange) minRange.value = String((min = max));
+      else maxRange.value = String((max = min));
+    }
+    const top = Number(maxRange.max);
+    // Ends of the track mean "no limit", so the filter is left out of the URL.
+    minInput.value = min > 0 ? String(min) : '';
+    maxInput.value = max < top ? String(max) : '';
+    this.#paint(min, max);
+  }
+
+  #fromInputs() {
+    const { minRange, maxRange, minInput, maxInput } = this.refs;
+    const top = Number(maxRange.max);
+    const min = Math.min(Math.max(Number(minInput.value) || 0, 0), top);
+    const max = Math.max(Math.min(maxInput.value === '' ? top : Number(maxInput.value), top), min);
+    minRange.value = String(min);
+    maxRange.value = String(max);
+    this.#paint(min, max);
+  }
+
+  /**
+   * @param {number} min
+   * @param {number} max
+   */
+  #paint(min, max) {
+    const top = Number(this.refs.maxRange.max) || 1;
+    this.style.setProperty('--range-start', `${(min / top) * 100}%`);
+    this.style.setProperty('--range-end', `${(max / top) * 100}%`);
+  }
+}
+
 defineElement('facets-form', FacetsForm);
+defineElement('price-range', PriceRange);

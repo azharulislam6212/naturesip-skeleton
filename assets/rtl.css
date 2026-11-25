@@ -1,0 +1,67 @@
+/*
+ * Right-to-left languages. Loaded only when the storefront language is RTL
+ * (snippets/stylesheets.liquid, using snippets/text-direction.liquid).
+ *
+ * Layout already flips on its own: the theme uses logical properties
+ * (inset-inline, padding-inline, margin-inline, text-align: start). This file
+ * only mirrors what logical properties can't: transforms, keyframes and
+ * direction-bearing icons.
+ */
+
+/* Overrides sit in the same layers as the rules they mirror and win by
+   loading last. */
+@layer components {
+  /* Arrow and chevron icons point the other way. */
+  [dir='rtl'] :is(.icon--arrow, .icon--arrow-left, .icon--chevron-left, .icon--chevron-right, .icon--diagonal) {
+    scale: -1 1;
+  }
+
+  /* Drawers: the end drawer sits on the left, the start drawer on the right.
+     Only when motion is allowed, so reduced motion keeps its `animation: none`. */
+  @media (prefers-reduced-motion: no-preference) {
+    [dir='rtl'] .drawer {
+      animation-name: drawer-in-start;
+    }
+
+    [dir='rtl'] .drawer--start {
+      animation-name: drawer-in;
+    }
+
+    [dir='rtl'] .drawer[data-closing] {
+      animation-name: drawer-out-start;
+    }
+
+    [dir='rtl'] .drawer--start[data-closing] {
+      animation-name: drawer-out;
+    }
+  }
+
+  /* Sweep button hover fills from the right. */
+  [dir='rtl'] .button[data-hover='sweep'] .button__fill--hover {
+    transform-origin: right center;
+  }
+
+  /* Collection card arrow nudges toward the reading direction. */
+  [dir='rtl'] .collection-card:hover .collection-card__title .icon {
+    translate: -4px 0;
+  }
+
+  /* Slider progress bar grows and moves from the right. */
+  [dir='rtl'] .slider__progress-bar {
+    transform-origin: right center;
+    transform: translateX(calc(var(--progress-offset, 0) * -100%)) scaleX(var(--progress-size, 0.25));
+  }
+}
+
+@layer sections {
+  /* Marquee scrolls toward the reading direction. */
+  @media (prefers-reduced-motion: no-preference) {
+    [dir='rtl'] .marquee__track {
+      animation-name: marquee-rtl;
+    }
+  }
+}
+
+@keyframes marquee-rtl {
+  to { transform: translateX(50%); }
+}

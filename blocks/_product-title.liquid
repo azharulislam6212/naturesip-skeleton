@@ -17,7 +17,11 @@
   style="{%- render 'spacing-style', settings: block.settings -%}"
   {{ block.shopify_attributes }}
 >
-  {{- product.title | escape -}}
+  {%- if product != blank -%}
+    {{- product.title | escape -}}
+  {%- else -%}
+    {{- 'onboarding.product_title' | t -}}
+  {%- endif -%}
 </{{ tag }}>
 
 {% schema %}

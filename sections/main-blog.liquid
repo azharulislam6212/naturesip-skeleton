@@ -1,10 +1,8 @@
 {%- comment -%} Blog: article cards with pagination. {%- endcomment -%}
 
-{{ 'section-content.css' | asset_url | stylesheet_tag }}
-
 {%- assign s = section.settings -%}
 <section class="section section-surface color-{{ s.color_scheme.id }} spacing-style" style="{%- render 'spacing-style', settings: s -%}">
-  <div class="section-surface__background" aria-hidden="true"></div>
+  {% render 'background' %}
   <div class="layout-stack" style="--gap: var(--space-xl);">
     <h1 class="type-heading type-{{ s.title_size | replace: '_', '-' }}">{{ blog.title | escape }}</h1>
     {%- paginate blog.articles by 9 -%}

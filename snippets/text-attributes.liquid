@@ -12,7 +12,7 @@
 
 {%- liquid
   assign preset = settings.type_preset | default: 'paragraph'
-  assign classes = class | append: ' text-block spacing-style'
+  assign classes = class | append: ' text-block spacing-style size-style'
 
   case preset
     when 'paragraph'
@@ -73,6 +73,7 @@
 class="{{ classes | strip }}"
 style="
   {%- render 'spacing-style', settings: settings -%}
+  {%- render 'size-style', settings: settings -%}
   {%- unless align == 'inherit' %}--text-align: {{ align }}; --align-self: {% case align %}{% when 'center' %}center{% when 'right' %}flex-end{% else %}flex-start{% endcase %};{% endunless -%}
   {%- unless align_mobile == 'inherit' %}--text-align-mobile: {{ align_mobile }}; --align-self-mobile: {% case align_mobile %}{% when 'center' %}center{% when 'right' %}flex-end{% else %}flex-start{% endcase %};{% endunless -%}
   {%- if max_width != blank %}--max-width: {{ max_width }};{% endif -%}

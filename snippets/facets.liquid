@@ -14,6 +14,7 @@
 {% enddoc %}
 
 {%- liquid
+  assign css_colours = ',aliceblue,antiquewhite,aqua,aquamarine,azure,beige,bisque,black,blanchedalmond,blue,blueviolet,brown,burlywood,cadetblue,chartreuse,chocolate,coral,cornflowerblue,cornsilk,crimson,cyan,darkblue,darkcyan,darkgoldenrod,darkgray,darkgreen,darkgrey,darkkhaki,darkmagenta,darkolivegreen,darkorange,darkorchid,darkred,darksalmon,darkseagreen,darkslateblue,darkslategray,darkslategrey,darkturquoise,darkviolet,deeppink,deepskyblue,dimgray,dimgrey,dodgerblue,firebrick,floralwhite,forestgreen,fuchsia,gainsboro,ghostwhite,gold,goldenrod,gray,green,greenyellow,grey,honeydew,hotpink,indianred,indigo,ivory,khaki,lavender,lavenderblush,lawngreen,lemonchiffon,lightblue,lightcoral,lightcyan,lightgoldenrodyellow,lightgray,lightgreen,lightgrey,lightpink,lightsalmon,lightseagreen,lightskyblue,lightslategray,lightslategrey,lightsteelblue,lightyellow,lime,limegreen,linen,magenta,maroon,mediumaquamarine,mediumblue,mediumorchid,mediumpurple,mediumseagreen,mediumslateblue,mediumspringgreen,mediumturquoise,mediumvioletred,midnightblue,mintcream,mistyrose,moccasin,navajowhite,navy,oldlace,olive,olivedrab,orange,orangered,orchid,palegoldenrod,palegreen,paleturquoise,palevioletred,papayawhip,peachpuff,peru,pink,plum,powderblue,purple,rebeccapurple,red,rosybrown,royalblue,saddlebrown,salmon,sandybrown,seagreen,seashell,sienna,silver,skyblue,slateblue,slategray,slategrey,snow,springgreen,steelblue,tan,teal,thistle,tomato,turquoise,violet,wheat,white,whitesmoke,yellow,yellowgreen,'
   assign sort_by = results.sort_by | default: results.default_sort_by
   assign total = results.products_count | default: results.results_count
   if results.terms
@@ -45,14 +46,29 @@
           <input type="hidden" name="q" value="{{ results.terms | escape }}">
           <input type="hidden" name="options[prefix]" value="last">
         {%- endif -%}
-        <label class="visually-hidden" for="SortBy-{{ section_id }}">{{ 'products.facets.sort_by' | t }}</label>
-        <select class="select" id="SortBy-{{ section_id }}" name="sort_by">
+        {%- liquid
+          assign sort_label = 'products.facets.sort_by' | t
+          assign sort_id = 'SortBy-' | append: section_id
+          assign sort_selected = ''
+        -%}
+        {%- capture sort_tags -%}
           {%- for option in results.sort_options -%}
+            {%- if option.value == sort_by -%}
+              {%- assign sort_selected = option.name | escape -%}
+            {%- endif -%}
             <option value="{{ option.value | escape }}" {% if option.value == sort_by %}selected{% endif %}>
               {{- option.name | escape -}}
             </option>
           {%- endfor -%}
-        </select>
+        {%- endcapture -%}
+        {% render 'custom-select',
+          id: sort_id,
+          name: 'sort_by',
+          label: sort_label,
+          label_hidden: true,
+          options: sort_tags,
+          selected_label: sort_selected
+        %}
         <noscript><button class="link" type="submit">{{ 'products.facets.apply' | t }}</button></noscript>
       </form>
     {%- endif -%}
@@ -139,37 +155,112 @@
                 <div class="accordion__content">
                   {%- case filter.type -%}
                     {%- when 'price_range' -%}
-                      {%- assign max = filter.range_max | money_without_currency | remove: ',' -%}
-                      <div class="facets__price">
-                        <div class="field">
-                          <label class="field__label" for="{{ filter.min_value.param_name | handleize }}-{{ section_id }}">{{ 'products.facets.from' | t }}</label>
-                          <input
-                            class="input"
-                            type="number"
-                            inputmode="decimal"
-                            id="{{ filter.min_value.param_name | handleize }}-{{ section_id }}"
-                            name="{{ filter.min_value.param_name }}"
-                            value="{{ filter.min_value.value | money_without_currency | remove: ',' }}"
-                            placeholder="0"
-                            min="0"
-                            max="{{ max }}"
-                          >
+                      {%- liquid
+                        # Shopify filter values are in cents; the URL takes whole units with a dot decimal.
+                        assign range_max = filter.range_max | divided_by: 100.0 | ceil
+                        assign min_cents = filter.min_value.value
+                        assign max_cents = filter.max_value.value
+
+                        assign min_input = ''
+                        assign min_position = 0
+                        if min_cents != nil
+                          assign min_position = min_cents | divided_by: 100
+                          assign min_remainder = min_cents | modulo: 100
+                          if min_remainder == 0
+                            assign min_input = min_position
+                          else
+                            assign min_input = min_cents | divided_by: 100.0 | round: 2
+                          endif
+                        endif
+
+                        assign max_input = ''
+                        assign max_position = range_max
+                        if max_cents != nil
+                          assign max_position = max_cents | divided_by: 100.0 | ceil
+                          assign max_remainder = max_cents | modulo: 100
+                          if max_remainder == 0
+                            assign max_input = max_cents | divided_by: 100
+                          else
+                            assign max_input = max_cents | divided_by: 100.0 | round: 2
+                          endif
+                        endif
+
+                        assign start_percent = 0
+                        assign end_percent = 100
+                        if range_max > 0
+                          assign start_percent = min_position | times: 100.0 | divided_by: range_max | at_most: 100
+                          assign end_percent = max_position | times: 100.0 | divided_by: range_max | at_most: 100
+                        endif
+
+                        assign min_id = filter.min_value.param_name | handleize | append: '-' | append: section_id
+                        assign max_id = filter.max_value.param_name | handleize | append: '-' | append: section_id
+                      -%}
+                      <price-range class="price-range" style="--range-start: {{ start_percent }}%; --range-end: {{ end_percent }}%;">
+                        {%- if range_max > 0 -%}
+                          <div class="price-range__slider">
+                            <input
+                              class="price-range__thumb"
+                              type="range"
+                              min="0"
+                              max="{{ range_max }}"
+                              step="1"
+                              value="{{ min_position }}"
+                              ref="minRange"
+                              aria-label="{{ 'products.facets.from' | t }}"
+                            >
+                            <input
+                              class="price-range__thumb"
+                              type="range"
+                              min="0"
+                              max="{{ range_max }}"
+                              step="1"
+                              value="{{ max_position }}"
+                              ref="maxRange"
+                              aria-label="{{ 'products.facets.to' | t }}"
+                            >
+                          </div>
+                        {%- endif -%}
+                        <div class="facets__price">
+                          <div class="field">
+                            <label class="field__label" for="{{ min_id }}">{{ 'products.facets.from' | t }}</label>
+                            <div class="price-range__input">
+                              <span class="price-range__currency" aria-hidden="true">{{ cart.currency.symbol }}</span>
+                              <input
+                                class="input"
+                                type="number"
+                                inputmode="decimal"
+                                id="{{ min_id }}"
+                                name="{{ filter.min_value.param_name }}"
+                                value="{{ min_input }}"
+                                placeholder="0"
+                                min="0"
+                                max="{{ range_max }}"
+                                step="any"
+                                ref="minInput"
+                              >
+                            </div>
+                          </div>
+                          <div class="field">
+                            <label class="field__label" for="{{ max_id }}">{{ 'products.facets.to' | t }}</label>
+                            <div class="price-range__input">
+                              <span class="price-range__currency" aria-hidden="true">{{ cart.currency.symbol }}</span>
+                              <input
+                                class="input"
+                                type="number"
+                                inputmode="decimal"
+                                id="{{ max_id }}"
+                                name="{{ filter.max_value.param_name }}"
+                                value="{{ max_input }}"
+                                placeholder="{{ range_max }}"
+                                min="0"
+                                max="{{ range_max }}"
+                                step="any"
+                                ref="maxInput"
+                              >
+                            </div>
+                          </div>
                         </div>
-                        <div class="field">
-                          <label class="field__label" for="{{ filter.max_value.param_name | handleize }}-{{ section_id }}">{{ 'products.facets.to' | t }}</label>
-                          <input
-                            class="input"
-                            type="number"
-                            inputmode="decimal"
-                            id="{{ filter.max_value.param_name | handleize }}-{{ section_id }}"
-                            name="{{ filter.max_value.param_name }}"
-                            value="{{ filter.max_value.value | money_without_currency | remove: ',' }}"
-                            placeholder="{{ max }}"
-                            min="0"
-                            max="{{ max }}"
-                          >
-                        </div>
-                      </div>
+                      </price-range>
                     {%- when 'boolean' -%}
                       <ul class="facets__values" role="list">
                         {%- for value in filter.values -%}
@@ -182,7 +273,59 @@
                         {%- endfor -%}
                       </ul>
                     {%- else -%}
-                      <ul class="facets__values{% if filter.presentation == 'swatch' %} facets__values--swatches{% endif %}" role="list">
+                      {%- liquid
+                        # Colour filters show as round swatches: when Search & Discovery
+                        # presents them as swatches, or when the filter is about colour.
+                        assign filter_key = filter.param_name | append: ' ' | append: filter.label | downcase
+                        assign is_colour_filter = false
+                        if filter.presentation == 'swatch' or filter_key contains 'color' or filter_key contains 'colour'
+                          assign is_colour_filter = true
+                        endif
+                      -%}
+                      {%- if is_colour_filter -%}
+                        <ul class="facets__swatches" role="list">
+                          {%- for value in filter.values -%}
+                            <li>
+                              <label class="facets__swatch" title="{{ value.label | escape }} ({{ value.count }})">
+                                <input
+                                  class="visually-hidden"
+                                  type="checkbox"
+                                  name="{{ value.param_name }}"
+                                  value="{{ value.value }}"
+                                  {% if value.active %}checked{% endif %}
+                                  {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                                >
+                                {%- liquid
+                                  # Colour from Shopify's swatch data, else the value name when it
+                                  # is a CSS colour (Black, Navy…), else a neutral swatch with its initial.
+                                  assign swatch_style = ''
+                                  assign colour_name = value.label | downcase | remove: ' ' | remove: '-'
+                                  assign colour_key = ',' | append: colour_name | append: ','
+                                  if value.swatch.image
+                                    assign swatch_url = value.swatch.image | image_url: width: 80
+                                    assign swatch_style = '--swatch-background: url(' | append: swatch_url | append: ') center / cover;'
+                                  elsif value.swatch.color
+                                    assign swatch_style = '--swatch-background: ' | append: value.swatch.color | append: ';'
+                                  elsif css_colours contains colour_key
+                                    assign swatch_style = '--swatch-background: ' | append: colour_name | append: ';'
+                                  endif
+                                -%}
+                                <span
+                                  class="swatch{% if swatch_style == blank %} swatch--text{% endif %}"
+                                  {% if swatch_style != blank %}
+                                    style="{{ swatch_style }}"
+                                  {% endif %}
+                                  aria-hidden="true"
+                                >
+                                  {%- if swatch_style == blank -%}{{ value.label | slice: 0 | upcase }}{%- endif -%}
+                                </span>
+                                <span class="visually-hidden">{{ value.label | escape }} ({{ value.count }})</span>
+                              </label>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      {%- else -%}
+                      <ul class="facets__values" role="list">
                         {%- for value in filter.values -%}
                           <li>
                             <label class="checkbox">
@@ -193,9 +336,7 @@
                                 {% if value.active %}checked{% endif %}
                                 {% if value.count == 0 and value.active == false %}disabled{% endif %}
                               >
-                              {%- if filter.presentation == 'swatch' -%}
-                                {% render 'swatch', value: value %}
-                              {%- elsif filter.presentation == 'image' and value.image -%}
+                              {%- if filter.presentation == 'image' and value.image -%}
                                 {{ value.image | image_url: width: 64 | image_tag: alt: '', class: 'facets__image', loading: 'lazy' }}
                               {%- endif -%}
                               <span>{{ value.label | escape }} <span class="facets__value-count">({{ value.count }})</span></span>
@@ -203,6 +344,7 @@
                           </li>
                         {%- endfor -%}
                       </ul>
+                      {%- endif -%}
                   {%- endcase -%}
                 </div>
               </details>

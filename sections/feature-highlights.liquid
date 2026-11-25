@@ -3,8 +3,6 @@
   split into a left and right column on desktop.
 {%- endcomment -%}
 
-{{ 'section-content.css' | asset_url | stylesheet_tag }}
-
 {%- liquid
   assign s = section.settings
   assign rows = section.blocks.size | plus: 1 | divided_by: 2 | at_least: 1
@@ -13,13 +11,9 @@
 <section
   class="section section-surface feature-highlights color-{{ s.color_scheme.id }} spacing-style"
   style="{%- render 'spacing-style', settings: s -%} --highlight-rows: {{ rows }};"
-  data-shape-bottom="{{ s.shape_bottom }}"
+  {% render 'shape-attributes', settings: s %}
 >
-  <div class="section-surface__background" aria-hidden="true">
-    {%- if s.background_image != blank -%}
-      {% render 'image', image: s.background_image, alt: '', sizes: '100vw' %}
-    {%- endif -%}
-  </div>
+  {% render 'background', settings: s %}
 
   <div class="layout-stack" style="--gap: var(--space-2xl);">
     {% content_for 'block', type: 'group', id: 'heading' %}
@@ -79,6 +73,50 @@
     },
     {
       "type": "select",
+      "id": "shape_top",
+      "label": "t:settings.shape_top",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.shape.none"
+        },
+        {
+          "value": "wave",
+          "label": "t:options.shape.wave"
+        },
+        {
+          "value": "waves",
+          "label": "t:options.shape.waves"
+        },
+        {
+          "value": "curve",
+          "label": "t:options.shape.curve"
+        },
+        {
+          "value": "arch",
+          "label": "t:options.shape.arch"
+        },
+        {
+          "value": "slant",
+          "label": "t:options.shape.slant"
+        },
+        {
+          "value": "triangle",
+          "label": "t:options.shape.triangle"
+        },
+        {
+          "value": "zigzag",
+          "label": "t:options.shape.zigzag"
+        },
+        {
+          "value": "scallop",
+          "label": "t:options.shape.scallop"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
       "id": "shape_bottom",
       "label": "t:settings.shape_bottom",
       "options": [
@@ -91,11 +129,56 @@
           "label": "t:options.shape.wave"
         },
         {
+          "value": "waves",
+          "label": "t:options.shape.waves"
+        },
+        {
           "value": "curve",
           "label": "t:options.shape.curve"
+        },
+        {
+          "value": "arch",
+          "label": "t:options.shape.arch"
+        },
+        {
+          "value": "slant",
+          "label": "t:options.shape.slant"
+        },
+        {
+          "value": "triangle",
+          "label": "t:options.shape.triangle"
+        },
+        {
+          "value": "zigzag",
+          "label": "t:options.shape.zigzag"
+        },
+        {
+          "value": "scallop",
+          "label": "t:options.shape.scallop"
         }
       ],
       "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "shape_size",
+      "label": "t:settings.shape_size",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:options.shape_size.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:options.shape_size.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:options.shape_size.large"
+        }
+      ],
+      "default": "medium",
+      "visible_if": "{{ section.settings.shape_top != 'none' or section.settings.shape_bottom != 'none' }}"
     },
     {
       "type": "header",

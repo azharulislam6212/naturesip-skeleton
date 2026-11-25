@@ -2,6 +2,8 @@
  * @layer L2
  * Lightbox zoom for product images, powered by PhotoSwipe. Everything (the
  * lightbox, the core and its stylesheet) loads on the first request to zoom.
+ * The stylesheet URL comes from the product media gallery that uses zoom
+ * (`data-zoom-stylesheet`), so no other page ever references it.
  *
  * Items come from Liquid: `<a href="large.jpg" data-zoom-item data-width data-height>`
  * with the image alt text used as caption. Video and 3D media are never zoomable.
@@ -11,8 +13,8 @@ import { t } from '@theme/utilities';
 /** @type {Promise<any> | null} */
 let lightboxModule = null;
 
-function loadStylesheet() {
-  const href = window.Theme?.assets?.photoswipeCss;
+/** @param {string | undefined} href */
+function loadStylesheet(href) {
   if (!href || document.querySelector(`link[href="${href}"]`)) return;
   const link = document.createElement('link');
   link.rel = 'stylesheet';
@@ -20,20 +22,23 @@ function loadStylesheet() {
   document.head.append(link);
 }
 
-/** Warm the modules on hover/focus intent so the first open is instant. */
-export function preloadZoom() {
+/**
+ * Warm the modules on hover/focus intent so the first open is instant.
+ * @param {string} [stylesheet] URL of photoswipe.css
+ */
+export function preloadZoom(stylesheet) {
   lightboxModule ??= import('@theme/photoswipe-lightbox');
-  loadStylesheet();
+  loadStylesheet(stylesheet);
   return lightboxModule;
 }
 
 /**
  * @param {HTMLAnchorElement[]} items
  * @param {number} index
- * @param { { onChange?: (index: number) => void } } [options]
+ * @param { { stylesheet?: string, onChange?: (index: number) => void } } [options]
  */
-export async function openZoom(items, index, { onChange } = {}) {
-  const { default: PhotoSwipeLightbox } = await preloadZoom();
+export async function openZoom(items, index, { stylesheet, onChange } = {}) {
+  const { default: PhotoSwipeLightbox } = await preloadZoom(stylesheet);
 
   const dataSource = items.map((item) => {
     const image = item.querySelector('img');

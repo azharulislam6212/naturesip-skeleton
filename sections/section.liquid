@@ -3,8 +3,6 @@
   Image with text, Icons with text and Hero, all fully editable.
 {%- endcomment -%}
 
-{{ 'section-content.css' | asset_url | stylesheet_tag }}
-
 {%- liquid
   assign s = section.settings
   assign horizontal = false
@@ -15,14 +13,10 @@
 
 <section
   class="section section-surface color-{{ s.color_scheme.id }} spacing-style{% if s.full_width %} section--full-width{% endif %}"
-  style="{%- render 'spacing-style', settings: s -%} {% if s.min_height > 0 %}min-height: {{ s.min_height }}svh;{% endif %} --background-image-opacity: {{ s.background_image_opacity | divided_by: 100.0 }};"
-  data-shape-bottom="{{ s.shape_bottom }}"
+  style="{%- render 'spacing-style', settings: s -%} {% if s.min_height > 0 %}min-height: {{ s.min_height }}svh;{% endif %}"
+  {% render 'shape-attributes', settings: s %}
 >
-  <div class="section-surface__background" aria-hidden="true">
-    {%- if s.background_image != blank -%}
-      {% render 'image', image: s.background_image, alt: '', sizes: '100vw', eager: s.background_priority %}
-    {%- endif -%}
-  </div>
+  {% render 'background', settings: s %}
 
   <div
     class="layout-stack content-section{% if horizontal %} layout-stack--horizontal{% endif %}"
@@ -223,6 +217,50 @@
     },
     {
       "type": "select",
+      "id": "shape_top",
+      "label": "t:settings.shape_top",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.shape.none"
+        },
+        {
+          "value": "wave",
+          "label": "t:options.shape.wave"
+        },
+        {
+          "value": "waves",
+          "label": "t:options.shape.waves"
+        },
+        {
+          "value": "curve",
+          "label": "t:options.shape.curve"
+        },
+        {
+          "value": "arch",
+          "label": "t:options.shape.arch"
+        },
+        {
+          "value": "slant",
+          "label": "t:options.shape.slant"
+        },
+        {
+          "value": "triangle",
+          "label": "t:options.shape.triangle"
+        },
+        {
+          "value": "zigzag",
+          "label": "t:options.shape.zigzag"
+        },
+        {
+          "value": "scallop",
+          "label": "t:options.shape.scallop"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
       "id": "shape_bottom",
       "label": "t:settings.shape_bottom",
       "options": [
@@ -235,11 +273,56 @@
           "label": "t:options.shape.wave"
         },
         {
+          "value": "waves",
+          "label": "t:options.shape.waves"
+        },
+        {
           "value": "curve",
           "label": "t:options.shape.curve"
+        },
+        {
+          "value": "arch",
+          "label": "t:options.shape.arch"
+        },
+        {
+          "value": "slant",
+          "label": "t:options.shape.slant"
+        },
+        {
+          "value": "triangle",
+          "label": "t:options.shape.triangle"
+        },
+        {
+          "value": "zigzag",
+          "label": "t:options.shape.zigzag"
+        },
+        {
+          "value": "scallop",
+          "label": "t:options.shape.scallop"
         }
       ],
       "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "shape_size",
+      "label": "t:settings.shape_size",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:options.shape_size.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:options.shape_size.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:options.shape_size.large"
+        }
+      ],
+      "default": "medium",
+      "visible_if": "{{ section.settings.shape_top != 'none' or section.settings.shape_bottom != 'none' }}"
     },
     {
       "type": "header",

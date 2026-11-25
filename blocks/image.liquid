@@ -27,11 +27,8 @@
 -%}
 
 <div
-  class="image-block spacing-style{% if s.width == 'custom' %} block-width-custom{% elsif s.width == 'fill' %} block-width-fill{% endif %}"
-  style="
-    {%- render 'spacing-style', settings: s -%}
-    {%- if s.width == 'custom' %}--block-width: {{ s.custom_width }}%; --block-width-mobile: {{ s.custom_width_mobile }}%;{% endif -%}
-  "
+  class="image-block spacing-style size-style"
+  style="{%- render 'spacing-style', settings: s -%} {% render 'size-style', settings: s %}"
   {% render 'animation-attributes', animation: s.animation, delay: s.animation_delay, image: true %}
   {{ block.shopify_attributes }}
 >

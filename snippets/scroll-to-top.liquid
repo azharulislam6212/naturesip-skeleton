@@ -1,0 +1,19 @@
+{% doc %}
+  Scroll to top: a button fixed to the bottom inline-end corner, drawn like
+  the theme's "sketch" icon frame (light rounded square with a stroke on a
+  tilted gradient shape). It appears after scrolling down and scrolls back up
+  smoothly. Behaviour lives in assets/scroll-to-top.js.
+  Shown when Theme settings > Layout > Scroll to top button is on.
+
+  @example
+  {% render 'scroll-to-top' %}
+{% enddoc %}
+
+{%- if settings.scroll_to_top -%}
+  <scroll-to-top class="scroll-top">
+    <button class="scroll-top__button" type="button" ref="button" tabindex="-1">
+      {%- render 'icon', name: 'arrow-up', class: 'scroll-top__icon' -%}
+      <span class="visually-hidden">{{ 'accessibility.back_to_top' | t }}</span>
+    </button>
+  </scroll-to-top>
+{%- endif -%}

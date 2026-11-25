@@ -1,7 +1,5 @@
 {%- comment -%} Customer login, password recovery (via #recover) and guest checkout. {%- endcomment -%}
 
-{{ 'section-customer.css' | asset_url | stylesheet_tag }}
-
 <section class="section customer color-{{ section.settings.color_scheme.id }} spacing-style" style="{%- render 'spacing-style', settings: section.settings -%}">
   <div class="customer__panel">
     <div class="customer__recover" id="recover" tabindex="-1">

@@ -1,16 +1,17 @@
 {
   "accessibility": {
+    "back_to_top": "Back to top",
     "carousel": "Carousel",
     "close": "Close",
     "image_error": "The image could not be loaded.",
     "new_window": "Opens in a new window.",
     "next": "Next",
+    "pause_animation": "Pause or play the scrolling text",
     "play_video": "Play video",
     "previous": "Previous",
     "skip_to_content": "Skip to content",
-    "slide_position": "Slide {{ index }} of {{ count }}",
     "slide": "Slide",
-    "pause_animation": "Pause or play the scrolling text",
+    "slide_position": "Slide {{ index }} of {{ count }}",
     "star_rating": "Rated {{ rating }} out of {{ max }} stars",
     "zoom": "Zoom"
   },
@@ -216,7 +217,8 @@
   "localization": {
     "country_label": "Country/region",
     "language_label": "Language",
-    "update": "Update"
+    "update": "Update",
+    "search_placeholder": "Search countries"
   },
   "newsletter": {
     "email_label": "Email address",

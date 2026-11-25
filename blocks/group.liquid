@@ -14,14 +14,9 @@
     assign horizontal = true
   endif
 
-  assign classes = 'group layout-stack spacing-style'
+  assign classes = 'group layout-stack spacing-style size-style'
   if horizontal
     assign classes = classes | append: ' layout-stack--horizontal'
-  endif
-  if s.width == 'fill'
-    assign classes = classes | append: ' block-width-fill'
-  elsif s.width == 'custom'
-    assign classes = classes | append: ' block-width-custom'
   endif
   if s.inherit_color_scheme == false
     assign classes = classes | append: ' color-' | append: s.color_scheme.id
@@ -57,11 +52,12 @@
     --justify: {{ justify }};
     --align: {{ align }};
     --gap: {{ s.gap }}px;
+    --gap-tablet: {{ s.gap }}px;
     --gap-mobile: {{ s.gap_mobile }}px;
     --stack-text-align: {% case horizontal_choice %}{% when 'center' %}center{% when 'flex-end' %}end{% else %}start{% endcase %};
     --group-radius: {{ s.border_radius }}px;
     {%- if s.border %}--group-border-width: {{ s.border_width }}px; --group-border-opacity: {{ s.border_opacity }}%;{% endif -%}
-    {%- if s.width == 'custom' %}--block-width: {{ s.custom_width }}%; --block-width-mobile: {{ s.custom_width_mobile }}%;{% endif -%}
+    {% render 'size-style', settings: s %}
     {%- if s.min_height > 0 %}min-height: {{ s.min_height }}px;{% endif -%}
   "
   {% if horizontal and s.stack_on_mobile %}
@@ -71,9 +67,7 @@
   {{ block.shopify_attributes }}
 >
   {%- if s.background_image != blank -%}
-    <div class="section-surface__background" style="--background-image-opacity: {{ s.background_image_opacity | divided_by: 100.0 }};" aria-hidden="true">
-      {% render 'image', image: s.background_image, alt: '', sizes: '100vw' %}
-    </div>
+    {% render 'background', settings: s %}
   {%- endif -%}
   {% content_for 'blocks' %}
 </div>

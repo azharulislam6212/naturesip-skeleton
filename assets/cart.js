@@ -1,8 +1,12 @@
 /**
  * @layer L3
- * <cart-items>: line item quantity changes, removals and the cart note, used
- * by both the cart page and the cart drawer. Every request asks the Cart API
- * to re-render all cart sections, then applies them in one go.
+ * Cart handling for the cart page and the cart drawer alike.
+ *
+ * <cart-items> wraps the line items in both places and handles quantity
+ * changes, removals and the cart note. Every request asks the Cart API to
+ * re-render all cart sections, then applies them in one go, so the drawer,
+ * the cart page and the header count always stay in sync.
+ * (<cart-drawer> in cart-drawer.js only opens and closes the drawer.)
  */
 import { Component, defineElement } from '@theme/component';
 import { CartErrorEvent, CartUpdateEvent } from '@theme/events';

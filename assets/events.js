@@ -62,6 +62,18 @@ export class DialogToggleEvent extends ThemeEvent {
   }
 }
 
+/**
+ * Request to scroll the page to `top`. Smooth scroll (Lenis) takes it over
+ * when it runs and sets `detail.handled`; otherwise the sender scrolls natively.
+ */
+export class ScrollToEvent extends ThemeEvent {
+  static eventName = 'scroll:to';
+  /** @param { { top: number, handled: boolean } } detail */
+  constructor(detail) {
+    super(ScrollToEvent.eventName, detail);
+  }
+}
+
 /** New server-rendered markup was inserted; enhancements should scan `root`. */
 export class ContentUpdateEvent extends ThemeEvent {
   static eventName = 'content:update';

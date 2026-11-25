@@ -4,15 +4,13 @@
   country/language selectors.
 {%- endcomment -%}
 
-{{ 'section-footer.css' | asset_url | stylesheet_tag }}
-
 {%- assign s = section.settings -%}
 <footer
   class="footer section-surface color-{{ s.color_scheme.id }} spacing-style"
   style="{%- render 'spacing-style', settings: s -%} --footer-columns: {{ s.columns }};"
-  data-shape-top="{{ s.shape_top }}"
+  {% render 'shape-attributes', settings: s %}
 >
-  <div class="section-surface__background" aria-hidden="true"></div>
+  {% render 'background' %}
   <div class="footer__inner page-width">
     <div class="footer__blocks" {% render 'animation-attributes', animation: 'theme', stagger: true %}>
       {% content_for 'blocks' %}
@@ -107,9 +105,58 @@
         {
           "value": "wave",
           "label": "t:options.shape.wave"
+        },
+        {
+          "value": "waves",
+          "label": "t:options.shape.waves"
+        },
+        {
+          "value": "curve",
+          "label": "t:options.shape.curve"
+        },
+        {
+          "value": "arch",
+          "label": "t:options.shape.arch"
+        },
+        {
+          "value": "slant",
+          "label": "t:options.shape.slant"
+        },
+        {
+          "value": "triangle",
+          "label": "t:options.shape.triangle"
+        },
+        {
+          "value": "zigzag",
+          "label": "t:options.shape.zigzag"
+        },
+        {
+          "value": "scallop",
+          "label": "t:options.shape.scallop"
         }
       ],
       "default": "wave"
+    },
+    {
+      "type": "select",
+      "id": "shape_size",
+      "label": "t:settings.shape_size",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:options.shape_size.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:options.shape_size.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:options.shape_size.large"
+        }
+      ],
+      "default": "medium",
+      "visible_if": "{{ section.settings.shape_top != 'none' }}"
     },
     {
       "type": "header",

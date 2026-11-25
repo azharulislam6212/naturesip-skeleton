@@ -5,7 +5,7 @@
   {% content_for 'block', type: 'divider', id: 'divider' %}
 {% enddoc %}
 
-<div class="divider-block spacing-style block-width-fill" style="{%- render 'spacing-style', settings: block.settings -%}" {{ block.shopify_attributes }}>
+<div class="divider-block spacing-style size-style" style="{%- render 'spacing-style', settings: block.settings -%} {% render 'size-style', settings: block.settings, default: 'fill' %}" {{ block.shopify_attributes }}>
   <hr
     class="divider"
     style="--divider-thickness: {{ block.settings.thickness }}px; --divider-style: {{ block.settings.line_style }}; --divider-width: {{ block.settings.line_width }}%;"

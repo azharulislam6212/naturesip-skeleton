@@ -4,8 +4,6 @@
   marked with data-variant-update.
 {%- endcomment -%}
 
-{{ 'section-product.css' | asset_url | stylesheet_tag }}
-
 {%- assign s = section.settings -%}
 <section
   class="section section-surface product-section color-{{ s.color_scheme.id }} spacing-style"
@@ -13,7 +11,7 @@
   data-product-section
   data-section-id="{{ section.id }}"
 >
-  <div class="section-surface__background" aria-hidden="true"></div>
+  {% render 'background' %}
   <div class="product product--media-{{ s.media_width }}{% if s.reverse %} product--reverse{% endif %}">
     <div class="product__media">
       {% content_for 'block', type: '_product-media-gallery', id: 'media-gallery' %}

@@ -26,27 +26,58 @@
     {%- form 'localization', id: id -%}
       <input type="hidden" name="return_to" value="{{ request.path }}">
       {%- if country_enabled -%}
+        {%- liquid
+          assign country_label = 'localization.country_label' | t
+          assign search_placeholder = 'localization.search_placeholder' | t
+          assign country_select_id = id | append: '-Country'
+          assign country_selected = ''
+        -%}
+        {%- capture country_tags -%}
+          {%- for country in localization.available_countries -%}
+            {%- capture country_name -%}
+              {{- country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+            {%- endcapture -%}
+            {%- if country.iso_code == localization.country.iso_code -%}
+              {%- assign country_selected = country_name -%}
+            {%- endif -%}
+            <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
+              {{- country_name -}}
+            </option>
+          {%- endfor -%}
+        {%- endcapture -%}
         <div class="field">
-          <label class="field__label" for="{{ id }}-Country">{{ 'localization.country_label' | t }}</label>
-          <select class="select" id="{{ id }}-Country" name="country_code">
-            {%- for country in localization.available_countries -%}
-              <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
-                {{- country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
-              </option>
-            {%- endfor -%}
-          </select>
+          {% render 'custom-select',
+            id: country_select_id,
+            name: 'country_code',
+            label: country_label,
+            options: country_tags,
+            selected_label: country_selected,
+            searchable: true,
+            search_placeholder: search_placeholder
+          %}
         </div>
       {%- endif -%}
       {%- if language_enabled -%}
+        {%- liquid
+          assign language_label = 'localization.language_label' | t
+          assign language_select_id = id | append: '-Language'
+          assign language_selected = localization.language.endonym_name | capitalize
+        -%}
+        {%- capture language_tags -%}
+          {%- for language in localization.available_languages -%}
+            <option value="{{ language.iso_code }}" lang="{{ language.iso_code }}" {% if language.iso_code == localization.language.iso_code %}selected{% endif %}>
+              {{- language.endonym_name | capitalize -}}
+            </option>
+          {%- endfor -%}
+        {%- endcapture -%}
         <div class="field">
-          <label class="field__label" for="{{ id }}-Language">{{ 'localization.language_label' | t }}</label>
-          <select class="select" id="{{ id }}-Language" name="language_code">
-            {%- for language in localization.available_languages -%}
-              <option value="{{ language.iso_code }}" lang="{{ language.iso_code }}" {% if language.iso_code == localization.language.iso_code %}selected{% endif %}>
-                {{- language.endonym_name | capitalize -}}
-              </option>
-            {%- endfor -%}
-          </select>
+          {% render 'custom-select',
+            id: language_select_id,
+            name: 'language_code',
+            label: language_label,
+            options: language_tags,
+            selected_label: language_selected
+          %}
         </div>
       {%- endif -%}
       <noscript><button class="link" type="submit">{{ 'localization.update' | t }}</button></noscript>

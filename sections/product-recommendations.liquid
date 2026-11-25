@@ -6,7 +6,7 @@
 -%}
 
 <section class="section section-surface color-{{ s.color_scheme.id }} spacing-style" style="{%- render 'spacing-style', settings: s -%}">
-  <div class="section-surface__background" aria-hidden="true"></div>
+  {% render 'background' %}
   <div class="layout-stack" style="--gap: var(--space-xl);">
     <div class="section-heading layout-stack" style="--align: center; --gap: 12px;">
       {% content_for 'blocks' %}

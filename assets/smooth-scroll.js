@@ -9,7 +9,7 @@
  * its own (drawers, dialogs, the lightbox, sliders) carries
  * `data-lenis-prevent`, and Lenis pauses while a modal is open.
  */
-import { DialogToggleEvent } from '@theme/events';
+import { DialogToggleEvent, ScrollToEvent } from '@theme/events';
 import { isDesignMode, isTouchDevice, prefersReducedMotion } from '@theme/utilities';
 
 /** @type {any} */
@@ -27,6 +27,10 @@ export async function initSmoothScroll() {
     smoothWheel: true,
     syncTouch: false,
     anchors: { offset: -headerOffset() },
+    // Read the scroll height live instead of caching it. The page keeps
+    // growing after load (lazy images, fonts, recommendations, reveal
+    // animations) and a cached height stopped the scroll before the footer end.
+    naiveDimensions: true,
     prevent: (/** @type {HTMLElement} */ node) => node.closest('dialog, .pswp, [data-lenis-prevent]') !== null,
   });
 
@@ -35,6 +39,12 @@ export async function initSmoothScroll() {
     window.requestAnimationFrame(frame);
   };
   window.requestAnimationFrame(frame);
+
+  document.addEventListener(ScrollToEvent.eventName, (event) => {
+    if (!lenis) return;
+    lenis.scrollTo(event.detail.top);
+    event.detail.handled = true;
+  });
 
   document.addEventListener(DialogToggleEvent.eventName, (event) => {
     openDialogs = Math.max(0, openDialogs + (event.detail.open ? 1 : -1));

@@ -17,6 +17,18 @@ export function loadMotion() {
 const EASE_OUT = [0.22, 1, 0.36, 1];
 
 /**
+ * 'slide-start' / 'slide-end' follow the reading direction: in RTL the start
+ * side is the right, so the two presets swap.
+ * @param {string} name
+ */
+function logicalPreset(name) {
+  if (document.documentElement.dir !== 'rtl') return name;
+  if (name === 'slide-start') return 'slide-end';
+  if (name === 'slide-end') return 'slide-start';
+  return name;
+}
+
+/**
  * Entrance presets. Only transform and opacity are animated so nothing ever
  * triggers layout.
  * @type {Record<string, { from: Record<string, any>, to: Record<string, any> }>}
@@ -38,7 +50,7 @@ export const PRESETS = {
  */
 export async function playEntrance(targets, presetName, { delay = 0, duration = 0.7, staggerBy = 0 } = {}) {
   const list = Array.isArray(targets) ? targets : [targets];
-  const preset = PRESETS[presetName] ?? PRESETS.fade;
+  const preset = PRESETS[logicalPreset(presetName)] ?? PRESETS.fade;
 
   if (prefersReducedMotion()) {
     for (const element of list) Object.assign(/** @type {HTMLElement} */ (element).style, { opacity: '', transform: '' });

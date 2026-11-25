@@ -1,0 +1,37 @@
+{% doc %}
+  Background layer for a section or group: the colour scheme's background
+  (solid or gradient) plus an optional image with opacity. Sits behind the
+  content of any `.section-surface`; shape masks (snippets/shape-attributes)
+  cut this layer.
+
+  Reads these settings when present:
+    background_image, background_image_opacity (0–100), background_priority
+
+  @param {object} [settings] - section.settings or block.settings. Omit for colour only.
+  @param {string} [class] - Extra class names.
+  @param {string} [sizes] - Image sizes attribute. Default: 100vw.
+
+  @example
+  {% render 'background', settings: section.settings %}
+{% enddoc %}
+
+{%- liquid
+  assign image = settings.background_image
+  assign image_sizes = sizes | default: '100vw'
+  assign opacity = 1
+  if settings.background_image_opacity != blank
+    assign opacity = settings.background_image_opacity | divided_by: 100.0
+  endif
+-%}
+
+<div
+  class="section-surface__background{% if class != blank %} {{ class }}{% endif %}"
+  {% if image != blank %}
+    style="--background-image-opacity: {{ opacity }};"
+  {% endif %}
+  aria-hidden="true"
+>
+  {%- if image != blank -%}
+    {% render 'image', image: image, alt: '', sizes: image_sizes, eager: settings.background_priority %}
+  {%- endif -%}
+</div>

@@ -1,0 +1,101 @@
+{% doc %}
+  Custom select: an animated listbox panel (ul/li) in place of the browser's
+  dropdown, used by every select in the theme (variant dropdown, sort,
+  country/currency, language, address country/province).
+
+  The native <select> stays in the markup and in the form: it carries the
+  value, submits with the form and fires the usual change event, so existing
+  listeners keep working. Without JavaScript the native select shows instead.
+  Behaviour lives in assets/custom-select.js.
+
+  @param {string} id - Id of the native select (the label points at it).
+  @param {string} options - The <option> tags, captured by the caller.
+  @param {string} [name] - Form field name.
+  @param {string} [label] - Visible label text.
+  @param {boolean} [label_hidden] - Keep the label for screen readers only.
+  @param {string} [selected_label] - Text of the selected option, shown before JavaScript runs.
+  @param {boolean} [searchable] - Add a search field that filters the options (long lists).
+  @param {string} [search_placeholder] - Placeholder for the search field.
+  @param {string} [attributes] - Extra raw attributes for the native select.
+  @param {string} [class] - Extra class names for <custom-select>.
+
+  @example
+  {%- capture sort_options -%}
+    {%- for option in collection.sort_options -%}
+      <option value="{{ option.value | escape }}">{{ option.name | escape }}</option>
+    {%- endfor -%}
+  {%- endcapture -%}
+  {% render 'custom-select', id: 'SortBy', name: 'sort_by', label: 'Sort by', options: sort_options %}
+{% enddoc %}
+
+{%- if label != blank -%}
+  <label class="field__label{% if label_hidden %} visually-hidden{% endif %}" id="{{ id }}-Label" for="{{ id }}">
+    {{- label -}}
+  </label>
+{%- endif -%}
+<custom-select class="custom-select{% if searchable %} custom-select--searchable{% endif %}{% if class != blank %} {{ class }}{% endif %}">
+  <select
+    class="select custom-select__native"
+    id="{{ id }}"
+    {% if name != blank %}
+      name="{{ name }}"
+    {% endif %}
+    {{ attributes }}
+  >
+    {{- options -}}
+  </select>
+  <button
+    class="select custom-select__button"
+    type="button"
+    id="{{ id }}-Button"
+    ref="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-controls="{{ id }}-Listbox"
+    {% if label != blank %}
+      aria-labelledby="{{ id }}-Label {{ id }}-Button"
+    {% endif %}
+  >
+    <span class="custom-select__value" ref="value">{{ selected_label }}</span>
+    {%- render 'icon', name: 'chevron-down', class: 'custom-select__icon' -%}
+  </button>
+  <div class="custom-select__panel" ref="panel">
+    {%- if searchable -%}
+      {%- liquid
+        assign placeholder = search_placeholder
+        if placeholder == blank
+          assign placeholder = 'search.title' | t
+        endif
+      -%}
+      <div class="custom-select__search">
+        {%- render 'icon', name: 'search', class: 'custom-select__search-icon' -%}
+        <input
+          class="custom-select__search-input"
+          type="text"
+          ref="search"
+          placeholder="{{ placeholder | escape }}"
+          aria-label="{{ placeholder | escape }}"
+          aria-controls="{{ id }}-Listbox"
+          aria-autocomplete="list"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+        >
+      </div>
+    {%- endif -%}
+    <ul
+      class="custom-select__list"
+      id="{{ id }}-Listbox"
+      ref="list"
+      role="listbox"
+      tabindex="-1"
+      {% if label != blank %}
+        aria-labelledby="{{ id }}-Label"
+      {% endif %}
+      data-lenis-prevent
+    ></ul>
+    {%- if searchable -%}
+      <p class="custom-select__empty" ref="empty" role="status" hidden>{{ 'search.no_results_short' | t }}</p>
+    {%- endif -%}
+  </div>
+</custom-select>

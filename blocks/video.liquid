@@ -19,8 +19,8 @@
 -%}
 
 <div
-  class="video-block spacing-style block-width-fill"
-  style="{%- render 'spacing-style', settings: s -%}"
+  class="video-block spacing-style size-style"
+  style="{%- render 'spacing-style', settings: s -%} {% render 'size-style', settings: s %}"
   {% render 'animation-attributes', animation: s.animation, delay: s.animation_delay %}
   {{ block.shopify_attributes }}
 >
@@ -141,6 +141,52 @@
       "step": 2,
       "unit": "px",
       "default": 24
+    },
+    {
+      "type": "header",
+      "content": "t:headers.layout"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "fit",
+          "label": "t:options.width.fit"
+        },
+        {
+          "value": "fill",
+          "label": "t:options.width.fill"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.width.custom"
+        }
+      ],
+      "default": "fill"
+    },
+    {
+      "type": "range",
+      "id": "custom_width",
+      "label": "t:settings.custom_width",
+      "min": 5,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.width == 'custom' }}"
+    },
+    {
+      "type": "range",
+      "id": "custom_width_mobile",
+      "label": "t:settings.custom_width_mobile",
+      "min": 5,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.width == 'custom' }}"
     },
     {
       "type": "header",

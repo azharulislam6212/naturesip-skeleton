@@ -1,15 +1,14 @@
 {% layout none %}
 
 <!doctype html>
-<html lang="{{ request.locale.iso_code }}">
+<html lang="{{ request.locale.iso_code }}" dir="{% render 'text-direction' %}">
   <head>
     <style>
-      @layer reset, tokens, base, layout, components, utilities;
+      @layer reset, tokens, base, layout, components, sections, utilities;
     </style>
     {% render 'meta-tags' %}
     {% render 'theme-styles' %}
-    {{ 'base.css' | asset_url | stylesheet_tag }}
-    {{ 'section-content.css' | asset_url | stylesheet_tag }}
+    {% render 'stylesheets', context: 'minimal' %}
     <script src="{{ 'vendor/qrcode.js' | shopify_asset_url }}" defer></script>
     {{ content_for_header }}
   </head>

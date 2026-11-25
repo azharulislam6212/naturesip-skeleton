@@ -1,10 +1,8 @@
 {%- comment -%} Page content. {%- endcomment -%}
 
-{{ 'section-content.css' | asset_url | stylesheet_tag }}
-
 {%- assign s = section.settings -%}
 <section class="section section-surface color-{{ s.color_scheme.id }} spacing-style" style="{%- render 'spacing-style', settings: s -%}">
-  <div class="section-surface__background" aria-hidden="true"></div>
+  {% render 'background' %}
   <div class="page-content">
     <h1 class="type-heading type-{{ s.title_size | replace: '_', '-' }}{% if s.decorated_title %} text-gradient text-stroke text-shadow{% endif %}">{{ page.title | escape }}</h1>
     <div class="rte">{{ page.content }}</div>

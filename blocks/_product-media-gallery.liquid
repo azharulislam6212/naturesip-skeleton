@@ -23,6 +23,9 @@
 <media-gallery
   class="media-gallery media-gallery--{{ s.layout }}"
   data-section-id="{{ section.id }}"
+  {% if s.zoom %}
+    data-zoom-stylesheet="{{ 'photoswipe.css' | asset_url }}"
+  {% endif %}
   {{ block.shopify_attributes }}
 >
   <ul class="media-gallery__track" ref="track" role="list" data-lenis-prevent>

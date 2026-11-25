@@ -49,17 +49,34 @@ class PickupAvailability extends Component {
 }
 
 class AddressForm extends Component {
+  /** @returns {HTMLSelectElement | null} */
+  get #country() {
+    return this.querySelector('select[data-address-country]');
+  }
+
+  /** @returns {HTMLSelectElement | null} */
+  get #province() {
+    return this.querySelector('select[data-address-province]');
+  }
+
   mount() {
-    const { country, province } = this.refs;
+    const country = this.#country;
+    const province = this.#province;
     if (!country || !province) return;
-    if (country.dataset.default) country.value = country.dataset.default;
+    if (country.dataset.default) {
+      country.value = country.dataset.default;
+      // Let <custom-select> show the restored country.
+      country.dispatchEvent(new Event('change', { bubbles: true }));
+    }
     this.#fillProvinces(province.dataset.default);
     this.listen(country, 'change', () => this.#fillProvinces());
   }
 
   /** @param {string} [selected] */
   #fillProvinces(selected) {
-    const { country, province, provinceWrapper } = this.refs;
+    const country = /** @type {HTMLSelectElement} */ (this.#country);
+    const province = /** @type {HTMLSelectElement} */ (this.#province);
+    const { provinceWrapper } = this.refs;
     const option = country.selectedOptions[0];
     /** @type {[string, string][]} */
     const provinces = JSON.parse(option?.dataset.provinces || '[]');

@@ -3,8 +3,6 @@
   parameter after every cart change; <cart-drawer> only opens/closes it.
 {%- endcomment -%}
 
-{{ 'component-cart.css' | asset_url | stylesheet_tag }}
-
 {%- if settings.cart_type == 'drawer' -%}
   <cart-drawer data-cart-section="{{ section.id }}">
     <dialog

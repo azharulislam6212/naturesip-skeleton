@@ -13,7 +13,11 @@
   data-variant-update="price-{{ block.id }}"
   {{ block.shopify_attributes }}
 >
-  {% render 'price', product: product, variant: product.selected_or_first_available_variant, show_unit_price: true %}
+  {%- if product != blank -%}
+    {% render 'price', product: product, variant: product.selected_or_first_available_variant, show_unit_price: true %}
+  {%- else -%}
+    <div class="price"><span class="price__current">{{ 2900 | money }}</span></div>
+  {%- endif -%}
 
   {%- if block.settings.show_tax_note -%}
     <p class="price__note">
@@ -30,7 +34,7 @@
     </p>
   {%- endif -%}
 
-  {%- if block.settings.show_installments -%}
+  {%- if block.settings.show_installments and product != blank -%}
     {%- assign installments_form = 'Installments-' | append: block.id -%}
     {%- form 'product', product, id: installments_form, class: 'product-price__installments' -%}
       <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">

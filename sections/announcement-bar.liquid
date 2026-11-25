@@ -4,8 +4,6 @@
   appear when there is more than one.
 {%- endcomment -%}
 
-{{ 'section-header.css' | asset_url | stylesheet_tag }}
-
 {%- assign s = section.settings -%}
 <div class="announcement-bar color-{{ s.color_scheme.id }}">
   <div class="announcement-bar__inner page-width">

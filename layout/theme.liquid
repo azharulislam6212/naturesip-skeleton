@@ -6,14 +6,14 @@
 >
   <head>
     <style>
-      @layer reset, tokens, base, layout, components, utilities;
+      @layer reset, tokens, base, layout, components, sections, utilities;
     </style>
 
     {% render 'meta-tags' %}
     {% render 'scripts' %}
     {% render 'font' %}
     {% render 'theme-styles' %}
-    {{ 'base.css' | asset_url | stylesheet_tag }}
+    {% render 'stylesheets' %}
 
     {{ content_for_header }}
   </head>
@@ -30,6 +30,7 @@
 
     {% sections 'footer-group' %}
     {% sections 'overlay-group' %}
+    {% render 'scroll-to-top' %}
 
     <p class="visually-hidden" id="LiveRegion" role="status" aria-live="polite"></p>
   </body>

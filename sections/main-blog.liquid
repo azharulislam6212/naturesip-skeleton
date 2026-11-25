@@ -11,16 +11,12 @@
       <ul class="grid" role="list" style="--columns-desktop: {{ s.columns_desktop }}; --columns-tablet: 2; --columns-mobile: 1;" {% render 'animation-attributes', stagger: true %}>
         {%- for article in blog.articles -%}
           <li>
-            <article class="article-card">
-              <div class="media media--hover" data-hover="{{ settings.image_hover }}" style="--ratio: 1.5;">
-                {% render 'image', image: article.image, sizes: '(min-width: 990px) 33vw, 100vw', placeholder: 'lifestyle-2' %}
-              </div>
-              {%- if s.show_date -%}
-                <p class="type-subheading">{{ article.published_at | time_tag: format: 'date' }}</p>
-              {%- endif -%}
-              <h2 class="type-heading type-h5"><a class="product-card__link" href="{{ article.url }}">{{ article.title | escape }}</a></h2>
-              <p>{{ article.excerpt_or_content | strip_html | truncatewords: 24 }}</p>
-            </article>
+            {% render 'article-card',
+              article: article,
+              show_date: s.show_date,
+              show_excerpt: true,
+              sizes: '(min-width: 990px) 33vw, 100vw'
+            %}
           </li>
         {%- endfor -%}
       </ul>

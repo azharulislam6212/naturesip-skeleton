@@ -58,6 +58,10 @@
         "buy_buttons": {
           "type": "_product-buy-buttons"
         },
+        "share": {
+          "type": "share",
+          "settings": {}
+        },
         "highlights": {
           "type": "accordion",
           "blocks": {
@@ -93,7 +97,8 @@
         "variant_picker",
         "inventory",
         "buy_buttons",
-        "highlights"
+        "highlights",
+        "share"
       ],
       "settings": {}
     },

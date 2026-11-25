@@ -236,23 +236,4 @@
   }
 
   /* Collection list cards */
-  .collection-card {
-    display: grid;
-    gap: var(--space-sm);
-    text-decoration: none;
-  }
-
-  .collection-card__title {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2xs);
-  }
-
-  .collection-card:hover .collection-card__title .icon {
-    translate: 4px 0;
-  }
-
-  .collection-card__title .icon {
-    transition: translate var(--duration-fast) var(--ease-out);
-  }
 }

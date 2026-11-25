@@ -87,7 +87,6 @@
       "type": "select",
       "id": "style",
       "label": "t:settings.style",
-      "info": "t:info.button_style",
       "options": [
         {
           "value": "primary",
@@ -131,7 +130,6 @@
       "type": "color_background",
       "id": "custom_gradient",
       "label": "t:settings.background_gradient",
-      "info": "t:info.gradient_fallback",
       "visible_if": "{{ block.settings.style == 'custom' }}"
     },
     {
@@ -159,7 +157,6 @@
       "type": "color_background",
       "id": "custom_gradient_hover",
       "label": "t:settings.background_gradient_hover",
-      "info": "t:info.gradient_fallback",
       "visible_if": "{{ block.settings.style == 'custom' }}"
     },
     {
@@ -400,7 +397,6 @@
       "type": "select",
       "id": "animation",
       "label": "t:settings.animation",
-      "info": "t:info.animation",
       "options": [
         {
           "value": "theme",
@@ -448,7 +444,7 @@
   "presets": [
     {
       "name": "t:blocks.button.name",
-      "category": "t:categories.basic",
+      "category": "t:categories.blocks.actions",
       "settings": {
         "link": "shopify://collections/all"
       }

@@ -56,10 +56,12 @@
       {% render 'image', placeholder: 'product-1' %}
     {%- endif -%}
 
-    <div class="product-card__badges">
+    <div class="product-card__badges product-card__badges--{{ settings.badge_position }}">
       {%- if product.available == false -%}
-        <span class="badge badge--sold-out">{{ 'products.product.sold_out' | t }}</span>
-      {%- elsif product.compare_at_price > product.price -%}
+        {%- if settings.show_sold_out_badge -%}
+          <span class="badge badge--sold-out">{{ 'products.product.sold_out' | t }}</span>
+        {%- endif -%}
+      {%- elsif settings.show_sale_badge and product.compare_at_price > product.price -%}
         <span class="badge badge--sale">
           {%- if settings.card_sale_badge == 'percent' -%}
             {%- assign saving = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}

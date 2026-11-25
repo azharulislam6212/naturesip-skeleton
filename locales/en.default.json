@@ -48,7 +48,11 @@
     "updated": "Cart updated"
   },
   "collections": {
-    "title": "Collections"
+    "title": "Collections",
+    "product_count": {
+      "one": "{{ count }} product",
+      "other": "{{ count }} products"
+    }
   },
   "contact": {
     "email": "Email",
@@ -167,6 +171,15 @@
       "youtube": "YouTube",
       "pinterest": "Pinterest",
       "x": "X"
+    },
+    "share": {
+      "facebook": "Share on Facebook",
+      "x": "Share on X",
+      "pinterest": "Pin on Pinterest",
+      "whatsapp": "Share on WhatsApp",
+      "email": "Share by email",
+      "copy_link": "Copy link",
+      "link_copied": "Link copied"
     }
   },
   "gift_cards": {

@@ -39,6 +39,7 @@ const REGISTRY = {
   'address-form': { module: '@theme/store-utilities', load: 'visible' },
   'deferred-media': { module: '@theme/store-utilities', load: 'interaction' },
   'marquee-banner': { module: '@theme/store-utilities', load: 'interaction' },
+  'share-copy': { module: '@theme/store-utilities', load: 'visible' },
 };
 
 /** @type {Map<string, Promise<unknown>>} */

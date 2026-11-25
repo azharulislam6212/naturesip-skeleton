@@ -11,13 +11,7 @@
       <ul class="grid" role="list" style="--columns-desktop: {{ s.columns_desktop }}; --columns-tablet: 3; --columns-mobile: {{ s.columns_mobile }};" {% render 'animation-attributes', stagger: true %}>
         {%- for item in collections -%}
           <li>
-            <a class="collection-card" href="{{ item.url }}">
-              <span class="collection-card__media media" style="--ratio: {{ s.image_ratio }};">
-                {%- assign card_image = item.featured_image | default: item.products.first.featured_media.preview_image -%}
-                {% render 'image', image: card_image, sizes: '(min-width: 990px) 25vw, 50vw', alt: '', placeholder: 'collection-1' %}
-              </span>
-              <span class="collection-card__title type-heading type-h5">{{ item.title | escape }}{% render 'icon', name: 'arrow' %}</span>
-            </a>
+            {% render 'collection-card', collection: item, ratio: s.image_ratio, sizes: '(min-width: 990px) 25vw, 50vw' %}
           </li>
         {%- endfor -%}
       </ul>

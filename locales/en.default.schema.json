@@ -70,7 +70,7 @@
       "name": "Product rating"
     },
     "product_sku": {
-      "name": "Product sku"
+      "name": "Product SKU"
     },
     "product_title": {
       "name": "Product title"
@@ -80,6 +80,9 @@
     },
     "product_vendor": {
       "name": "Product vendor"
+    },
+    "share": {
+      "name": "Share"
     },
     "slide": {
       "name": "Slide"
@@ -105,14 +108,24 @@
     }
   },
   "categories": {
-    "basic": "Basic",
-    "forms": "Forms",
-    "layout": "Layout",
-    "links": "Links",
-    "media": "Media",
-    "product": "Product",
-    "products": "Products",
-    "text": "Text"
+    "blocks": {
+      "actions": "Buttons and links",
+      "advanced": "Advanced",
+      "forms": "Forms",
+      "layout": "Layout",
+      "media": "Media",
+      "product": "Product",
+      "text": "Text"
+    },
+    "sections": {
+      "advanced": "Advanced",
+      "banners": "Banners",
+      "blog": "Blog",
+      "collections": "Collections",
+      "forms": "Forms",
+      "products": "Products",
+      "storytelling": "Storytelling"
+    }
   },
   "defaults": {
     "accordion_content": "<p>Use this row to answer a common question or share product details.</p>",
@@ -145,6 +158,7 @@
     "recommendations_heading": "You may also like",
     "section_heading": "Made for <em>every</em> day",
     "section_text": "<p>Pair a short heading with a sentence that explains what makes your products worth choosing.</p>",
+    "share_label": "Share",
     "slideshow_name": "Featured promotions",
     "subheading": "<p>Subheading</p>",
     "table_caption": "How we compare",
@@ -168,49 +182,6 @@
     "padding": "Padding",
     "typography": "Typography"
   },
-  "info": {
-    "alignment_mobile_parent": "Left uses the desktop alignment.",
-    "alignment_parent": "Left follows the alignment of the group or section around this block. Center and right always apply.",
-    "animation": "Theme default follows Theme settings > Animations.",
-    "autoplay": "Autoplaying videos are muted.",
-    "button_style": "Edit button styles in Theme settings > Buttons and Colors.",
-    "cart_drawer": "Used when Theme settings > Cart > Cart type is Drawer.",
-    "center_image": "A transparent PNG or WebP works best.",
-    "collection_image": "Defaults to the collection image.",
-    "collection_title": "Defaults to the collection title.",
-    "complementary": "Complementary products are set up with the Search & Discovery app.",
-    "connectors": "Decorative arrows between steps on desktop.",
-    "custom_icon": "Replaces the icon above. Square, transparent images work best.",
-    "custom_liquid": "Add app snippets or other Liquid code.",
-    "decor": "Decorative only, hidden from screen readers.",
-    "dynamic_checkout": "Shows the payment buttons available in your store, such as Shop Pay.",
-    "email_signup": "Customers who subscribe are added to your Shopify customer list with marketing consent.",
-    "filtering": "Customize filters with the Search & Discovery app.",
-    "gift_card_recipient": "Lets customers send gift card products to someone else.",
-    "gradient_fallback": "Optional. When empty, the solid color is used.",
-    "heading_italic": "Italic words use the accent font and highlight style.",
-    "highlight": "Applies to italic words.",
-    "hover_effect": "Uses the image hover effect from Theme settings > Animations.",
-    "html_tag": "Choose the tag for document structure; size comes from the typography preset.",
-    "installments": "Requires Shop Pay Installments.",
-    "low_stock": "Shows \"Low stock\" when real inventory is at or below this number.",
-    "marquee_speed": "Time for one full loop. Higher is slower.",
-    "primary_product": "Uses an H1 title. Turn off when this section is not the page's main product.",
-    "priority": "Turn on only for the first image on the page to load it faster.",
-    "quick_view": "Used when product cards show a quick view button.",
-    "rating": "Shows ratings from product review apps that use the standard reviews metafields.",
-    "social_links": "Add your social media links in Theme settings > Social media.",
-    "sticky": "Desktop only.",
-    "swatches": "Swatches use the colors or images set on product options in the Shopify admin.",
-    "table_caption": "Read by screen readers only.",
-    "testimonial_product": "Links the testimonial to a product.",
-    "text_italic": "Italic words use the highlight style.",
-    "type_preset": "Edit presets in Theme settings > Typography.",
-    "us_logo": "Replaces the brand name in the table header.",
-    "video": "Upload a video to Shopify, or use a YouTube or Vimeo link below.",
-    "video_description": "Describes the video for screen reader users.",
-    "zoom": "Images open in a full-screen zoom viewer."
-  },
   "options": {
     "alignment": {
       "center": "Center",
@@ -227,6 +198,15 @@
       "slide_start": "Slide from start",
       "theme": "Theme default",
       "zoom": "Zoom"
+    },
+    "badge_position": {
+      "top_end": "Top right",
+      "top_start": "Top left"
+    },
+    "badge_shape": {
+      "pill": "Pill",
+      "rounded": "Rounded",
+      "square": "Square"
     },
     "button_hover": {
       "fade": "Fade",
@@ -458,6 +438,10 @@
       "scheme": "Color scheme",
       "subtext": "Subtext"
     },
+    "title_position": {
+      "below": "Below image",
+      "overlay": "On image"
+    },
     "type_preset": {
       "custom": "Custom",
       "display_l": "Display large",
@@ -599,7 +583,7 @@
     "section": {
       "name": "Section",
       "presets": {
-        "faq": "Faq",
+        "faq": "FAQ",
         "hero": "Hero",
         "icons_with_text": "Icons with text",
         "image_with_text": "Image with text",
@@ -824,25 +808,35 @@
       "image_hover": "Image hover",
       "name": "Animations",
       "page_transition": "Page transition",
-      "page_transition_info": "Supported browsers fade between pages. Others load pages normally.",
       "reveal": "Reveal",
-      "reveal_info": "Never applied to content above the fold or for visitors who prefer reduced motion.",
       "smooth_scroll": "Smooth scroll",
-      "smooth_scroll_info": "Desktop with mouse or trackpad only. Off for visitors who prefer reduced motion.",
       "smooth_scroll_intensity": "Smooth scroll intensity",
-      "smooth_scroll_intensity_info": "Lower is smoother.",
       "style": "Style",
       "text": "Text"
+    },
+    "badges": {
+      "background": "Background",
+      "name": "Badges",
+      "position": "Position",
+      "shape": "Shape",
+      "show_sale": "Show sale badge",
+      "show_sold_out": "Show sold out badge",
+      "text": "Text"
+    },
+    "blog_cards": {
+      "excerpt_length": "Excerpt length (words)",
+      "image_ratio": "Image ratio",
+      "name": "Blog cards",
+      "show_author": "Show author"
     },
     "buttons": {
       "hover_effect": "Hover effect",
       "name": "Buttons",
       "padding_inline": "Padding inline",
-      "skew": "Skew",
-      "skew_info": "Set to 0 for straight buttons."
+      "skew": "Skew"
     },
     "cards": {
-      "name": "Cards",
+      "name": "Product card",
       "quick_action": "Quick action",
       "sale_badge": "Sale badge",
       "second_image": "Second image",
@@ -856,6 +850,11 @@
       "name": "Cart",
       "note": "Note",
       "type": "Cart type"
+    },
+    "collection_cards": {
+      "name": "Collection cards",
+      "show_count": "Show product count",
+      "title_position": "Title position"
     },
     "colors": {
       "accent": "Accent",
@@ -898,8 +897,7 @@
     },
     "currency": {
       "name": "Currency",
-      "show_code": "Show code",
-      "show_code_info": "Cart and checkout always show currency codes."
+      "show_code": "Show code"
     },
     "headers": {
       "decorated_headings": "Decorated headings",
@@ -918,8 +916,10 @@
       "navigation": "Navigation",
       "page_transitions": "Page transitions",
       "paragraph": "Paragraph",
+      "sale_badge": "Sale badge",
       "scroll_reveal": "Scroll reveal",
       "smooth_scroll": "Smooth scroll",
+      "sold_out_badge": "Sold out badge",
       "subheading": "Subheading",
       "swatches": "Swatches"
     },
@@ -934,13 +934,21 @@
     },
     "logo": {
       "favicon": "Favicon",
-      "favicon_info": "32 × 32px PNG recommended.",
       "logo": "Logo",
       "name": "Logo"
     },
     "search": {
       "name": "Search",
       "predictive": "Predictive"
+    },
+    "sharing": {
+      "copy_link": "Copy link",
+      "email": "Email",
+      "facebook": "Facebook",
+      "name": "Social sharing",
+      "pinterest": "Pinterest",
+      "whatsapp": "WhatsApp",
+      "x": "X"
     },
     "social": {
       "facebook": "Facebook",
@@ -953,12 +961,9 @@
     },
     "typography": {
       "accent_font": "Accent font",
-      "accent_font_info": "Used for display headings and italic words in headings.",
       "body_font": "Body font",
-      "decorated_info": "Headings with a text outline or shadow use these defaults.",
       "heading_font": "Heading font",
       "mobile_scale": "Mobile scale",
-      "mobile_scale_info": "Headings scale from this size on small screens to full size on desktop, never smaller than body text.",
       "name": "Typography"
     }
   }

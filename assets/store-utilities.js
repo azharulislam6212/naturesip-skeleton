@@ -6,10 +6,12 @@
  *   <address-form>         country → province select for customer addresses
  *   <deferred-media>       loads a video/iframe only when the visitor asks
  *   <marquee-banner>       pause/play button for the scrolling text ribbon
+ *   <share-copy>           copy-link button in the share buttons
  */
 import { Component, defineElement } from '@theme/component';
 import { VariantChangeEvent } from '@theme/events';
 import { fetchSection } from '@theme/section-renderer';
+import { announce, t } from '@theme/utilities';
 
 class LocalizationForm extends Component {
   mount() {
@@ -85,6 +87,32 @@ class DeferredMedia extends Component {
   }
 }
 
+/** <share-copy data-url>: copies the share URL and confirms it. */
+class ShareCopy extends Component {
+  /** @type {number | undefined} */
+  #timer;
+
+  mount() {
+    this.listen(this.refs.button, 'click', () => this.#copy());
+  }
+
+  unmount() {
+    window.clearTimeout(this.#timer);
+  }
+
+  async #copy() {
+    try {
+      await navigator.clipboard.writeText(this.dataset.url || window.location.href);
+    } catch {
+      return;
+    }
+    announce(t('linkCopied'));
+    this.setAttribute('data-copied', '');
+    window.clearTimeout(this.#timer);
+    this.#timer = window.setTimeout(() => this.removeAttribute('data-copied'), 2000);
+  }
+}
+
 class MarqueeBanner extends Component {
   mount() {
     const { toggle } = this.refs;
@@ -102,3 +130,4 @@ defineElement('pickup-availability', PickupAvailability);
 defineElement('address-form', AddressForm);
 defineElement('deferred-media', DeferredMedia);
 defineElement('marquee-banner', MarqueeBanner);
+defineElement('share-copy', ShareCopy);

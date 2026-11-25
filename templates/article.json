@@ -11,6 +11,15 @@
   "sections": {
     "main": {
       "type": "main-article",
+      "blocks": {
+        "share": {
+          "type": "share",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "share"
+      ],
       "settings": {}
     }
   },

@@ -23,7 +23,6 @@
       "type": "richtext",
       "id": "text",
       "label": "t:settings.text",
-      "info": "t:info.text_italic",
       "default": "t:defaults.text"
     },
     {
@@ -34,7 +33,6 @@
       "type": "select",
       "id": "type_preset",
       "label": "t:settings.type_preset",
-      "info": "t:info.type_preset",
       "options": [
         {
           "value": "paragraph",
@@ -234,14 +232,12 @@
       "type": "color_background",
       "id": "gradient",
       "label": "t:settings.gradient",
-      "info": "t:info.gradient_fallback",
       "visible_if": "{{ block.settings.text_color == 'gradient' }}"
     },
     {
       "type": "select",
       "id": "highlight_style",
       "label": "t:settings.highlight_style",
-      "info": "t:info.highlight",
       "options": [
         {
           "value": "none",
@@ -274,7 +270,6 @@
       "type": "color_background",
       "id": "highlight_gradient",
       "label": "t:settings.highlight_gradient",
-      "info": "t:info.gradient_fallback",
       "visible_if": "{{ block.settings.highlight_style != 'none' }}"
     },
     {
@@ -285,14 +280,12 @@
       "type": "text_alignment",
       "id": "alignment",
       "label": "t:settings.alignment",
-      "info": "t:info.alignment_parent",
       "default": "left"
     },
     {
       "type": "text_alignment",
       "id": "alignment_mobile",
       "label": "t:settings.alignment_mobile",
-      "info": "t:info.alignment_mobile_parent",
       "default": "left"
     },
     {
@@ -450,7 +443,6 @@
       "type": "select",
       "id": "animation",
       "label": "t:settings.animation",
-      "info": "t:info.animation",
       "options": [
         {
           "value": "theme",
@@ -498,11 +490,11 @@
   "presets": [
     {
       "name": "t:blocks.text.name",
-      "category": "t:categories.text"
+      "category": "t:categories.blocks.text"
     },
     {
       "name": "t:blocks.text.presets.subheading",
-      "category": "t:categories.text",
+      "category": "t:categories.blocks.text",
       "settings": {
         "text": "t:defaults.subheading",
         "type_preset": "subheading"
@@ -510,7 +502,7 @@
     },
     {
       "name": "t:blocks.text.presets.heading",
-      "category": "t:categories.text",
+      "category": "t:categories.blocks.text",
       "settings": {
         "text": "t:defaults.heading_html",
         "type_preset": "h3"

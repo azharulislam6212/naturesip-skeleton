@@ -145,6 +145,12 @@
       --card-title-case: {{ settings.card_title_case }};
       --card-shadow-offset: {{ settings.card_shadow_offset }}px;
 
+      --badge-radius: {% case settings.badge_shape %}{% when 'square' %}0px{% when 'rounded' %}0.375rem{% else %}999px{% endcase %};
+      {%- if settings.sale_badge_background != blank %}--sale-badge-background: {{ settings.sale_badge_background }};{% endif -%}
+      {%- if settings.sale_badge_text != blank %}--sale-badge-text: {{ settings.sale_badge_text }};{% endif -%}
+      {%- if settings.sold_out_badge_background != blank %}--sold-out-badge-background: {{ settings.sold_out_badge_background }};{% endif -%}
+      {%- if settings.sold_out_badge_text != blank %}--sold-out-badge-text: {{ settings.sold_out_badge_text }};{% endif %}
+
       --swatch-size: {{ settings.swatch_size | divided_by: 16.0 }}rem;
       --swatch-radius: {% if settings.swatch_shape == 'circle' %}50%{% else %}{{ settings.radius_input }}px{% endif %};
 

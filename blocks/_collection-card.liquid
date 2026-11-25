@@ -5,22 +5,14 @@
   {% content_for 'block', type: '_collection-card', id: 'collection' %}
 {% enddoc %}
 
-{%- liquid
-  assign s = block.settings
-  assign collection = s.collection
-  assign card_image = s.image | default: collection.featured_image | default: collection.products.first.featured_media.preview_image
-  assign title = s.title | default: collection.title
-  if title == blank
-    assign title = 'onboarding.collection_title' | t
-  endif
--%}
 <li class="slider__slide" {{ block.shopify_attributes }}>
-  <a class="collection-card" href="{{ collection.url | default: routes.collections_url }}">
-    <span class="collection-card__media media media--hover" data-hover="{{ settings.image_hover }}" style="--ratio: {{ section.settings.image_ratio }};">
-      {% render 'image', image: card_image, alt: '', sizes: '(min-width: 990px) 25vw, 70vw', placeholder: 'collection-1' %}
-    </span>
-    <span class="collection-card__title type-heading type-h5">{{ title | escape }}{% render 'icon', name: 'arrow' %}</span>
-  </a>
+  {% render 'collection-card',
+    collection: block.settings.collection,
+    image: block.settings.image,
+    title: block.settings.title,
+    ratio: section.settings.image_ratio,
+    sizes: '(min-width: 990px) 25vw, 70vw'
+  %}
 </li>
 
 {% schema %}
@@ -36,14 +28,12 @@
     {
       "type": "image_picker",
       "id": "image",
-      "label": "t:settings.image",
-      "info": "t:info.collection_image"
+      "label": "t:settings.image"
     },
     {
       "type": "text",
       "id": "title",
-      "label": "t:settings.title",
-      "info": "t:info.collection_title"
+      "label": "t:settings.title"
     }
   ],
   "presets": [

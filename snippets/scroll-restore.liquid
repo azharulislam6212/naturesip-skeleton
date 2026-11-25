@@ -1,0 +1,89 @@
+{% doc %}
+  Reload / back-forward opens on the section you were on, without first
+  painting the top of the page (hero) and then jumping down.
+
+  Saves the scroll position per URL on pagehide. On the next reload or
+  back/forward visit to that URL it hides the page, takes over scroll
+  restoration, scrolls once the document is parsed, then shows the page.
+  Normal navigations are untouched. A timeout always shows the page again.
+  The page-transition curtain stays visible meanwhile and waits for
+  `theme:scroll-restored` before it animates away.
+
+  Render once inside <head>, as early as possible.
+
+  @example
+  {% render 'scroll-restore' %}
+{% enddoc %}
+
+<style>
+  /* Hide the content while it is moved into place. The page-transition
+     curtain stays visible so it covers the page from the very first paint. */
+  html.is-restoring-scroll body > :not(page-transition) {
+    visibility: hidden;
+  }
+</style>
+<script>
+  (() => {
+    const KEY = 'theme:scroll:' + location.pathname + location.search;
+    const root = document.documentElement;
+
+    let storage;
+    try {
+      storage = window.sessionStorage;
+    } catch (e) {
+      return;
+    }
+
+    window.addEventListener('pagehide', () => {
+      try {
+        storage.setItem(KEY, String(Math.round(window.scrollY)));
+      } catch (e) {}
+    });
+
+    const nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+    const type = nav && nav.type;
+    if (type !== 'reload' && type !== 'back_forward') return;
+    if (location.hash) return;
+
+    let saved = 0;
+    try {
+      saved = Number(storage.getItem(KEY)) || 0;
+    } catch (e) {}
+    if (saved <= 0) return;
+
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    root.classList.add('is-restoring-scroll');
+
+    let shown = false;
+    const show = () => {
+      if (shown) return;
+      shown = true;
+      root.classList.remove('is-restoring-scroll');
+      document.dispatchEvent(new CustomEvent('theme:scroll-restored'));
+    };
+    const restore = () => {
+      window.scrollTo(0, saved);
+      show();
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', restore, { once: true });
+    } else {
+      restore();
+    }
+
+    // Images and fonts can still change the height after DOMContentLoaded.
+    // Correct once on load, unless the visitor has already scrolled.
+    window.addEventListener(
+      'load',
+      () => {
+        if (Math.abs(window.scrollY - saved) > 2 && window.scrollY !== 0) return;
+        window.scrollTo(0, saved);
+      },
+      { once: true }
+    );
+
+    // Never leave the page hidden.
+    setTimeout(show, 3000);
+  })();
+</script>

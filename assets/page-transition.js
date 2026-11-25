@@ -20,8 +20,15 @@ class PageTransition extends Component {
       return;
     }
 
-    // Let the first frame paint covered, then animate away.
-    requestAnimationFrame(() => requestAnimationFrame(() => this.#leave()));
+    // Let the first frame paint covered, then animate away. On a reload that
+    // restores the scroll position (snippets/scroll-restore.liquid), wait until
+    // the page is in place so the content never moves while it shows.
+    const leaveAfterPaint = () => requestAnimationFrame(() => requestAnimationFrame(() => this.#leave()));
+    if (document.documentElement.classList.contains('is-restoring-scroll')) {
+      this.listen(document, 'theme:scroll-restored', leaveAfterPaint, { once: true });
+    } else {
+      leaveAfterPaint();
+    }
 
     this.listen(document, 'click', (event) => this.#onClick(event));
 

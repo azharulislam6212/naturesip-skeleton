@@ -17,15 +17,7 @@
     {% render 'font' %}
     {% render 'theme-styles' %}
     {% render 'stylesheets' %}
-
-    {%- comment -%}
-      Hold the first paint until the end of <body> is parsed. Otherwise the
-      browser paints the top of the page while the rest is still arriving, and
-      on reload shows the hero first, then jumps back to where you were (e.g. the
-      footer). Once the whole page is parsed it can restore straight away.
-      No JavaScript; browsers without support ignore it.
-    {%- endcomment -%}
-    <link rel="expect" href="#LiveRegion" blocking="render">
+    {% render 'scroll-restore' %}
 
     {{ content_for_header }}
   </head>

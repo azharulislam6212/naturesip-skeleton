@@ -1,0 +1,204 @@
+{%- comment -%}
+  Slideshow: full-width slides, each with its own image, colour scheme and
+  content blocks. Native scroll-snap with arrows and a progress bar; no autoplay.
+{%- endcomment -%}
+
+{{ 'section-content.css' | asset_url | stylesheet_tag }}
+
+{%- assign s = section.settings -%}
+<section
+  class="section section--full-width slideshow color-{{ s.color_scheme.id }}"
+  style="--slide-height: {{ s.height }}svh; --slide-height-mobile: {{ s.height_mobile }}svh;"
+  data-shape-bottom="{{ s.shape_bottom }}"
+>
+  <slider-component class="slideshow__slider" aria-roledescription="{{ 'accessibility.carousel' | t }}" aria-label="{{ s.accessible_name | escape }}">
+    <ul class="slider__track slideshow__track" ref="track" role="list" data-lenis-prevent>
+      {% content_for 'blocks' %}
+    </ul>
+    {%- if section.blocks.size > 1 -%}
+      <div class="slideshow__controls page-width">
+        <div class="slider__progress" ref="progress" aria-hidden="true"><span class="slider__progress-bar"></span></div>
+        <span class="visually-hidden" ref="counter" aria-live="polite"></span>
+        <div class="slider__buttons">
+          <button class="icon-button" type="button" ref="previous">
+            {%- render 'icon', name: 'undo' -%}
+            <span class="visually-hidden">{{ 'accessibility.previous' | t }}</span>
+          </button>
+          <button class="icon-button" type="button" ref="next">
+            {%- render 'icon', name: 'redo' -%}
+            <span class="visually-hidden">{{ 'accessibility.next' | t }}</span>
+          </button>
+        </div>
+      </div>
+    {%- endif -%}
+  </slider-component>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.slideshow.name",
+  "class": "section-wrapper",
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "_slide"
+    }
+  ],
+  "settings": [
+    {
+      "type": "select",
+      "id": "height",
+      "label": "t:settings.slide_height",
+      "options": [
+        {
+          "value": "50",
+          "label": "t:options.height.small"
+        },
+        {
+          "value": "70",
+          "label": "t:options.height.medium"
+        },
+        {
+          "value": "85",
+          "label": "t:options.height.large"
+        },
+        {
+          "value": "100",
+          "label": "t:options.height.full"
+        }
+      ],
+      "default": "85"
+    },
+    {
+      "type": "select",
+      "id": "height_mobile",
+      "label": "t:settings.slide_height_mobile",
+      "options": [
+        {
+          "value": "50",
+          "label": "t:options.height.small"
+        },
+        {
+          "value": "70",
+          "label": "t:options.height.medium"
+        },
+        {
+          "value": "85",
+          "label": "t:options.height.large"
+        },
+        {
+          "value": "100",
+          "label": "t:options.height.full"
+        }
+      ],
+      "default": "70"
+    },
+    {
+      "type": "text",
+      "id": "accessible_name",
+      "label": "t:settings.accessible_name",
+      "default": "t:defaults.slideshow_name"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "select",
+      "id": "shape_bottom",
+      "label": "t:settings.shape_bottom",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.shape.none"
+        },
+        {
+          "value": "wave",
+          "label": "t:options.shape.wave"
+        },
+        {
+          "value": "curve",
+          "label": "t:options.shape.curve"
+        }
+      ],
+      "default": "wave"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.slideshow.name",
+      "category": "t:categories.media",
+      "blocks": {
+        "slide_1": {
+          "type": "_slide",
+          "blocks": {
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "t:defaults.heading",
+                "type_preset": "display_l"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "t:defaults.section_text",
+                "max_width": 45
+              }
+            },
+            "button": {
+              "type": "button",
+              "settings": {
+                "link": "shopify://collections/all",
+                "style": "secondary"
+              }
+            }
+          },
+          "block_order": [
+            "heading",
+            "text",
+            "button"
+          ]
+        },
+        "slide_2": {
+          "type": "_slide",
+          "blocks": {
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "t:defaults.heading",
+                "type_preset": "display_l"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "t:defaults.section_text",
+                "max_width": 45
+              }
+            },
+            "button": {
+              "type": "button",
+              "settings": {
+                "link": "shopify://collections/all",
+                "style": "secondary"
+              }
+            }
+          },
+          "block_order": [
+            "heading",
+            "text",
+            "button"
+          ]
+        }
+      },
+      "block_order": [
+        "slide_1",
+        "slide_2"
+      ]
+    }
+  ]
+}
+{% endschema %}

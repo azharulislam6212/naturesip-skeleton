@@ -1,0 +1,44 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "t:sections.groups.header",
+  "sections": {
+    "announcement": {
+      "type": "announcement-bar",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "show_social": true,
+        "contact_text": ""
+      },
+      "blocks": {
+        "one": {
+          "type": "_announcement",
+          "settings": {
+            "text": "Free shipping on all orders"
+          }
+        }
+      },
+      "block_order": [
+        "one"
+      ]
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "color_scheme": "scheme-1"
+      }
+    }
+  },
+  "order": [
+    "announcement",
+    "header"
+  ]
+}

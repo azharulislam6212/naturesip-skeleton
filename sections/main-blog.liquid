@@ -1,0 +1,175 @@
+{%- comment -%} Blog: article cards with pagination. {%- endcomment -%}
+
+{{ 'section-content.css' | asset_url | stylesheet_tag }}
+
+{%- assign s = section.settings -%}
+<section class="section section-surface color-{{ s.color_scheme.id }} spacing-style" style="{%- render 'spacing-style', settings: s -%}">
+  <div class="section-surface__background" aria-hidden="true"></div>
+  <div class="layout-stack" style="--gap: var(--space-xl);">
+    <h1 class="type-heading type-{{ s.title_size | replace: '_', '-' }}">{{ blog.title | escape }}</h1>
+    {%- paginate blog.articles by 9 -%}
+      <ul class="grid" role="list" style="--columns-desktop: {{ s.columns_desktop }}; --columns-tablet: 2; --columns-mobile: 1;" {% render 'animation-attributes', stagger: true %}>
+        {%- for article in blog.articles -%}
+          <li>
+            <article class="article-card">
+              <div class="media media--hover" style="--ratio: 1.5;">
+                {% render 'image', image: article.image, sizes: '(min-width: 990px) 33vw, 100vw', placeholder: 'lifestyle-2' %}
+              </div>
+              {%- if s.show_date -%}
+                <p class="type-subheading">{{ article.published_at | time_tag: format: 'date' }}</p>
+              {%- endif -%}
+              <h2 class="type-heading type-h5"><a class="product-card__link" href="{{ article.url }}">{{ article.title | escape }}</a></h2>
+              <p>{{ article.excerpt_or_content | strip_html | truncatewords: 24 }}</p>
+            </article>
+          </li>
+        {%- endfor -%}
+      </ul>
+      {% render 'pagination', paginate: paginate %}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.main_blog.name",
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "title_size",
+      "label": "t:settings.title_size",
+      "options": [
+        {
+          "value": "display_xl",
+          "label": "t:options.type_preset.display_xl"
+        },
+        {
+          "value": "display_l",
+          "label": "t:options.type_preset.display_l"
+        },
+        {
+          "value": "display_m",
+          "label": "t:options.type_preset.display_m"
+        },
+        {
+          "value": "display_s",
+          "label": "t:options.type_preset.display_s"
+        },
+        {
+          "value": "h1",
+          "label": "t:options.type_preset.h1"
+        },
+        {
+          "value": "h2",
+          "label": "t:options.type_preset.h2"
+        },
+        {
+          "value": "h3",
+          "label": "t:options.type_preset.h3"
+        }
+      ],
+      "default": "h1"
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "t:settings.columns_desktop",
+      "options": [
+        {
+          "value": "2",
+          "label": "t:options.columns.two"
+        },
+        {
+          "value": "3",
+          "label": "t:options.columns.three"
+        },
+        {
+          "value": "4",
+          "label": "t:options.columns.four"
+        }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "t:settings.show_date",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:headers.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 64,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 40,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,68 @@
+{% doc %}
+  Class and style attributes shared by the heading and text blocks:
+  typography preset, colour (scheme, subtext, gradient, custom), highlight
+  style for italic words, outline, shadow, alignment, max width and padding.
+
+  @param {object} settings - block.settings
+  @param {string} [class] - Base class names.
+
+  @example
+  <h2 {% render 'text-attributes', settings: block.settings, class: 'heading' %}>
+{% enddoc %}
+
+{%- liquid
+  assign preset = settings.type_preset | default: 'paragraph'
+  assign classes = class | append: ' text-block spacing-style'
+
+  case preset
+    when 'paragraph'
+      assign classes = classes | append: ' type-paragraph'
+    when 'subheading'
+      assign classes = classes | append: ' type-subheading'
+    when 'custom'
+      assign classes = classes | append: ' type-custom'
+    else
+      assign classes = classes | append: ' type-heading type-' | append: preset | replace: '_', '-'
+  endcase
+
+  case settings.text_color
+    when 'subtext'
+      assign classes = classes | append: ' text-color-subtext'
+    when 'gradient'
+      assign classes = classes | append: ' text-gradient'
+    when 'custom'
+      assign classes = classes | append: ' text-color-custom'
+  endcase
+
+  if settings.highlight_style != blank and settings.highlight_style != 'none'
+    assign classes = classes | append: ' highlight-' | append: settings.highlight_style
+  endif
+  if settings.stroke
+    assign classes = classes | append: ' text-stroke'
+  endif
+  if settings.shadow
+    assign classes = classes | append: ' text-shadow'
+  endif
+-%}
+
+class="{{ classes | strip }}"
+style="
+  {%- render 'spacing-style', settings: settings -%}
+  --text-align: {{ settings.alignment | default: 'left' }};
+  --text-align-mobile: {{ settings.alignment_mobile | default: settings.alignment | default: 'left' }};
+  {%- if settings.max_width > 0 %}--max-width: {{ settings.max_width }}ch;{% endif -%}
+  {%- if preset == 'custom' -%}
+    --custom-family: var(--font-{{ settings.custom_font }}--family);
+    --custom-weight: var(--font-{{ settings.custom_font }}--weight);
+    --custom-size: {{ settings.custom_size | divided_by: 16.0 }}rem;
+    --custom-size-mobile: {{ settings.custom_size_mobile | divided_by: 16.0 }}rem;
+    --custom-line-height: var(--line-height-{{ settings.custom_line_height }});
+    --custom-letter-spacing: {{ settings.custom_letter_spacing | divided_by: 100.0 }}em;
+    --custom-case: {{ settings.custom_case }};
+  {%- endif -%}
+  {%- if settings.text_color == 'custom' %}--text-color: {{ settings.custom_color }};{% endif -%}
+  {%- if settings.text_color == 'gradient' and settings.gradient != blank %}--text-gradient: {{ settings.gradient }};{% endif -%}
+  {%- if settings.highlight_gradient != blank %}--highlight-gradient: {{ settings.highlight_gradient }};{% endif -%}
+  {%- if settings.stroke %}--stroke-width: {{ settings.stroke_width }}px; --stroke-color: {{ settings.stroke_color }};{% endif -%}
+  {%- if settings.shadow %}--shadow-offset: {{ settings.shadow_offset }}px; --shadow-color: {{ settings.shadow_color }};{% endif -%}
+"

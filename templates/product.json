@@ -1,0 +1,129 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "media-gallery": {
+          "type": "_product-media-gallery",
+          "static": true,
+          "settings": {
+            "layout": "slider",
+            "show_thumbnails": true,
+            "zoom": true
+          }
+        },
+        "rating": {
+          "type": "_product-rating",
+          "settings": {
+            "show_count": true
+          }
+        },
+        "title": {
+          "type": "_product-title",
+          "settings": {
+            "type_preset": "h3"
+          }
+        },
+        "price": {
+          "type": "_product-price",
+          "settings": {
+            "size": 28
+          }
+        },
+        "description": {
+          "type": "_product-description"
+        },
+        "variant_picker": {
+          "type": "_product-variant-picker",
+          "settings": {
+            "picker_style": "buttons",
+            "show_swatches": true
+          }
+        },
+        "inventory": {
+          "type": "_product-inventory",
+          "settings": {
+            "low_stock_threshold": 10
+          }
+        },
+        "buy_buttons": {
+          "type": "_product-buy-buttons"
+        },
+        "highlights": {
+          "type": "accordion",
+          "blocks": {
+            "row_1": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "Ingredients",
+                "icon": "leaf",
+                "content": "<p>Use this row for ingredients, materials or specifications.</p>",
+                "open": true
+              }
+            },
+            "row_2": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "Shipping & returns",
+                "icon": "truck",
+                "content": "<p>Share your delivery times and return policy.</p>"
+              }
+            }
+          },
+          "block_order": [
+            "row_1",
+            "row_2"
+          ]
+        }
+      },
+      "block_order": [
+        "rating",
+        "title",
+        "price",
+        "description",
+        "variant_picker",
+        "inventory",
+        "buy_buttons",
+        "highlights"
+      ],
+      "settings": {}
+    },
+    "recommendations": {
+      "type": "product-recommendations",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "You may also like",
+            "type_preset": "display_m",
+            "text_color": "gradient",
+            "stroke": true,
+            "shadow": true,
+            "alignment": "center",
+            "alignment_mobile": "center"
+          }
+        }
+      },
+      "block_order": [
+        "heading"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "shape_bottom": "wave"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "recommendations"
+  ]
+}

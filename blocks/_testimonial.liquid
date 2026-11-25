@@ -1,0 +1,91 @@
+{% doc %}
+  One testimonial card: rating, quote, author and an optional photo or product.
+
+  @example
+  {% content_for 'block', type: '_testimonial', id: 'testimonial' %}
+{% enddoc %}
+
+{%- assign s = block.settings -%}
+<li class="testimonial slider__slide" {{ block.shopify_attributes }}>
+  <figure class="testimonial__card color-{{ s.color_scheme.id }}">
+    {%- if s.rating > 0 -%}
+      <span
+        class="rating__stars"
+        role="img"
+        aria-label="{{ 'accessibility.star_rating' | t: rating: s.rating, max: 5 }}"
+        style="--rating: {{ s.rating }}; --rating-max: 5;"
+      ></span>
+    {%- endif -%}
+    <blockquote class="testimonial__quote rte">{{ s.quote }}</blockquote>
+    <figcaption class="testimonial__author">
+      {%- if s.image != blank -%}
+        {{ s.image | image_url: width: 120 | image_tag: alt: '', width: 48, height: 48, loading: 'lazy', class: 'testimonial__avatar' }}
+      {%- endif -%}
+      <span>
+        <strong>{{ s.author | escape }}</strong>
+        {%- if s.product != blank -%}
+          <a class="testimonial__product" href="{{ s.product.url }}">{{ s.product.title | escape }}</a>
+        {%- elsif s.role != blank -%}
+          <span class="testimonial__role">{{ s.role | escape }}</span>
+        {%- endif -%}
+      </span>
+    </figcaption>
+  </figure>
+</li>
+
+{% schema %}
+{
+  "name": "t:blocks.testimonial.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "range",
+      "id": "rating",
+      "label": "t:settings.rating",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "richtext",
+      "id": "quote",
+      "label": "t:settings.quote",
+      "default": "t:defaults.quote"
+    },
+    {
+      "type": "text",
+      "id": "author",
+      "label": "t:settings.author",
+      "default": "t:defaults.author"
+    },
+    {
+      "type": "text",
+      "id": "role",
+      "label": "t:settings.role"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "t:settings.product",
+      "info": "t:info.testimonial_product"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:settings.author_photo"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-4"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.testimonial.name"
+    }
+  ]
+}
+{% endschema %}

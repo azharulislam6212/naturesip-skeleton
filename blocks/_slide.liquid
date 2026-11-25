@@ -1,0 +1,146 @@
+{% doc %}
+  One slide of the slideshow: background image (with optional mobile image),
+  overlay and any content blocks.
+
+  @example
+  {% content_for 'block', type: '_slide', id: 'slide' %}
+{% enddoc %}
+
+{%- assign s = block.settings -%}
+<li
+  class="slide slider__slide section-surface color-{{ s.color_scheme.id }}"
+  style="--overlay: {{ s.overlay | divided_by: 100.0 }}; --slide-justify: {{ s.horizontal_position }}; --slide-align: {{ s.vertical_position }};"
+  aria-roledescription="{{ 'accessibility.slide' | t }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="section-surface__background slide__media" aria-hidden="true">
+    {%- if s.image != blank -%}
+      <picture>
+        {%- if s.image_mobile != blank -%}
+          <source media="(max-width: 749px)" srcset="{{ s.image_mobile | image_url: width: 750 }} 750w, {{ s.image_mobile | image_url: width: 1100 }} 1100w" sizes="100vw">
+        {%- endif -%}
+        {% render 'image', image: s.image, alt: '', sizes: '100vw', eager: s.priority %}
+      </picture>
+    {%- endif -%}
+  </div>
+  <div class="slide__content page-width">
+    <div class="slide__inner layout-stack" style="--gap: 20px; --align: {{ s.content_alignment }};">
+      {% content_for 'blocks' %}
+    </div>
+  </div>
+</li>
+
+{% schema %}
+{
+  "name": "t:blocks.slide.name",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:settings.image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "t:settings.image_mobile"
+    },
+    {
+      "type": "checkbox",
+      "id": "priority",
+      "label": "t:settings.priority",
+      "info": "t:info.priority",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "overlay",
+      "label": "t:settings.overlay",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 20
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "select",
+      "id": "horizontal_position",
+      "label": "t:settings.horizontal_position",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.alignment.flex_start"
+        },
+        {
+          "value": "center",
+          "label": "t:options.alignment.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.alignment.flex_end"
+        }
+      ],
+      "default": "flex-start"
+    },
+    {
+      "type": "select",
+      "id": "vertical_position",
+      "label": "t:settings.vertical_position",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.alignment.flex_start"
+        },
+        {
+          "value": "center",
+          "label": "t:options.alignment.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.alignment.flex_end"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "t:settings.content_alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.alignment.flex_start"
+        },
+        {
+          "value": "center",
+          "label": "t:options.alignment.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.alignment.flex_end"
+        }
+      ],
+      "default": "flex-start"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.slide.name"
+    }
+  ]
+}
+{% endschema %}

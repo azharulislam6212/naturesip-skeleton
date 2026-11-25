@@ -1,0 +1,41 @@
+{% doc %}
+  Social profile links from theme settings.
+
+  @example
+  {% render 'social-links' %}
+{% enddoc %}
+
+{%- liquid
+  assign networks = 'facebook,instagram,tiktok,youtube,pinterest,x' | split: ','
+  assign has_links = false
+  for network in networks
+    assign key = 'social_' | append: network | append: '_link'
+    if settings[key] != blank
+      assign has_links = true
+    endif
+  endfor
+-%}
+
+{%- if has_links -%}
+  <ul class="social-links" role="list">
+    {%- for network in networks -%}
+      {%- assign key = 'social_' | append: network | append: '_link' -%}
+      {%- if settings[key] != blank -%}
+        {%- case network -%}
+          {%- when 'facebook' -%}{%- assign network_label = 'general.social.facebook' | t -%}
+          {%- when 'instagram' -%}{%- assign network_label = 'general.social.instagram' | t -%}
+          {%- when 'tiktok' -%}{%- assign network_label = 'general.social.tiktok' | t -%}
+          {%- when 'youtube' -%}{%- assign network_label = 'general.social.youtube' | t -%}
+          {%- when 'pinterest' -%}{%- assign network_label = 'general.social.pinterest' | t -%}
+          {%- else -%}{%- assign network_label = 'general.social.x' | t -%}
+        {%- endcase -%}
+        <li>
+          <a href="{{ settings[key] }}" target="_blank" rel="noopener">
+            {%- render 'icon', name: network -%}
+            <span class="visually-hidden">{{ network_label }} — {{ 'accessibility.new_window' | t }}</span>
+          </a>
+        </li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+{%- endif -%}

@@ -1,0 +1,242 @@
+{%- comment -%} Blog posts: latest articles from a chosen blog. {%- endcomment -%}
+
+{{ 'section-content.css' | asset_url | stylesheet_tag }}
+
+{%- assign s = section.settings -%}
+<section
+  class="section section-surface color-{{ s.color_scheme.id }} spacing-style"
+  style="{%- render 'spacing-style', settings: s -%}"
+  data-shape-bottom="{{ s.shape_bottom }}"
+>
+  <div class="section-surface__background" aria-hidden="true"></div>
+  <div class="layout-stack" style="--gap: var(--space-xl);">
+    {% content_for 'block', type: 'group', id: 'heading' %}
+    <ul class="grid" role="list" style="--columns-desktop: {{ s.columns_desktop }}; --columns-tablet: 2; --columns-mobile: 1;" {% render 'animation-attributes', stagger: true %}>
+      {%- for article in s.blog.articles limit: s.limit -%}
+        <li>
+          <article class="article-card">
+            <div class="media media--hover" style="--ratio: 1.5;">
+              {% render 'image', image: article.image, sizes: '(min-width: 990px) 33vw, 100vw', placeholder: 'lifestyle-2' %}
+            </div>
+            {%- if s.show_date -%}<p class="type-subheading">{{ article.published_at | time_tag: format: 'date' }}</p>{%- endif -%}
+            <h3 class="type-heading type-h5"><a class="product-card__link" href="{{ article.url }}">{{ article.title | escape }}</a></h3>
+            {%- if s.show_excerpt -%}<p>{{ article.excerpt_or_content | strip_html | truncatewords: 20 }}</p>{%- endif -%}
+          </article>
+        </li>
+      {%- else -%}
+        {%- for i in (1..3) -%}
+          <li>
+            <article class="article-card">
+              <div class="media" style="--ratio: 1.5;">{{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+              <h3 class="type-heading type-h5">{{ 'onboarding.article_title' | t }}</h3>
+            </article>
+          </li>
+        {%- endfor -%}
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.blog_posts.name",
+  "class": "section-wrapper",
+  "blocks": [
+    {
+      "type": "group"
+    }
+  ],
+  "settings": [
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "t:settings.blog"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "t:settings.post_limit",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "t:settings.columns_desktop",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "t:settings.show_date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "t:settings.show_excerpt",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:headers.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "t:settings.background_image"
+    },
+    {
+      "type": "range",
+      "id": "background_image_opacity",
+      "label": "t:settings.background_image_opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ section.settings.background_image != blank }}"
+    },
+    {
+      "type": "select",
+      "id": "shape_bottom",
+      "label": "t:settings.shape_bottom",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.shape.none"
+        },
+        {
+          "value": "wave",
+          "label": "t:options.shape.wave"
+        },
+        {
+          "value": "curve",
+          "label": "t:options.shape.curve"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.blog_posts.name",
+      "category": "t:categories.text",
+      "blocks": {
+        "heading": {
+          "type": "group",
+          "static": true,
+          "settings": {
+            "horizontal_alignment": "center",
+            "gap": 12,
+            "width": "fill"
+          },
+          "blocks": {
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "t:defaults.blog_heading",
+                "type_preset": "display_m",
+                "text_color": "gradient",
+                "stroke": true,
+                "shadow": true,
+                "alignment": "center",
+                "alignment_mobile": "center"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "",
+                "type_preset": "subheading",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "max_width": 70
+              }
+            }
+          },
+          "block_order": [
+            "heading",
+            "text"
+          ]
+        }
+      }
+    }
+  ]
+}
+{% endschema %}

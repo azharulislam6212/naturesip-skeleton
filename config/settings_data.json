@@ -1,0 +1,175 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "current": "NatureSip",
+  "presets": {
+    "NatureSip": {
+      "color_schemes": {
+        "scheme-1": {
+          "settings": {
+            "background": "#FEF6F2",
+            "background_gradient": "linear-gradient(180deg, #FEF6F2 0%, #FFE3EA 100%)",
+            "text": "#1A1020",
+            "subtext": "#5A4B5E",
+            "heading": "#1A1020",
+            "heading_gradient": "linear-gradient(90deg, #FAC67A 0%, #FE8A80 100%)",
+            "heading_stroke": "#1A1020",
+            "highlight": "#C2357A",
+            "highlight_gradient": "linear-gradient(90deg, #DA498D 0%, #69247C 100%)",
+            "accent": "#69247C",
+            "accent_gradient": "linear-gradient(270deg, #640D5F 0%, #8A2E8F 100%)",
+            "on_accent": "#FFFFFF",
+            "sale": "#C2185B",
+            "primary_button": "#69247C",
+            "primary_button_gradient": "linear-gradient(270deg, #640D5F 0%, #8A2E8F 100%)",
+            "primary_button_label": "#FFFFFF",
+            "primary_button_border": "#1A1020",
+            "primary_button_hover": "#FE8A80",
+            "primary_button_gradient_hover": "linear-gradient(90deg, #FAC67A 0%, #FE8A80 100%)",
+            "primary_button_label_hover": "#1A1020",
+            "primary_button_border_hover": "#1A1020",
+            "secondary_button": "#FFFFFF",
+            "secondary_button_gradient": "",
+            "secondary_button_label": "#1A1020",
+            "secondary_button_border": "#1A1020",
+            "secondary_button_hover": "#FAC67A",
+            "secondary_button_gradient_hover": "linear-gradient(90deg, #FAC67A 0%, #FE8A80 100%)",
+            "secondary_button_label_hover": "#1A1020",
+            "secondary_button_border_hover": "#1A1020",
+            "card": "#FFFFFF",
+            "input_background": "#FFFFFF",
+            "input_text": "#1A1020",
+            "input_border": "#69247C",
+            "border": "#E7C9D6",
+            "shadow": "#1A1020"
+          }
+        },
+        "scheme-2": {
+          "settings": {
+            "background": "#5B1667",
+            "background_gradient": "linear-gradient(90deg, #4A0E5C 0%, #7A1C78 100%)",
+            "text": "#FFFFFF",
+            "subtext": "#EBDCEF",
+            "heading": "#FFFFFF",
+            "heading_gradient": "",
+            "heading_stroke": "#1A1020",
+            "highlight": "#FAC67A",
+            "highlight_gradient": "linear-gradient(90deg, #FAC67A 0%, #FE8A80 100%)",
+            "accent": "#FAC67A",
+            "accent_gradient": "linear-gradient(90deg, #FAC67A 0%, #FE8A80 100%)",
+            "on_accent": "#1A1020",
+            "sale": "#FFB4C8",
+            "primary_button": "#FAC67A",
+            "primary_button_gradient": "linear-gradient(90deg, #FAC67A 0%, #FE8A80 100%)",
+            "primary_button_label": "#1A1020",
+            "primary_button_border": "#1A1020",
+            "primary_button_hover": "#FFFFFF",
+            "primary_button_gradient_hover": "",
+            "primary_button_label_hover": "#5B1667",
+            "primary_button_border_hover": "#1A1020",
+            "secondary_button": "#FFFFFF",
+            "secondary_button_gradient": "",
+            "secondary_button_label": "#5B1667",
+            "secondary_button_border": "#FFFFFF",
+            "secondary_button_hover": "#FAC67A",
+            "secondary_button_gradient_hover": "linear-gradient(90deg, #FAC67A 0%, #FE8A80 100%)",
+            "secondary_button_label_hover": "#1A1020",
+            "secondary_button_border_hover": "#1A1020",
+            "card": "#4A0E5C",
+            "input_background": "#FFFFFF",
+            "input_text": "#1A1020",
+            "input_border": "#FFFFFF",
+            "border": "#8C4A95",
+            "shadow": "#1A1020"
+          }
+        },
+        "scheme-3": {
+          "settings": {
+            "background": "#FFE7EE",
+            "background_gradient": "linear-gradient(180deg, #FFF1F4 0%, #FFD6E3 100%)",
+            "text": "#1A1020",
+            "subtext": "#5A4B5E",
+            "heading": "#69247C",
+            "heading_gradient": "linear-gradient(90deg, #FAC67A 0%, #FE8A80 100%)",
+            "heading_stroke": "#1A1020",
+            "highlight": "#C2357A",
+            "highlight_gradient": "linear-gradient(90deg, #DA498D 0%, #69247C 100%)",
+            "accent": "#69247C",
+            "accent_gradient": "linear-gradient(270deg, #640D5F 0%, #8A2E8F 100%)",
+            "on_accent": "#FFFFFF",
+            "sale": "#C2185B",
+            "primary_button": "#69247C",
+            "primary_button_gradient": "linear-gradient(270deg, #640D5F 0%, #8A2E8F 100%)",
+            "primary_button_label": "#FFFFFF",
+            "primary_button_border": "#1A1020",
+            "primary_button_hover": "#FE8A80",
+            "primary_button_gradient_hover": "linear-gradient(90deg, #FAC67A 0%, #FE8A80 100%)",
+            "primary_button_label_hover": "#1A1020",
+            "primary_button_border_hover": "#1A1020",
+            "secondary_button": "#FFFFFF",
+            "secondary_button_gradient": "",
+            "secondary_button_label": "#1A1020",
+            "secondary_button_border": "#1A1020",
+            "secondary_button_hover": "#FAC67A",
+            "secondary_button_gradient_hover": "linear-gradient(90deg, #FAC67A 0%, #FE8A80 100%)",
+            "secondary_button_label_hover": "#1A1020",
+            "secondary_button_border_hover": "#1A1020",
+            "card": "#FFFFFF",
+            "input_background": "#FFFFFF",
+            "input_text": "#1A1020",
+            "input_border": "#69247C",
+            "border": "#F2B8C9",
+            "shadow": "#1A1020"
+          }
+        },
+        "scheme-4": {
+          "settings": {
+            "background": "#FFFFFF",
+            "background_gradient": "",
+            "text": "#1A1020",
+            "subtext": "#5A4B5E",
+            "heading": "#1A1020",
+            "heading_gradient": "",
+            "heading_stroke": "#1A1020",
+            "highlight": "#C2357A",
+            "highlight_gradient": "",
+            "accent": "#69247C",
+            "accent_gradient": "",
+            "on_accent": "#FFFFFF",
+            "sale": "#C2185B",
+            "primary_button": "#1A1020",
+            "primary_button_gradient": "",
+            "primary_button_label": "#FFFFFF",
+            "primary_button_border": "#1A1020",
+            "primary_button_hover": "#69247C",
+            "primary_button_gradient_hover": "",
+            "primary_button_label_hover": "#FFFFFF",
+            "primary_button_border_hover": "#1A1020",
+            "secondary_button": "#FFFFFF",
+            "secondary_button_gradient": "",
+            "secondary_button_label": "#1A1020",
+            "secondary_button_border": "#1A1020",
+            "secondary_button_hover": "#1A1020",
+            "secondary_button_gradient_hover": "",
+            "secondary_button_label_hover": "#FFFFFF",
+            "secondary_button_border_hover": "#1A1020",
+            "card": "#FFFFFF",
+            "input_background": "#FFFFFF",
+            "input_text": "#1A1020",
+            "input_border": "#69247C",
+            "border": "#E5E1E8",
+            "shadow": "#1A1020"
+          }
+        }
+      },
+      "body_color_scheme": "scheme-1"
+    }
+  }
+}

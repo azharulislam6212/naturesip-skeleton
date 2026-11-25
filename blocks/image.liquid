@@ -1,0 +1,346 @@
+{% doc %}
+  Image block with aspect ratio, width, corner radius, optional link,
+  hover effect and reveal animation.
+
+  @example
+  {% content_for 'block', type: 'image', id: 'image' %}
+{% enddoc %}
+
+{%- liquid
+  assign s = block.settings
+  case s.ratio
+    when 'square'
+      assign ratio = '1'
+    when 'portrait'
+      assign ratio = '0.8'
+    when 'landscape'
+      assign ratio = '1.5'
+    when 'wide'
+      assign ratio = '1.78'
+    else
+      assign ratio = s.image.aspect_ratio | default: '1.5'
+  endcase
+  assign tag = 'div'
+  if s.link != blank
+    assign tag = 'a'
+  endif
+-%}
+
+<div
+  class="image-block spacing-style{% if s.width == 'custom' %} block-width-custom{% elsif s.width == 'fill' %} block-width-fill{% endif %}"
+  style="
+    {%- render 'spacing-style', settings: s -%}
+    {%- if s.width == 'custom' %}--block-width: {{ s.custom_width }}%; --block-width-mobile: {{ s.custom_width_mobile }}%;{% endif -%}
+  "
+  {% render 'animation-attributes', animation: s.animation, delay: s.animation_delay, image: true %}
+  {{ block.shopify_attributes }}
+>
+  <{{ tag }}
+    class="media{% if s.link != blank or s.hover_effect %} media--hover{% endif %}"
+    style="--ratio: {{ ratio }}; --media-radius: {{ s.radius }}px; --fit: {{ s.fit }};"
+    {% if s.link != blank %}
+      href="{{ s.link }}"
+    {% endif %}
+  >
+    {% render 'image', image: s.image, sizes: '(min-width: 990px) 50vw, 100vw', eager: s.priority, placeholder: 'lifestyle-1' %}
+  </{{ tag }}>
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.image.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:settings.image"
+    },
+    {
+      "type": "select",
+      "id": "ratio",
+      "label": "t:settings.aspect_ratio",
+      "options": [
+        {
+          "value": "natural",
+          "label": "t:options.ratio.natural"
+        },
+        {
+          "value": "square",
+          "label": "t:options.ratio.square"
+        },
+        {
+          "value": "portrait",
+          "label": "t:options.ratio.portrait"
+        },
+        {
+          "value": "landscape",
+          "label": "t:options.ratio.landscape"
+        },
+        {
+          "value": "wide",
+          "label": "t:options.ratio.wide"
+        }
+      ],
+      "default": "natural"
+    },
+    {
+      "type": "select",
+      "id": "fit",
+      "label": "t:settings.image_fit",
+      "options": [
+        {
+          "value": "cover",
+          "label": "t:options.fit.cover"
+        },
+        {
+          "value": "contain",
+          "label": "t:options.fit.contain"
+        }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "range",
+      "id": "radius",
+      "label": "t:settings.border_radius",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "t:settings.link"
+    },
+    {
+      "type": "checkbox",
+      "id": "hover_effect",
+      "label": "t:settings.hover_effect",
+      "info": "t:info.hover_effect",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "priority",
+      "label": "t:settings.priority",
+      "info": "t:info.priority",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:headers.layout"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "fit",
+          "label": "t:options.width.fit"
+        },
+        {
+          "value": "fill",
+          "label": "t:options.width.fill"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.width.custom"
+        }
+      ],
+      "default": "fill"
+    },
+    {
+      "type": "range",
+      "id": "custom_width",
+      "label": "t:settings.custom_width",
+      "min": 5,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.width == 'custom' }}"
+    },
+    {
+      "type": "range",
+      "id": "custom_width_mobile",
+      "label": "t:settings.custom_width_mobile",
+      "min": 5,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.width == 'custom' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.animation"
+    },
+    {
+      "type": "select",
+      "id": "animation",
+      "label": "t:settings.animation",
+      "info": "t:info.animation",
+      "options": [
+        {
+          "value": "theme",
+          "label": "t:options.animation.theme"
+        },
+        {
+          "value": "none",
+          "label": "t:options.animation.none"
+        },
+        {
+          "value": "fade",
+          "label": "t:options.animation.fade"
+        },
+        {
+          "value": "rise",
+          "label": "t:options.animation.rise"
+        },
+        {
+          "value": "zoom",
+          "label": "t:options.animation.zoom"
+        },
+        {
+          "value": "slide-start",
+          "label": "t:options.animation.slide_start"
+        },
+        {
+          "value": "slide-end",
+          "label": "t:options.animation.slide_end"
+        }
+      ],
+      "default": "theme"
+    },
+    {
+      "type": "range",
+      "id": "animation_delay",
+      "label": "t:settings.animation_delay",
+      "min": 0,
+      "max": 1000,
+      "step": 50,
+      "unit": "ms",
+      "default": 0,
+      "visible_if": "{{ block.settings.animation != 'none' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.image.name",
+      "category": "t:categories.media"
+    }
+  ]
+}
+{% endschema %}

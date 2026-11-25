@@ -1,0 +1,82 @@
+{%- comment -%}
+  Cart drawer (overlay group). Re-rendered through the Cart API `sections`
+  parameter after every cart change; <cart-drawer> only opens/closes it.
+{%- endcomment -%}
+
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+
+{%- if settings.cart_type == 'drawer' -%}
+  <cart-drawer data-cart-section="{{ section.id }}">
+    <dialog
+      class="drawer cart-drawer color-{{ section.settings.color_scheme.id }}"
+      id="CartDrawer"
+      ref="dialog"
+      aria-labelledby="CartDrawerTitle"
+      data-lenis-prevent
+    >
+      <div class="drawer__inner">
+        <div class="drawer__header">
+          <h2 class="type-h5" id="CartDrawerTitle">
+            {{ 'cart.title' | t }}
+            {%- if cart.item_count > 0 %} <span class="cart-drawer__count">({{ cart.item_count }})</span>{% endif -%}
+          </h2>
+          <button class="icon-button" type="button" ref="close">
+            {%- render 'icon', name: 'close' -%}
+            <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
+          </button>
+        </div>
+
+        {%- if cart.item_count > 0 -%}
+          <cart-items class="drawer__body cart-items">
+            {% render 'cart-line-items', context: 'drawer' %}
+          </cart-items>
+          <div class="drawer__footer">
+            {% render 'cart-summary', context: 'drawer', show_note: settings.cart_note, show_dynamic_checkout: section.settings.show_dynamic_checkout %}
+          </div>
+        {%- else -%}
+          <div class="drawer__body empty-state">
+            {%- render 'icon', name: 'bag' -%}
+            <p class="type-h5">{{ 'cart.empty' | t }}</p>
+            {%- assign continue_label = 'cart.continue_shopping' | t -%}
+            {%- assign continue_url = section.settings.empty_link | default: routes.all_products_collection_url -%}
+            {% render 'button', label: continue_label, url: continue_url, icon: 'arrow' %}
+          </div>
+        {%- endif -%}
+      </div>
+    </dialog>
+  </cart-drawer>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.cart_drawer.name",
+  "enabled_on": {
+    "groups": [
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:info.cart_drawer"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "t:settings.show_dynamic_checkout",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "empty_link",
+      "label": "t:settings.empty_cart_link"
+    }
+  ]
+}
+{% endschema %}

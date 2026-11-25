@@ -1,0 +1,12 @@
+{% doc %}
+  The cart item count bubble (also rendered by sections/cart-count.liquid
+  so cart updates can refresh it).
+
+  @example
+  {% render 'cart-count' %}
+{% enddoc %}
+
+{%- if cart.item_count > 0 -%}
+  <span class="cart-count" aria-hidden="true">{{ cart.item_count | at_most: 99 }}</span>
+  <span class="visually-hidden">{{ 'header.cart_count' | t: count: cart.item_count }}</span>
+{%- endif -%}

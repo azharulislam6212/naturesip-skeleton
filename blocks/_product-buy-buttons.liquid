@@ -1,0 +1,323 @@
+{% doc %}
+  Buy buttons: quantity, subscriptions (selling plans), gift card recipient
+  form, add to cart, accelerated checkout and local pickup availability.
+
+  @example
+  {% content_for 'block', type: '_product-buy-buttons', id: 'buy-buttons' %}
+{% enddoc %}
+
+{%- liquid
+  assign product = closest.product
+  assign variant = product.selected_or_first_available_variant
+  assign form_id = 'ProductForm-' | append: section.id | append: '-' | append: block.id
+  assign selected_plan = product.selected_selling_plan
+-%}
+
+<div
+  class="buy-buttons spacing-style"
+  style="{%- render 'spacing-style', settings: block.settings -%}"
+  data-variant-update="buy-{{ block.id }}"
+  {{ block.shopify_attributes }}
+>
+  <product-form class="buy-buttons__form" data-section-id="{{ section.id }}">
+    {%- form 'product', product, id: form_id, novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+      <input type="hidden" name="id" value="{{ variant.id }}" {% if variant.available == false %}disabled{% endif %}>
+
+      {%- if product.selling_plan_groups.size > 0 -%}
+        <fieldset class="purchase-options">
+          <legend class="visually-hidden">{{ 'products.selling_plans.legend' | t }}</legend>
+          {%- unless product.requires_selling_plan -%}
+            <label class="purchase-option">
+              <input type="radio" name="selling_plan" value="" {% if selected_plan == nil %}checked{% endif %}>
+              <span class="purchase-option__body">
+                <span class="purchase-option__title">{{ 'products.selling_plans.one_time' | t }}</span>
+                <span class="purchase-option__price">{{ variant.price | money }}</span>
+              </span>
+            </label>
+          {%- endunless -%}
+          {%- for allocation in variant.selling_plan_allocations -%}
+            {%- assign checked = false -%}
+            {%- if selected_plan.id == allocation.selling_plan.id -%}{%- assign checked = true -%}{%- endif -%}
+            {%- if product.requires_selling_plan and selected_plan == nil and forloop.first -%}{%- assign checked = true -%}{%- endif -%}
+            <label class="purchase-option">
+              <input type="radio" name="selling_plan" value="{{ allocation.selling_plan.id }}" {% if checked %}checked{% endif %}>
+              <span class="purchase-option__body">
+                <span class="purchase-option__title">
+                  {{ allocation.selling_plan.name | escape }}
+                  {%- if allocation.compare_at_price > allocation.price -%}
+                    {%- assign plan_saving = allocation.compare_at_price | minus: allocation.price | times: 100 | divided_by: allocation.compare_at_price -%}
+                    <span class="purchase-option__badge">{{ 'products.product.save_percent' | t: percent: plan_saving }}</span>
+                  {%- endif -%}
+                </span>
+                <span class="purchase-option__price">
+                  {{ allocation.price | money }}
+                  {%- if allocation.compare_at_price > allocation.price %} <s>{{ allocation.compare_at_price | money }}</s>{% endif -%}
+                </span>
+              </span>
+            </label>
+          {%- endfor -%}
+        </fieldset>
+      {%- endif -%}
+
+      {%- if product.gift_card? and block.settings.show_gift_card_recipient -%}
+        {% render 'gift-card-recipient-form', form_id: form_id %}
+      {%- endif -%}
+
+      <div class="buy-buttons__row">
+        {%- if block.settings.show_quantity -%}
+          {%- assign quantity_id = 'Quantity-' | append: form_id -%}
+          {% render 'quantity-input',
+            id: quantity_id,
+            value: variant.quantity_rule.min,
+            min: variant.quantity_rule.min,
+            max: variant.quantity_rule.max,
+            step: variant.quantity_rule.increment,
+            label: product.title
+          %}
+        {%- endif -%}
+
+        {%- liquid
+          if variant.available
+            assign add_label = 'products.product.add_to_cart' | t
+            if product.selling_plan_groups.size > 0 and product.requires_selling_plan
+              assign add_label = 'products.product.subscribe' | t
+            endif
+            assign add_attributes = 'name="add" aria-disabled="false"'
+          else
+            if variant == nil
+              assign add_label = 'products.product.unavailable' | t
+            else
+              assign add_label = 'products.product.sold_out' | t
+            endif
+            assign add_attributes = 'name="add" aria-disabled="true" data-unavailable'
+          endif
+        -%}
+        {% render 'button', label: add_label, type: 'submit', icon: block.settings.button_icon, size: 'large', class: 'buy-buttons__add', attributes: add_attributes %}
+      </div>
+
+      {%- if block.settings.show_dynamic_checkout and product.selling_plan_groups.size == 0 -%}
+        <div class="buy-buttons__dynamic">{{ form | payment_button }}</div>
+      {%- endif -%}
+
+      <p class="form-message form-message--error" role="alert" ref="error" hidden></p>
+    {%- endform -%}
+  </product-form>
+
+  {%- if block.settings.show_pickup -%}
+    <pickup-availability
+      class="pickup-availability"
+      data-variant-id="{{ variant.id }}"
+      data-section-id="{{ section.id }}"
+    ></pickup-availability>
+  {%- endif -%}
+
+  <noscript>
+    {%- if product.has_only_default_variant == false -%}
+      <label class="field__label" for="NoScriptVariant-{{ form_id }}">{{ 'products.product.choose_options' | t }}</label>
+      <select class="select" id="NoScriptVariant-{{ form_id }}" name="id" form="{{ form_id }}">
+        {%- for option_variant in product.variants -%}
+          <option value="{{ option_variant.id }}" {% if option_variant == variant %}selected{% endif %} {% unless option_variant.available %}disabled{% endunless %}>
+            {{- option_variant.title | escape }} — {{ option_variant.price | money -}}
+          </option>
+        {%- endfor -%}
+      </select>
+    {%- endif -%}
+  </noscript>
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.product_buy_buttons.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_quantity",
+      "label": "t:settings.show_quantity",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "t:settings.show_dynamic_checkout",
+      "info": "t:info.dynamic_checkout",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_gift_card_recipient",
+      "label": "t:settings.show_gift_card_recipient",
+      "info": "t:info.gift_card_recipient",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pickup",
+      "label": "t:settings.show_pickup",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "button_icon",
+      "label": "t:settings.icon",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.icon.none"
+        },
+        {
+          "value": "arrow",
+          "label": "t:options.icon.arrow"
+        },
+        {
+          "value": "bag",
+          "label": "t:options.icon.bag"
+        },
+        {
+          "value": "basket",
+          "label": "t:options.icon.basket"
+        },
+        {
+          "value": "cart",
+          "label": "t:options.icon.cart"
+        },
+        {
+          "value": "diagonal",
+          "label": "t:options.icon.diagonal"
+        },
+        {
+          "value": "eye",
+          "label": "t:options.icon.eye"
+        },
+        {
+          "value": "calendar",
+          "label": "t:options.icon.calendar"
+        },
+        {
+          "value": "plane",
+          "label": "t:options.icon.plane"
+        },
+        {
+          "value": "truck",
+          "label": "t:options.icon.truck"
+        }
+      ],
+      "default": "bag"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.product_buy_buttons.name",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

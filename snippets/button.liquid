@@ -1,0 +1,77 @@
+{% doc %}
+  The theme button. Renders <a> when `url` is given, otherwise <button>.
+  Fill and hover fill accept gradients or solid colours (colour scheme or
+  block-level custom colours passed through `style`).
+
+  @param {string} label - Visible text.
+  @param {string} [url] - Link target; omit for a <button>.
+  @param {string} [variant] - 'primary' (default), 'secondary' or 'link'.
+  @param {string} [size] - 'small', 'medium' (default) or 'large'.
+  @param {string} [icon] - Icon name shown after the label ('none' for no icon).
+  @param {string} [type] - <button> type: 'button' (default) or 'submit'.
+  @param {boolean} [full_width] - Stretch to the container.
+  @param {boolean} [new_tab] - Open the link in a new tab.
+  @param {string} [class] - Extra class names.
+  @param {string} [style] - Inline custom properties (custom colours).
+  @param {string} [attributes] - Extra raw attributes.
+
+  @example
+  {% render 'button', label: block.settings.label, url: block.settings.link, icon: 'bag' %}
+{% enddoc %}
+
+{%- liquid
+  assign variant = variant | default: 'primary'
+  if variant == 'link'
+    assign classes = 'link'
+  else
+    assign classes = 'button button--' | append: variant
+    if size == 'small' or size == 'large'
+      assign classes = classes | append: ' button--' | append: size
+    endif
+    if full_width
+      assign classes = classes | append: ' button--full'
+    endif
+  endif
+  if class != blank
+    assign classes = classes | append: ' ' | append: class
+  endif
+-%}
+
+{%- capture inner -%}
+  {%- unless variant == 'link' -%}
+    <span class="button__fill" aria-hidden="true"></span>
+    <span class="button__fill button__fill--hover" aria-hidden="true"></span>
+  {%- endunless -%}
+  <span class="button__label">{{ label }}</span>
+  {%- if icon != blank and icon != 'none' -%}
+    <span class="button__icon">{% render 'icon', name: icon %}</span>
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- if url != blank -%}
+  <a
+    class="{{ classes }}"
+    href="{{ url }}"
+    {% if new_tab %}
+      target="_blank" rel="noopener"
+    {% endif %}
+    {% if style != blank %}
+      style="{{ style }}"
+    {% endif %}
+    {{ attributes }}
+  >
+    {{- inner -}}
+    {%- if new_tab %}<span class="visually-hidden">{{ 'accessibility.new_window' | t }}</span>{% endif -%}
+  </a>
+{%- else -%}
+  <button
+    class="{{ classes }}"
+    type="{{ type | default: 'button' }}"
+    {% if style != blank %}
+      style="{{ style }}"
+    {% endif %}
+    {{ attributes }}
+  >
+    {{- inner -}}
+  </button>
+{%- endif -%}

@@ -1,0 +1,84 @@
+{% doc %}
+  Inline line icon from the theme's own icon set (24×24, stroke = currentColor).
+  Decorative by default; pass `label` for a standalone meaningful icon.
+
+  @param {string} name - Icon name, e.g. 'cart', 'search', 'leaf'. See the case list below.
+  @param {string} [label] - Accessible name.
+  @param {string} [class] - Extra class names.
+
+  @example
+  {% render 'icon', name: 'search' %}
+{% enddoc %}
+
+<svg
+  class="icon icon--{{ name }}{% if class %} {{ class }}{% endif %}"
+  viewBox="0 0 24 24"
+  width="24"
+  height="24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.75"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  focusable="false"
+  {% if label %}
+    role="img" aria-label="{{ label | escape }}"
+  {% else %}
+    aria-hidden="true"
+  {% endif %}
+>
+  {%- case name -%}
+    {%- when 'account' -%}<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>
+    {%- when 'cart' -%}<path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6.2"/><circle cx="10" cy="20.5" r="1"/><circle cx="17" cy="20.5" r="1"/>
+    {%- when 'bag' -%}<path d="M5.5 8h13l-1 12.5h-11L5.5 8Z"/><path d="M9 10V7a3 3 0 0 1 6 0v3"/>
+    {%- when 'basket' -%}<path d="M3 10h18l-1.8 9.2a1.5 1.5 0 0 1-1.5 1.3H6.3a1.5 1.5 0 0 1-1.5-1.3L3 10Z"/><path d="m8 10 3-6M16 10l-3-6M9 14v3M15 14v3"/>
+    {%- when 'search' -%}<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
+    {%- when 'close' -%}<path d="M6 6l12 12M18 6 6 18"/>
+    {%- when 'menu' -%}<path d="M4 7h16M4 12h16M4 17h10"/>
+    {%- when 'chevron-down' -%}<path d="m6 9 6 6 6-6"/>
+    {%- when 'chevron-left' -%}<path d="m15 6-6 6 6 6"/>
+    {%- when 'chevron-right' -%}<path d="m9 6 6 6-6 6"/>
+    {%- when 'arrow' -%}<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>
+    {%- when 'arrow-left' -%}<path d="M19 12H5"/><path d="m11 6-6 6 6 6"/>
+    {%- when 'diagonal' -%}<path d="M7 17 17 7"/><path d="M8 7h9v9"/>
+    {%- when 'undo' -%}<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>
+    {%- when 'redo' -%}<path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/>
+    {%- when 'plus' -%}<path d="M12 5v14M5 12h14"/>
+    {%- when 'minus' -%}<path d="M5 12h14"/>
+    {%- when 'trash' -%}<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>
+    {%- when 'eye' -%}<path d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7Z"/><circle cx="12" cy="12" r="3"/>
+    {%- when 'zoom' -%}<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M11 8v6M8 11h6"/>
+    {%- when 'pause' -%}<path d="M8.5 5v14M15.5 5v14"/>
+    {%- when 'play' -%}<path d="M7 4.5v15l12-7.5-12-7.5Z"/>
+    {%- when 'check' -%}<path d="m5 12.5 4.5 4.5L19 7"/>
+    {%- when 'star' -%}<path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9L12 3.5Z"/>
+    {%- when 'heart' -%}<path d="M12 20s-7.5-4.6-7.5-10.1A4.3 4.3 0 0 1 12 7.4a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20Z"/>
+    {%- when 'leaf' -%}<path d="M5 19c0-8.2 5.2-14 15-14 0 9.3-6 14-14.2 14"/><path d="M5 19l8-8"/>
+    {%- when 'bolt' -%}<path d="M13.2 3 5 13.6h6.2L10.6 21 19 10.4h-6.2L13.2 3Z"/>
+    {%- when 'drop' -%}<path d="M12 3.5c3.6 4.3 6 7.7 6 10.7a6 6 0 0 1-12 0c0-3 2.4-6.4 6-10.7Z"/><path d="M9 14.5a3 3 0 0 0 3 3"/>
+    {%- when 'shield' -%}<path d="M12 3 5 6v5.6c0 4.3 3 7.8 7 9.4 4-1.6 7-5.1 7-9.4V6l-7-3Z"/><path d="m9 12 2.1 2.1L15.2 10"/>
+    {%- when 'sparkle' -%}<path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7Z"/>
+    {%- when 'sun' -%}<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/>
+    {%- when 'ban' -%}<circle cx="12" cy="12" r="8.5"/><path d="m6 6 12 12"/>
+    {%- when 'truck' -%}<path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/>
+    {%- when 'return' -%}<path d="M4 9h11a5 5 0 0 1 0 10H8"/><path d="m8 5-4 4 4 4"/>
+    {%- when 'lock' -%}<rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>
+    {%- when 'gift' -%}<rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8.5h14V12M12 8v12.5M12 8S10.5 3.5 8 4.5 9 8 12 8Zm0 0s1.5-4.5 4-3.5S15 8 12 8Z"/>
+    {%- when 'calendar' -%}<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>
+    {%- when 'plane' -%}<path d="M21 4 3 11l7 2.5L12.5 21 21 4Z"/><path d="m10 13.5 4-4"/>
+    {%- when 'chat' -%}<path d="M4 5h16v11H9l-5 4V5Z"/>
+    {%- when 'mail' -%}<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6 8.5 7 8.5-7"/>
+    {%- when 'phone' -%}<path d="M5 3.5h4l1.5 4.5-2.5 1.5a11 11 0 0 0 5.5 5.5l1.5-2.5 4.5 1.5v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/>
+    {%- when 'pin' -%}<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/>
+    {%- when 'globe' -%}<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>
+    {%- when 'filter' -%}<path d="M4 6h16M7 12h10M10 18h4"/>
+    {%- when 'grid' -%}<rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/>
+    {%- when 'facebook' -%}<path d="M14 8.5h2.5V5H14a3.5 3.5 0 0 0-3.5 3.5V11H8v3.5h2.5V21H14v-6.5h2.5L17 11h-3V8.5Z"/>
+    {%- when 'instagram' -%}<rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.8"/><circle cx="17" cy="7" r="0.6"/>
+    {%- when 'x' -%}<path d="M4 4l16 16M20 4 4 20"/>
+    {%- when 'tiktok' -%}<path d="M14 4v10.5a3.5 3.5 0 1 1-3-3.46M14 4c.5 2.5 2.5 4 5 4"/>
+    {%- when 'youtube' -%}<rect x="3" y="6" width="18" height="12" rx="3.5"/><path d="m10.5 9.5 4 2.5-4 2.5v-5Z"/>
+    {%- when 'pinterest' -%}<circle cx="12" cy="12" r="9"/><path d="M11 9.5c0-1.6 1.2-2.5 2.6-2.5 1.6 0 2.6 1.2 2.6 2.8 0 2.2-1.3 3.9-3 3.9-1 0-1.6-.8-1.4-1.6M10.5 13l-1.8 7.5"/>
+    {%- else -%}<circle cx="12" cy="12" r="8.5"/>
+  {%- endcase -%}
+</svg>

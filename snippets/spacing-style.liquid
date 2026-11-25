@@ -1,0 +1,26 @@
+{% doc %}
+  Writes the padding custom properties read by `.spacing-style`: desktop
+  values from 750px up, mobile values below. Output goes inside a `style`
+  attribute. Missing settings resolve to 0.
+
+  Setting ids: padding_top, padding_bottom, padding_left, padding_right,
+  plus the same with a `_mobile` suffix.
+
+  @param {object} settings - block.settings or section.settings
+
+  @example
+  <div class="spacing-style" style="{% render 'spacing-style', settings: block.settings %}">
+{% enddoc %}
+
+{%- liquid
+  assign sides = 'top,bottom,left,right' | split: ','
+  assign devices = ',_mobile' | split: ','
+-%}
+{%- for side in sides -%}
+  {%- for device in devices -%}
+    {%- assign key = 'padding_' | append: side | append: device -%}
+    {%- if settings[key] != blank -%}
+      --padding-{{ side }}{{ device | replace: '_', '-' }}: {{ settings[key] }}px;
+    {%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}

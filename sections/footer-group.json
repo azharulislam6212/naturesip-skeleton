@@ -1,0 +1,80 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "footer",
+  "name": "t:sections.groups.footer",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "settings": {
+        "color_scheme": "scheme-2"
+      },
+      "blocks": {
+        "about": {
+          "type": "group",
+          "settings": {
+            "gap": 16,
+            "width": "fill"
+          },
+          "blocks": {
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "Stay refreshed",
+                "tag": "h2",
+                "type_preset": "h4"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>New flavors, recipes and offers — straight to your inbox.</p>"
+              }
+            },
+            "signup": {
+              "type": "email-signup"
+            },
+            "social": {
+              "type": "social-links"
+            }
+          },
+          "block_order": [
+            "heading",
+            "text",
+            "signup",
+            "social"
+          ]
+        },
+        "menu_1": {
+          "type": "menu",
+          "settings": {
+            "heading": "Shop",
+            "menu": "main-menu"
+          }
+        },
+        "menu_2": {
+          "type": "menu",
+          "settings": {
+            "heading": "Information",
+            "menu": "footer"
+          }
+        }
+      },
+      "block_order": [
+        "about",
+        "menu_1",
+        "menu_2"
+      ]
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

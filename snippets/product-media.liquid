@@ -1,0 +1,62 @@
+{% doc %}
+  One item of the product media gallery. Images become PhotoSwipe zoom links
+  when zoom is on; video, external video and 3D models keep native players.
+
+  @param {object} media - Product media.
+  @param {boolean} [zoom] - Enable lightbox zoom on images.
+  @param {boolean} [eager] - First media: load eagerly.
+  @param {string} [sizes] - Image sizes attribute.
+  @param {string} [ratio] - CSS aspect-ratio for the frame.
+
+  @example
+  {% render 'product-media', media: media, zoom: true, eager: forloop.first %}
+{% enddoc %}
+
+{%- liquid
+  assign sizes = sizes | default: '(min-width: 990px) 55vw, 100vw'
+  assign frame_ratio = ratio | default: media.aspect_ratio
+-%}
+
+{%- case media.media_type -%}
+  {%- when 'image' -%}
+    {%- if zoom -%}
+      <a
+        class="media media--zoom"
+        href="{{ media | image_url: width: 2400 }}"
+        data-zoom-item
+        data-width="{{ media.width | at_most: 2400 }}"
+        data-height="{{ media.height | times: 2400 | divided_by: media.width | at_most: media.height }}"
+        style="--ratio: {{ frame_ratio }};"
+        aria-label="{%- assign escaped_value = media.alt | escape -%}{{ 'products.media.open_zoom' | t: alt: escaped_value }}"
+      >
+        {% render 'image', image: media.preview_image, sizes: sizes, eager: eager %}
+        <span class="media__zoom-icon" aria-hidden="true">{% render 'icon', name: 'zoom' %}</span>
+      </a>
+    {%- else -%}
+      <div class="media" style="--ratio: {{ frame_ratio }};">
+        {% render 'image', image: media.preview_image, sizes: sizes, eager: eager %}
+      </div>
+    {%- endif -%}
+
+  {%- when 'video' -%}
+    <div class="media" style="--ratio: {{ frame_ratio }};">
+      {{ media | video_tag: image_size: '1600x', controls: true, playsinline: true, preload: 'metadata' }}
+    </div>
+
+  {%- when 'external_video' -%}
+    <deferred-media class="media deferred-media" style="--ratio: {{ frame_ratio }};">
+      {% render 'image', image: media.preview_image, sizes: sizes, eager: eager, alt: '' %}
+      <button class="deferred-media__button" type="button" data-load>
+        <span class="deferred-media__icon">{% render 'icon', name: 'play' %}</span>
+        <span class="visually-hidden">{%- assign escaped_value = media.alt | escape -%}{{ 'products.media.play_video' | t: alt: escaped_value }}</span>
+      </button>
+      <template>
+        {{ media | external_video_url: autoplay: true, rel: 0, playsinline: 1 | external_video_tag: loading: 'lazy' }}
+      </template>
+    </deferred-media>
+
+  {%- when 'model' -%}
+    <div class="media media--model" style="--ratio: 1;">
+      {{ media | model_viewer_tag: image_size: '1200x', reveal: 'interaction', toggleable: true, data-model-id: media.id }}
+    </div>
+{%- endcase -%}

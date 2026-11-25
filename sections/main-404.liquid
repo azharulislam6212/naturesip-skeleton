@@ -1,0 +1,96 @@
+{%- comment -%} Page not found. {%- endcomment -%}
+
+{%- assign s = section.settings -%}
+<section class="section section-surface color-{{ s.color_scheme.id }} spacing-style" style="{%- render 'spacing-style', settings: s -%}">
+  <div class="section-surface__background" aria-hidden="true"></div>
+  <div class="empty-state">
+    <p class="type-heading type-display-l text-gradient text-stroke text-shadow" aria-hidden="true">404</p>
+    <h1 class="type-heading type-h3">{{ 'templates.404.title' | t }}</h1>
+    <p>{{ 'templates.404.subtext' | t }}</p>
+    {%- assign continue_label = 'cart.continue_shopping' | t -%}
+    {% render 'button', label: continue_label, url: routes.all_products_collection_url, icon: 'arrow' %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.main_404.name",
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:headers.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 64,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 40,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    }
+  ]
+}
+{% endschema %}

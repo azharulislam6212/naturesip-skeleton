@@ -1,0 +1,186 @@
+{% doc %}
+  Email sign-up block: subscribes customers to marketing emails.
+
+  @example
+  {% content_for 'block', type: 'email-signup', id: 'newsletter' %}
+{% enddoc %}
+
+{%- assign form_id = 'Newsletter-' | append: block.id -%}
+<div class="email-signup spacing-style block-width-fill" style="{%- render 'spacing-style', settings: block.settings -%}" {{ block.shopify_attributes }}>
+  {%- form 'customer', id: form_id, class: 'email-signup__form' -%}
+    <input type="hidden" name="contact[tags]" value="newsletter">
+    <div class="email-signup__row">
+      <label class="visually-hidden" for="{{ form_id }}-Email">{{ 'newsletter.email_label' | t }}</label>
+      <input
+        class="input"
+        id="{{ form_id }}-Email"
+        type="email"
+        name="contact[email]"
+        autocomplete="email"
+        autocapitalize="off"
+        spellcheck="false"
+        placeholder="{{ 'newsletter.email_label' | t }}"
+        required
+        {% if form.errors %}
+          aria-invalid="true" aria-describedby="{{ form_id }}-Error"
+        {% endif %}
+      >
+      {%- assign signup_label = block.settings.button_label | default: 'newsletter.subscribe' -%}
+      {%- if block.settings.button_label == blank -%}{%- assign signup_label = 'newsletter.subscribe' | t -%}{%- endif -%}
+      {% render 'button', label: signup_label, type: 'submit', variant: block.settings.button_style, icon: 'arrow' %}
+    </div>
+    {%- if form.errors -%}
+      <p class="form-message form-message--error" id="{{ form_id }}-Error" role="alert">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>
+    {%- elsif form.posted_successfully? -%}
+      <p class="form-message form-message--success" role="status">{{ 'newsletter.success' | t }}</p>
+    {%- endif -%}
+  {%- endform -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.email_signup.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:info.email_signup"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:settings.button_label"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "t:settings.button_style",
+      "options": [
+        {
+          "value": "primary",
+          "label": "t:options.button_style.primary"
+        },
+        {
+          "value": "secondary",
+          "label": "t:options.button_style.secondary"
+        }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.email_signup.name",
+      "category": "t:categories.forms"
+    }
+  ]
+}
+{% endschema %}

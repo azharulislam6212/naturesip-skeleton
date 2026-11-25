@@ -1,0 +1,59 @@
+{%- comment -%}
+  Quick view content, rendered only through the Section Rendering API in the
+  context of a product URL (?section_id=quick-view).
+{%- endcomment -%}
+
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign form_id = 'QuickViewForm-' | append: product.id
+-%}
+
+<div class="quick-view__layout" data-quick-view-content data-product-section data-section-id="{{ section.id }}" data-update-url="false">
+  <media-gallery class="media-gallery media-gallery--slider" data-section-id="{{ section.id }}">
+    <ul class="media-gallery__track" ref="track" role="list">
+      {%- for media in product.media limit: 8 -%}
+        <li class="media-gallery__item" data-media-id="{{ media.id }}">
+          {% render 'product-media', media: media, zoom: false, eager: forloop.first, sizes: '(min-width: 990px) 480px, 100vw' %}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </media-gallery>
+
+  <div class="quick-view__info">
+    {% render 'rating', product: product, show_count: true %}
+    <h2 class="type-heading type-h4" tabindex="-1">{{ product.title | escape }}</h2>
+    <div data-variant-update="price">{% render 'price', product: product, variant: variant, show_unit_price: true %}</div>
+    <div data-variant-update="picker">{% render 'variant-picker', product: product, section_id: section.id %}</div>
+
+    <div data-variant-update="buy">
+      <product-form data-section-id="{{ section.id }}">
+        {%- form 'product', product, id: form_id, novalidate: 'novalidate' -%}
+          <input type="hidden" name="id" value="{{ variant.id }}">
+          <div class="buy-buttons__row">
+            {%- assign quantity_id = 'Quantity-' | append: form_id -%}
+            {% render 'quantity-input', id: quantity_id, value: variant.quantity_rule.min, min: variant.quantity_rule.min, max: variant.quantity_rule.max, step: variant.quantity_rule.increment, label: product.title %}
+            {%- liquid
+              if variant.available
+                assign add_label = 'products.product.add_to_cart' | t
+                assign add_attributes = 'aria-disabled="false"'
+              else
+                assign add_label = 'products.product.sold_out' | t
+                assign add_attributes = 'aria-disabled="true" data-unavailable'
+              endif
+            -%}
+            {% render 'button', label: add_label, type: 'submit', icon: 'bag', size: 'large', class: 'buy-buttons__add', attributes: add_attributes %}
+          </div>
+          <p class="form-message form-message--error" role="alert" ref="error" hidden></p>
+        {%- endform -%}
+      </product-form>
+    </div>
+
+    <a class="link" href="{{ product.url }}">{{ 'products.product.view_details' | t }}{% render 'icon', name: 'arrow' %}</a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.quick_view.name"
+}
+{% endschema %}

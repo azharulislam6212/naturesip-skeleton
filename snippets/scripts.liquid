@@ -1,0 +1,116 @@
+{% doc %}
+  Every script the document head needs: the import map, the `window.Theme`
+  payload that components read, module preloads and the entry module.
+
+  @param {string} [context] - 'password' for the reduced payload used by the password page.
+{% enddoc %}
+
+{%- liquid
+  assign is_password = false
+  if context == 'password'
+    assign is_password = true
+  endif
+-%}
+
+<script type="importmap">
+  {
+    "imports": {
+      "@theme/utilities": "{{ 'utilities.js' | asset_url }}",
+      "@theme/events": "{{ 'events.js' | asset_url }}",
+      "@theme/component": "{{ 'component.js' | asset_url }}",
+      "@theme/morph": "{{ 'morph.js' | asset_url }}",
+      "@theme/section-renderer": "{{ 'section-renderer.js' | asset_url }}",
+      "@theme/dialog": "{{ 'dialog.js' | asset_url }}",
+      "@theme/carousel": "{{ 'carousel.js' | asset_url }}",
+      "@theme/motion-engine": "{{ 'motion-engine.js' | asset_url }}",
+      "@theme/animations": "{{ 'animations.js' | asset_url }}",
+      "@theme/smooth-scroll": "{{ 'smooth-scroll.js' | asset_url }}",
+      "@theme/vendor-motion": "{{ 'vendor-motion.js' | asset_url }}",
+      "@theme/vendor-lenis": "{{ 'vendor-lenis.js' | asset_url }}",
+      "@theme/store-utilities": "{{ 'store-utilities.js' | asset_url }}"
+      {%- unless is_password -%},
+      "@theme/header": "{{ 'header.js' | asset_url }}",
+      "@theme/predictive-search": "{{ 'predictive-search.js' | asset_url }}",
+      "@theme/cart-drawer": "{{ 'cart-drawer.js' | asset_url }}",
+      "@theme/cart-items": "{{ 'cart-items.js' | asset_url }}",
+      "@theme/product-form": "{{ 'product-form.js' | asset_url }}",
+      "@theme/variant-picker": "{{ 'variant-picker.js' | asset_url }}",
+      "@theme/media-gallery": "{{ 'media-gallery.js' | asset_url }}",
+      "@theme/media-zoom": "{{ 'media-zoom.js' | asset_url }}",
+      "@theme/vendor-photoswipe-lightbox": "{{ 'vendor-photoswipe-lightbox.js' | asset_url }}",
+      "@theme/vendor-photoswipe": "{{ 'vendor-photoswipe.js' | asset_url }}",
+      "@theme/quantity-selector": "{{ 'quantity-selector.js' | asset_url }}",
+      "@theme/facets": "{{ 'facets.js' | asset_url }}",
+      "@theme/product-recommendations": "{{ 'product-recommendations.js' | asset_url }}",
+      "@theme/quick-view": "{{ 'quick-view.js' | asset_url }}"
+      {%- endunless %}
+    }
+  }
+</script>
+
+<script>
+  document.documentElement.classList.replace('no-js', 'js');
+  window.Theme = {
+    routes: {
+      root: {{ routes.root_url | json }}
+      {%- unless is_password -%},
+      cart: {{ routes.cart_url | json }},
+      cartAdd: {{ routes.cart_add_url | json }},
+      cartChange: {{ routes.cart_change_url | json }},
+      cartUpdate: {{ routes.cart_update_url | json }},
+      search: {{ routes.search_url | json }},
+      predictiveSearch: {{ routes.predictive_search_url | json }},
+      productRecommendations: {{ routes.product_recommendations_url | json }}
+      {%- endunless %}
+    },
+    settings: {
+      cartType: {% if is_password %}"none"{% else %}{{ settings.cart_type | json }}{% endif %},
+      animations: {{ settings.animations_reveal | json }},
+      smoothScroll: {{ settings.smooth_scroll | json }},
+      smoothScrollLerp: {{ settings.smooth_scroll_intensity | divided_by: 100.0 | json }},
+      predictiveSearch: {{ settings.predictive_search | json }},
+      predictiveSearchLimit: 4
+    },
+    assets: {
+      photoswipeCss: {{ 'vendor-photoswipe.css' | asset_url | json }}
+    },
+    strings: {
+      close: {{ 'accessibility.close' | t | json }},
+      next: {{ 'accessibility.next' | t | json }},
+      previous: {{ 'accessibility.previous' | t | json }},
+      zoom: {{ 'accessibility.zoom' | t | json }},
+      imageError: {{ 'accessibility.image_error' | t | json }},
+      slidePosition: {{ 'accessibility.slide_position' | t: index: '[index]', count: '[count]' | json }},
+      networkError: {{ 'general.network_error' | t | json }},
+      addedToCart: {{ 'cart.added' | t | json }},
+      cartUpdated: {{ 'cart.updated' | t | json }},
+      itemRemoved: {{ 'cart.item_removed' | t | json }},
+      noteSaved: {{ 'cart.note_saved' | t | json }},
+      cartError: {{ 'cart.error' | t | json }},
+      unavailable: {{ 'products.product.unavailable' | t | json }},
+      variantSelected: {{ 'products.product.variant_selected' | t: variant: '[variant]' | json }},
+      searchResults: {{ 'search.results_count' | t: count: '[count]' | json }},
+      searchNoResults: {{ 'search.no_results_short' | t | json }}
+    }
+  };
+</script>
+
+<link rel="modulepreload" href="{{ 'global.js' | asset_url }}">
+<link rel="modulepreload" href="{{ 'utilities.js' | asset_url }}">
+
+{%- unless is_password -%}
+  {%- if settings.cart_type == 'drawer' -%}
+    <link rel="modulepreload" href="{{ 'cart-drawer.js' | asset_url }}" fetchpriority="low">
+  {%- endif -%}
+  {%- case template.name -%}
+    {%- when 'product' -%}
+      <link rel="modulepreload" href="{{ 'media-gallery.js' | asset_url }}" fetchpriority="low">
+      <link rel="modulepreload" href="{{ 'product-form.js' | asset_url }}" fetchpriority="low">
+    {%- when 'collection', 'search' -%}
+      <link rel="modulepreload" href="{{ 'facets.js' | asset_url }}" fetchpriority="low">
+    {%- when 'cart' -%}
+      <link rel="modulepreload" href="{{ 'cart-items.js' | asset_url }}" fetchpriority="low">
+  {%- endcase -%}
+{%- endunless -%}
+
+<script type="module" src="{{ 'global.js' | asset_url }}"></script>

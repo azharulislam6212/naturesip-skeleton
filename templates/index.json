@@ -1,0 +1,656 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "section",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "min_height": 85,
+        "shape_bottom": "wave",
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "flex-end",
+        "background_priority": true,
+        "padding_top": 120,
+        "padding_bottom": 120,
+        "padding_top_mobile": 80,
+        "padding_bottom_mobile": 80
+      },
+      "blocks": {
+        "eyebrow": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Made from nature</p>",
+            "type_preset": "subheading"
+          }
+        },
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Sip something <em>real</em>",
+            "tag": "h2",
+            "type_preset": "display_xl",
+            "highlight_style": "gradient",
+            "text_animation": "theme"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk — this is energy, done right.</p>",
+            "max_width": 45
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "label": "Shop now",
+            "link": "shopify://collections/all",
+            "style": "secondary",
+            "icon": "bag"
+          }
+        }
+      },
+      "block_order": [
+        "eyebrow",
+        "heading",
+        "text",
+        "button"
+      ]
+    },
+    "steps": {
+      "type": "feature-steps",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "shape_bottom": "wave",
+        "columns": 5
+      },
+      "blocks": {
+        "heading": {
+          "type": "group",
+          "static": true,
+          "settings": {
+            "horizontal_alignment": "center",
+            "gap": 12,
+            "width": "fill"
+          },
+          "blocks": {
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "Naturally energized",
+                "type_preset": "display_m",
+                "text_color": "gradient",
+                "stroke": true,
+                "shadow": true,
+                "alignment": "center",
+                "alignment_mobile": "center"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Clean energy, live probiotics and refreshing taste. Organic kombucha crafted for a healthier boost, body and mind.</p>",
+                "type_preset": "subheading",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "max_width": 70
+              }
+            }
+          },
+          "block_order": [
+            "heading",
+            "text"
+          ]
+        },
+        "step_1": {
+          "type": "icon-text",
+          "settings": {
+            "icon": "ban",
+            "title": "Sugar free",
+            "text": "<p>All the sweetness, none of the sugar.</p>"
+          }
+        },
+        "step_2": {
+          "type": "icon-text",
+          "settings": {
+            "icon": "drop",
+            "title": "Low sodium",
+            "text": "<p>Light on salt, big on refreshment.</p>"
+          }
+        },
+        "step_3": {
+          "type": "icon-text",
+          "settings": {
+            "icon": "leaf",
+            "title": "100% gluten free",
+            "text": "<p>Safe, clean and gentle for gluten-sensitive lifestyles.</p>"
+          }
+        },
+        "step_4": {
+          "type": "icon-text",
+          "settings": {
+            "icon": "sparkle",
+            "title": "Pure organic",
+            "text": "<p>Crafted from the finest organic ingredients.</p>"
+          }
+        },
+        "step_5": {
+          "type": "icon-text",
+          "settings": {
+            "icon": "bolt",
+            "title": "Low carb",
+            "text": "<p>Deliciously light, great taste without compromise.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3",
+        "step_4",
+        "step_5"
+      ]
+    },
+    "marquee": {
+      "type": "marquee",
+      "settings": {
+        "color_scheme": "scheme-4"
+      },
+      "blocks": {
+        "m_1": {
+          "type": "_marquee-item",
+          "settings": {
+            "text": "135mg natural caffeine"
+          }
+        },
+        "m_2": {
+          "type": "_marquee-item",
+          "settings": {
+            "text": "Sustainable production"
+          }
+        },
+        "m_3": {
+          "type": "_marquee-item",
+          "settings": {
+            "text": "9 essential amino acids"
+          }
+        },
+        "m_4": {
+          "type": "_marquee-item",
+          "settings": {
+            "text": "100% natural ingredients"
+          }
+        },
+        "m_5": {
+          "type": "_marquee-item",
+          "settings": {
+            "text": "Made from nature"
+          }
+        }
+      },
+      "block_order": [
+        "m_1",
+        "m_2",
+        "m_3",
+        "m_4",
+        "m_5"
+      ]
+    },
+    "image_text": {
+      "type": "section",
+      "settings": {
+        "direction": "row",
+        "horizontal_alignment": "stretch",
+        "vertical_alignment": "center",
+        "gap": 64,
+        "color_scheme": "scheme-1"
+      },
+      "blocks": {
+        "image": {
+          "type": "image",
+          "settings": {
+            "ratio": "square",
+            "radius": 24
+          }
+        },
+        "content": {
+          "type": "group",
+          "settings": {
+            "gap": 20,
+            "width": "fill"
+          },
+          "blocks": {
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "The refreshing energy boost",
+                "type_preset": "display_s",
+                "text_color": "gradient",
+                "stroke": true,
+                "shadow": true
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Naturally fermented and packed with live probiotics, antioxidants and essential amino acids.</p><p>A smooth, clean energy lift with zero sugar crash.</p>",
+                "type_preset": "subheading"
+              }
+            },
+            "button": {
+              "type": "button",
+              "settings": {
+                "label": "Try it today",
+                "link": "shopify://collections/all",
+                "icon": "bag"
+              }
+            }
+          },
+          "block_order": [
+            "heading",
+            "text",
+            "button"
+          ]
+        }
+      },
+      "block_order": [
+        "image",
+        "content"
+      ]
+    },
+    "highlights": {
+      "type": "feature-highlights",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "shape_bottom": "wave"
+      },
+      "blocks": {
+        "heading": {
+          "type": "group",
+          "static": true,
+          "settings": {
+            "horizontal_alignment": "center",
+            "gap": 12,
+            "width": "fill"
+          },
+          "blocks": {
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "Features you'll love",
+                "type_preset": "display_m",
+                "text_color": "gradient",
+                "stroke": true,
+                "shadow": true,
+                "alignment": "center",
+                "alignment_mobile": "center"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Discover the benefits of kombucha packed with natural energy, probiotics and antioxidants.</p>",
+                "type_preset": "subheading",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "max_width": 70
+              }
+            }
+          },
+          "block_order": [
+            "heading",
+            "text"
+          ]
+        },
+        "f_1": {
+          "type": "icon-text",
+          "settings": {
+            "icon": "bolt",
+            "frame": "square",
+            "frame_size": 56,
+            "layout": "vertical",
+            "alignment": "left",
+            "title_size": "h6",
+            "title": "Natural energy boost",
+            "text": "<p>A clean, sustained lift without the jitters.</p>"
+          }
+        },
+        "f_2": {
+          "type": "icon-text",
+          "settings": {
+            "icon": "heart",
+            "frame": "square",
+            "frame_size": 56,
+            "layout": "vertical",
+            "alignment": "left",
+            "title_size": "h6",
+            "title": "Probiotic gut health",
+            "text": "<p>Live cultures that support healthy digestion.</p>"
+          }
+        },
+        "f_3": {
+          "type": "icon-text",
+          "settings": {
+            "icon": "sparkle",
+            "frame": "square",
+            "frame_size": 56,
+            "layout": "vertical",
+            "alignment": "left",
+            "title_size": "h6",
+            "title": "Antioxidant-rich",
+            "text": "<p>Helps protect your body from free radicals.</p>"
+          }
+        },
+        "f_4": {
+          "type": "icon-text",
+          "settings": {
+            "icon": "drop",
+            "frame": "square",
+            "frame_size": 56,
+            "layout": "vertical",
+            "alignment": "left",
+            "title_size": "h6",
+            "title": "Low-calorie refreshment",
+            "text": "<p>Crisp taste without worrying about calories.</p>"
+          }
+        },
+        "f_5": {
+          "type": "icon-text",
+          "settings": {
+            "icon": "leaf",
+            "frame": "square",
+            "frame_size": 56,
+            "layout": "vertical",
+            "alignment": "left",
+            "title_size": "h6",
+            "title": "Vegan-friendly",
+            "text": "<p>Made to support an ethical lifestyle.</p>"
+          }
+        },
+        "f_6": {
+          "type": "icon-text",
+          "settings": {
+            "icon": "ban",
+            "frame": "square",
+            "frame_size": 56,
+            "layout": "vertical",
+            "alignment": "left",
+            "title_size": "h6",
+            "title": "No artificial additives",
+            "text": "<p>No artificial preservatives, colors or flavors.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "f_1",
+        "f_2",
+        "f_3",
+        "f_4",
+        "f_5",
+        "f_6"
+      ]
+    },
+    "comparison": {
+      "type": "comparison-table",
+      "settings": {
+        "us_label": "NatureSip",
+        "them_label": "Other energy drinks",
+        "color_scheme": "scheme-1"
+      },
+      "blocks": {
+        "heading": {
+          "type": "group",
+          "static": true,
+          "settings": {
+            "horizontal_alignment": "center",
+            "gap": 12,
+            "width": "fill"
+          },
+          "blocks": {
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "How we stack up",
+                "type_preset": "display_m",
+                "text_color": "gradient",
+                "stroke": true,
+                "shadow": true,
+                "alignment": "center",
+                "alignment_mobile": "center"
+              }
+            }
+          },
+          "block_order": [
+            "heading"
+          ]
+        },
+        "r_1": {
+          "type": "_comparison-row",
+          "settings": {
+            "label": "Probiotic-rich digestive support"
+          }
+        },
+        "r_2": {
+          "type": "_comparison-row",
+          "settings": {
+            "label": "Antioxidant properties"
+          }
+        },
+        "r_3": {
+          "type": "_comparison-row",
+          "settings": {
+            "label": "Lower caffeine content"
+          }
+        },
+        "r_4": {
+          "type": "_comparison-row",
+          "settings": {
+            "label": "No artificial additives"
+          }
+        },
+        "r_5": {
+          "type": "_comparison-row",
+          "settings": {
+            "label": "Clean label ingredients"
+          }
+        }
+      },
+      "block_order": [
+        "r_1",
+        "r_2",
+        "r_3",
+        "r_4",
+        "r_5"
+      ]
+    },
+    "collection": {
+      "type": "featured-collection",
+      "settings": {
+        "layout": "slider",
+        "columns_desktop": 3,
+        "color_scheme": "scheme-3",
+        "shape_bottom": "wave"
+      },
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Choose your experience",
+            "type_preset": "display_m",
+            "text_color": "gradient",
+            "stroke": true,
+            "shadow": true,
+            "alignment": "center",
+            "alignment_mobile": "center"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>A blend for every moment: an energy boost, digestive support or simply a flavorful treat.</p>",
+            "type_preset": "subheading",
+            "alignment": "center",
+            "alignment_mobile": "center",
+            "max_width": 70
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "text"
+      ]
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "shape_bottom": "wave"
+      },
+      "blocks": {
+        "heading": {
+          "type": "group",
+          "static": true,
+          "settings": {
+            "horizontal_alignment": "center",
+            "gap": 12,
+            "width": "fill"
+          },
+          "blocks": {
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "Real people, really good",
+                "type_preset": "display_m",
+                "text_color": "gradient",
+                "stroke": true,
+                "shadow": true,
+                "alignment": "center",
+                "alignment_mobile": "center"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Don't just take our word for it. Hear what our customers say.</p>",
+                "type_preset": "subheading",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "max_width": 70
+              }
+            }
+          },
+          "block_order": [
+            "heading",
+            "text"
+          ]
+        },
+        "t_1": {
+          "type": "_testimonial",
+          "settings": {
+            "quote": "<p>The perfect pick-me-up during my busy workday. Refreshing, energizing and no crash!</p>",
+            "author": "Sarah M.",
+            "color_scheme": "scheme-4"
+          }
+        },
+        "t_2": {
+          "type": "_testimonial",
+          "settings": {
+            "quote": "<p>Finally an energy drink that doesn't upset my stomach. The berry flavor is amazing.</p>",
+            "author": "Daniel R.",
+            "color_scheme": "scheme-3"
+          }
+        },
+        "t_3": {
+          "type": "_testimonial",
+          "settings": {
+            "quote": "<p>I swapped my afternoon coffee for this and never looked back.</p>",
+            "author": "Priya K.",
+            "color_scheme": "scheme-4"
+          }
+        }
+      },
+      "block_order": [
+        "t_1",
+        "t_2",
+        "t_3"
+      ]
+    },
+    "featured": {
+      "type": "featured-product",
+      "settings": {
+        "color_scheme": "scheme-1"
+      },
+      "blocks": {
+        "media-gallery": {
+          "type": "_product-media-gallery",
+          "static": true
+        },
+        "rating": {
+          "type": "_product-rating",
+          "settings": {
+            "show_count": true
+          }
+        },
+        "title": {
+          "type": "_product-title",
+          "settings": {
+            "type_preset": "h3"
+          }
+        },
+        "price": {
+          "type": "_product-price",
+          "settings": {
+            "size": 28
+          }
+        },
+        "description": {
+          "type": "_product-description"
+        },
+        "variant_picker": {
+          "type": "_product-variant-picker",
+          "settings": {
+            "picker_style": "buttons",
+            "show_swatches": true
+          }
+        },
+        "inventory": {
+          "type": "_product-inventory",
+          "settings": {
+            "low_stock_threshold": 10
+          }
+        },
+        "buy_buttons": {
+          "type": "_product-buy-buttons"
+        }
+      },
+      "block_order": [
+        "rating",
+        "title",
+        "price",
+        "description",
+        "variant_picker",
+        "inventory",
+        "buy_buttons"
+      ]
+    }
+  },
+  "order": [
+    "hero",
+    "steps",
+    "marquee",
+    "image_text",
+    "highlights",
+    "comparison",
+    "collection",
+    "testimonials",
+    "featured"
+  ]
+}

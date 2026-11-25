@@ -1,0 +1,65 @@
+{% doc %}
+  Responsive <img> with sensible widths, lazy loading below the fold and the
+  focal point honoured. Renders a placeholder SVG when `image` is blank.
+
+  @param {object} [image] - Image object; omit for a placeholder.
+  @param {string} [sizes] - The `sizes` attribute. Default: 100vw.
+  @param {number} [max_width] - Largest rendition. Default: 2400.
+  @param {boolean} [eager] - Load eagerly with high fetch priority (above the fold / LCP).
+  @param {string} [alt] - Overrides image.alt ('' for decorative images).
+  @param {string} [class] - Extra class names.
+  @param {string} [placeholder] - placeholder_svg_tag name. Default: 'image'.
+
+  @example
+  {% render 'image', image: block.settings.image, sizes: '(min-width: 990px) 50vw, 100vw' %}
+{% enddoc %}
+
+{%- liquid
+  assign max = max_width | default: 2400
+  assign widths = '240,360,480,640,800,960,1200,1440,1800,2400' | split: ','
+  assign width_list = ''
+  for width in widths
+    assign w = width | plus: 0
+    if w <= max and w <= image.width
+      assign width_list = width_list | append: width | append: ','
+    endif
+  endfor
+  assign width_list = width_list | append: image.width | split: ',' | uniq | join: ','
+-%}
+
+{%- if image != blank -%}
+  {%- liquid
+    if alt == nil
+      assign alt_text = image.alt | escape
+    else
+      assign alt_text = alt | escape
+    endif
+    assign sizes_attr = sizes | default: '100vw'
+    assign focal_style = ''
+    if image.presentation.focal_point
+      assign focal_style = '--focal: ' | append: image.presentation.focal_point
+    endif
+    if eager
+      assign loading = 'eager'
+      assign priority = 'high'
+    else
+      assign loading = 'lazy'
+      assign priority = 'auto'
+    endif
+  -%}
+  {{
+    image
+    | image_url: width: max
+    | image_tag:
+      widths: width_list,
+      sizes: sizes_attr,
+      loading: loading,
+      fetchpriority: priority,
+      alt: alt_text,
+      class: class,
+      style: focal_style
+  }}
+{%- else -%}
+  {%- assign placeholder_name = placeholder | default: 'image' -%}
+  {{ placeholder_name | placeholder_svg_tag: 'placeholder-svg' }}
+{%- endif -%}

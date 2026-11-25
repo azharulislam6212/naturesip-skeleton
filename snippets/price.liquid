@@ -1,0 +1,58 @@
+{% doc %}
+  Product or variant price with compare-at, unit price and "from" support.
+
+  @param {object} product - Product object.
+  @param {object} [variant] - Variant to price. Default: selected or first available.
+  @param {boolean} [show_from] - Prefix "From" when variants have different prices.
+  @param {boolean} [show_unit_price] - Show the unit price line when it exists.
+  @param {string} [class] - Extra class names.
+
+  @example
+  {% render 'price', product: product, show_unit_price: true %}
+{% enddoc %}
+
+{%- liquid
+  assign target = variant | default: product.selected_or_first_available_variant
+  assign price = target.price
+  assign compare = target.compare_at_price
+  if show_from and product.price_varies
+    assign price = product.price_min
+    assign compare = nil
+  endif
+  assign on_sale = false
+  if compare > price
+    assign on_sale = true
+  endif
+-%}
+
+<div class="price{% if class %} {{ class }}{% endif %}">
+  {%- if on_sale -%}
+    <span class="visually-hidden">{{ 'products.price.sale_price' | t }}</span>
+  {%- else -%}
+    <span class="visually-hidden">{{ 'products.price.regular_price' | t }}</span>
+  {%- endif -%}
+  <span class="price__current">
+    {%- if show_from and product.price_varies -%}
+      {%- assign from_price = price | money -%}
+      {{ 'products.price.from_price_html' | t: price: from_price }}
+    {%- elsif settings.currency_code_enabled -%}
+      {{ price | money_with_currency }}
+    {%- else -%}
+      {{ price | money }}
+    {%- endif -%}
+  </span>
+  {%- if on_sale -%}
+    <span class="visually-hidden">{{ 'products.price.compare_price' | t }}</span>
+    <s class="price__compare">{{ compare | money }}</s>
+  {%- endif -%}
+  {%- if show_unit_price and target.unit_price_measurement -%}
+    <span class="price__unit">
+      {%- capture unit -%}
+        {%- if target.unit_price_measurement.reference_value != 1 -%}{{ target.unit_price_measurement.reference_value }}{%- endif -%}
+        {{ target.unit_price_measurement.reference_unit }}
+      {%- endcapture -%}
+      {%- assign unit_price = target.unit_price | money -%}
+      {{ 'products.price.unit_price_html' | t: price: unit_price, unit: unit }}
+    </span>
+  {%- endif -%}
+</div>

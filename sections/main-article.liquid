@@ -1,0 +1,204 @@
+{%- comment -%} Blog article with optional comments. {%- endcomment -%}
+
+{{ 'section-content.css' | asset_url | stylesheet_tag }}
+
+{%- assign s = section.settings -%}
+<section class="section section-surface color-{{ s.color_scheme.id }} spacing-style" style="{%- render 'spacing-style', settings: s -%}">
+  <div class="section-surface__background" aria-hidden="true"></div>
+  <article class="article">
+    <header class="article__header">
+      <p class="type-subheading">
+        {{ article.published_at | time_tag: format: 'date' }}
+        {%- if s.show_author %} · {{ article.author | escape }}{% endif -%}
+      </p>
+      <h1 class="type-heading type-{{ s.title_size | replace: '_', '-' }}">{{ article.title | escape }}</h1>
+    </header>
+    {%- if article.image -%}
+      <div class="media article__image" style="--ratio: {{ article.image.aspect_ratio }};">
+        {% render 'image', image: article.image, sizes: '(min-width: 990px) 960px, 100vw', eager: true %}
+      </div>
+    {%- endif -%}
+    <div class="rte article__content">{{ article.content }}</div>
+    {% content_for 'blocks' %}
+
+    {%- if blog.comments_enabled? -%}
+      <div class="article__comments">
+        {%- if article.comments_count > 0 -%}
+          <h2 class="type-heading type-h4">{{ 'blog.comments' | t: count: article.comments_count }}</h2>
+          {%- paginate article.comments by 10 -%}
+            <ul class="article__comment-list" role="list">
+              {%- for comment in article.comments -%}
+                <li class="article__comment">
+                  <div class="rte">{{ comment.content }}</div>
+                  <p class="type-subheading">{{ comment.author | escape }} · {{ comment.created_at | time_tag: format: 'date' }}</p>
+                </li>
+              {%- endfor -%}
+            </ul>
+            {% render 'pagination', paginate: paginate %}
+          {%- endpaginate -%}
+        {%- endif -%}
+
+        {%- form 'new_comment', article, class: 'article__comment-form' -%}
+          <h2 class="type-heading type-h4">{{ 'blog.leave_comment' | t }}</h2>
+          {%- if form.posted_successfully? -%}
+            <p class="form-message form-message--success" role="status">
+              {%- if blog.moderated? -%}{{ 'blog.success_moderated' | t }}{%- else -%}{{ 'blog.success' | t }}{%- endif -%}
+            </p>
+          {%- elsif form.errors -%}
+            <div class="form-message form-message--error" role="alert">{{ form.errors | default_errors }}</div>
+          {%- endif -%}
+          <div class="contact__row">
+            <div class="field">
+              <label class="field__label" for="CommentAuthor">{{ 'blog.name' | t }}</label>
+              <input class="input" id="CommentAuthor" type="text" name="comment[author]" value="{{ form.author }}" autocomplete="name" required>
+            </div>
+            <div class="field">
+              <label class="field__label" for="CommentEmail">{{ 'blog.email' | t }}</label>
+              <input class="input" id="CommentEmail" type="email" name="comment[email]" value="{{ form.email }}" autocomplete="email" required>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field__label" for="CommentBody">{{ 'blog.message' | t }}</label>
+            <textarea class="textarea" id="CommentBody" name="comment[body]" required>{{ form.body }}</textarea>
+          </div>
+          {%- if blog.moderated? -%}<p class="price__note">{{ 'blog.moderated' | t }}</p>{%- endif -%}
+          {%- assign post_label = 'blog.post' | t -%}
+          {% render 'button', label: post_label, type: 'submit' %}
+        {%- endform -%}
+      </div>
+    {%- endif -%}
+  </article>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.main_article.name",
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "title_size",
+      "label": "t:settings.title_size",
+      "options": [
+        {
+          "value": "display_xl",
+          "label": "t:options.type_preset.display_xl"
+        },
+        {
+          "value": "display_l",
+          "label": "t:options.type_preset.display_l"
+        },
+        {
+          "value": "display_m",
+          "label": "t:options.type_preset.display_m"
+        },
+        {
+          "value": "display_s",
+          "label": "t:options.type_preset.display_s"
+        },
+        {
+          "value": "h1",
+          "label": "t:options.type_preset.h1"
+        },
+        {
+          "value": "h2",
+          "label": "t:options.type_preset.h2"
+        },
+        {
+          "value": "h3",
+          "label": "t:options.type_preset.h3"
+        }
+      ],
+      "default": "h1"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "t:settings.show_author",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:headers.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 64,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 40,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    }
+  ]
+}
+{% endschema %}

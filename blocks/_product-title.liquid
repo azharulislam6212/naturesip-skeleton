@@ -1,0 +1,172 @@
+{% doc %}
+  Product title.
+
+  @example
+  {% content_for 'block', type: '_product-title', id: 'title' %}
+{% enddoc %}
+
+{%- liquid
+  assign product = closest.product
+  assign tag = 'h2'
+  if request.page_type == 'product' and section.settings.primary
+    assign tag = 'h1'
+  endif
+-%}
+<{{ tag }}
+  class="product-title type-heading type-{{ block.settings.type_preset | replace: '_', '-' }} spacing-style"
+  style="{%- render 'spacing-style', settings: block.settings -%}"
+  {{ block.shopify_attributes }}
+>
+  {{- product.title | escape -}}
+</{{ tag }}>
+
+{% schema %}
+{
+  "name": "t:blocks.product_title.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "type_preset",
+      "label": "t:settings.type_preset",
+      "options": [
+        {
+          "value": "display_s",
+          "label": "t:options.type_preset.display_s"
+        },
+        {
+          "value": "h1",
+          "label": "t:options.type_preset.h1"
+        },
+        {
+          "value": "h2",
+          "label": "t:options.type_preset.h2"
+        },
+        {
+          "value": "h3",
+          "label": "t:options.type_preset.h3"
+        },
+        {
+          "value": "h4",
+          "label": "t:options.type_preset.h4"
+        }
+      ],
+      "default": "h3"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.product_title.name",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

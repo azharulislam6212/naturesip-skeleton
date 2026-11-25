@@ -1,0 +1,115 @@
+/* Footer. */
+@layer components {
+  .footer {
+    position: relative;
+  }
+
+  .footer[data-shape-top='wave'] {
+    margin-block-start: 3rem;
+  }
+
+  .footer[data-shape-top='wave'] > .section-surface__background {
+    inset-block-start: -2.9rem;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 48' preserveAspectRatio='none'%3E%3Cpath d='M0 48V24C120 0 240 0 360 18s240 30 360 6S960-6 1080 14s240 26 360 2v32Z'/%3E%3C/svg%3E"), linear-gradient(#000, #000);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 48' preserveAspectRatio='none'%3E%3Cpath d='M0 48V24C120 0 240 0 360 18s240 30 360 6S960-6 1080 14s240 26 360 2v32Z'/%3E%3C/svg%3E"), linear-gradient(#000, #000);
+    -webkit-mask-size: 100% 3rem, 100% calc(100% - 3rem + 1px);
+    mask-size: 100% 3rem, 100% calc(100% - 3rem + 1px);
+    -webkit-mask-position: top, bottom;
+    mask-position: top, bottom;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+
+  .footer__inner {
+    display: grid;
+    gap: var(--space-2xl);
+  }
+
+  .footer__blocks {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+
+  @media (min-width: 750px) {
+    .footer__blocks {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 990px) {
+    .footer__blocks {
+      grid-template-columns: 1.6fr repeat(calc(var(--footer-columns) - 1), minmax(0, 1fr));
+    }
+  }
+
+  .menu-block__heading {
+    margin-block-end: var(--space-sm);
+  }
+
+  .menu-block__list {
+    display: grid;
+    gap: var(--space-2xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .menu-block__link {
+    text-decoration: none;
+  }
+
+  .menu-block__link:hover,
+  .menu-block__link[aria-current='page'] {
+    text-decoration: underline;
+  }
+
+  .email-signup__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .email-signup__row .input {
+    flex: 1 1 14rem;
+    border-radius: 999px;
+  }
+
+  .footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding-block-start: var(--space-lg);
+    border-block-start: 1px solid var(--color-border);
+    font-size: 0.875rem;
+  }
+
+  .footer__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .footer__meta .localization form {
+    display: flex;
+    gap: var(--space-xs);
+  }
+
+  .footer__policies,
+  .footer__payment {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .footer__payment-icon {
+    width: 2.5rem;
+    height: auto;
+  }
+}

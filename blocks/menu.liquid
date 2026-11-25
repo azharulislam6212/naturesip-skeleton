@@ -1,0 +1,181 @@
+{% doc %}
+  Menu block: a heading and a list of links from a navigation menu (footer columns).
+
+  @example
+  {% content_for 'block', type: 'menu', id: 'menu' %}
+{% enddoc %}
+
+{%- assign menu = block.settings.menu -%}
+<nav class="menu-block spacing-style" style="{%- render 'spacing-style', settings: block.settings -%}" aria-label="{{ block.settings.heading | default: menu.title | escape }}" {{ block.shopify_attributes }}>
+  {%- if block.settings.heading != blank -%}
+    <h2 class="menu-block__heading type-heading type-{{ block.settings.heading_size | replace: '_', '-' }}">{{ block.settings.heading | escape }}</h2>
+  {%- endif -%}
+  {%- if menu.links.size > 0 -%}
+    <ul class="menu-block__list" role="list">
+      {%- for link in menu.links -%}
+        <li>
+          <a class="menu-block__link" href="{{ link.url }}" {% if link.current %}aria-current="page"{% endif %}>{{ link.title | escape }}</a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</nav>
+
+{% schema %}
+{
+  "name": "t:blocks.menu.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:settings.heading",
+      "default": "t:defaults.menu_heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "t:settings.heading_size",
+      "options": [
+        {
+          "value": "h4",
+          "label": "t:options.type_preset.h4"
+        },
+        {
+          "value": "h5",
+          "label": "t:options.type_preset.h5"
+        },
+        {
+          "value": "h6",
+          "label": "t:options.type_preset.h6"
+        },
+        {
+          "value": "subheading",
+          "label": "t:options.type_preset.subheading"
+        }
+      ],
+      "default": "h6"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "t:settings.menu",
+      "default": "footer"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.menu.name",
+      "category": "t:categories.links"
+    }
+  ]
+}
+{% endschema %}

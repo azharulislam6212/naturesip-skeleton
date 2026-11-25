@@ -1,0 +1,48 @@
+{% doc %}
+  Quantity selector with minus/plus buttons, enhanced by <quantity-selector>.
+
+  @param {string} id - Input id.
+  @param {string} [name] - Input name. Default: 'quantity'.
+  @param {number} [value] - Current value. Default: 1.
+  @param {number} [min] - Minimum. Default: 1.
+  @param {number} [max] - Maximum.
+  @param {number} [step] - Step. Default: 1.
+  @param {string} [label] - Accessible label (product title for line items).
+  @param {number} [line] - Cart line number (cart forms).
+  @param {string} [form] - Associated form id.
+
+  @example
+  {% render 'quantity-input', id: 'Quantity-main', min: 1 %}
+{% enddoc %}
+
+<quantity-selector class="quantity">
+  <button class="quantity__button" type="button" ref="minus">
+    <span class="visually-hidden">{{ 'products.quantity.decrease' | t: product: label }}</span>
+    {%- render 'icon', name: 'minus' -%}
+  </button>
+  <label class="visually-hidden" for="{{ id }}">{{ 'products.quantity.label' | t }}</label>
+  <input
+    class="quantity__input"
+    type="number"
+    id="{{ id }}"
+    name="{{ name | default: 'quantity' }}"
+    value="{{ value | default: 1 }}"
+    min="{{ min | default: 1 }}"
+    {% if max %}
+      max="{{ max }}"
+    {% endif %}
+    step="{{ step | default: 1 }}"
+    inputmode="numeric"
+    ref="input"
+    {% if line %}
+      data-line="{{ line }}" data-line-quantity
+    {% endif %}
+    {% if form %}
+      form="{{ form }}"
+    {% endif %}
+  >
+  <button class="quantity__button" type="button" ref="plus">
+    <span class="visually-hidden">{{ 'products.quantity.increase' | t: product: label }}</span>
+    {%- render 'icon', name: 'plus' -%}
+  </button>
+</quantity-selector>

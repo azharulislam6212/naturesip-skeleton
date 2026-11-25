@@ -1,0 +1,256 @@
+{%- comment -%} Testimonials: review cards in a slider or grid, optionally tilted like sticky notes. {%- endcomment -%}
+
+{{ 'section-content.css' | asset_url | stylesheet_tag }}
+
+{%- assign s = section.settings -%}
+<section
+  class="section section-surface testimonials color-{{ s.color_scheme.id }} spacing-style"
+  style="{%- render 'spacing-style', settings: s -%} --columns-desktop: {{ s.columns_desktop }}; --columns-tablet: 2;"
+  data-shape-bottom="{{ s.shape_bottom }}"
+  {% if s.tilt %}
+    data-tilt
+  {% endif %}
+>
+  <div class="section-surface__background" aria-hidden="true">
+    {%- if s.background_image != blank -%}
+      {% render 'image', image: s.background_image, alt: '', sizes: '100vw' %}
+    {%- endif -%}
+  </div>
+
+  <div class="layout-stack" style="--gap: var(--space-2xl);">
+    {% content_for 'block', type: 'group', id: 'heading' %}
+    <slider-component class="testimonials__slider">
+      <ul class="slider__track testimonials__track" ref="track" role="list" data-lenis-prevent>
+        {% content_for 'blocks' %}
+      </ul>
+      <div class="slider__controls">
+        <div class="slider__progress" ref="progress" aria-hidden="true"><span class="slider__progress-bar"></span></div>
+        <span class="visually-hidden" ref="counter" aria-live="polite"></span>
+        <div class="slider__buttons">
+          <button class="icon-button" type="button" ref="previous">
+            {%- render 'icon', name: 'undo' -%}
+            <span class="visually-hidden">{{ 'accessibility.previous' | t }}</span>
+          </button>
+          <button class="icon-button" type="button" ref="next">
+            {%- render 'icon', name: 'redo' -%}
+            <span class="visually-hidden">{{ 'accessibility.next' | t }}</span>
+          </button>
+        </div>
+      </div>
+    </slider-component>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.testimonials.name",
+  "class": "section-wrapper",
+  "max_blocks": 12,
+  "blocks": [
+    {
+      "type": "_testimonial"
+    },
+    {
+      "type": "group"
+    }
+  ],
+  "settings": [
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "t:settings.columns_desktop",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "tilt",
+      "label": "t:settings.tilt_cards",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:headers.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-3"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "t:settings.background_image"
+    },
+    {
+      "type": "range",
+      "id": "background_image_opacity",
+      "label": "t:settings.background_image_opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ section.settings.background_image != blank }}"
+    },
+    {
+      "type": "select",
+      "id": "shape_bottom",
+      "label": "t:settings.shape_bottom",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.shape.none"
+        },
+        {
+          "value": "wave",
+          "label": "t:options.shape.wave"
+        },
+        {
+          "value": "curve",
+          "label": "t:options.shape.curve"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.testimonials.name",
+      "category": "t:categories.text",
+      "settings": {
+        "shape_bottom": "wave"
+      },
+      "blocks": {
+        "heading": {
+          "type": "group",
+          "static": true,
+          "settings": {
+            "horizontal_alignment": "center",
+            "gap": 12,
+            "width": "fill"
+          },
+          "blocks": {
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "t:defaults.testimonials_heading",
+                "type_preset": "display_m",
+                "text_color": "gradient",
+                "stroke": true,
+                "shadow": true,
+                "alignment": "center",
+                "alignment_mobile": "center"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "t:defaults.section_text",
+                "type_preset": "subheading",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "max_width": 70
+              }
+            }
+          },
+          "block_order": [
+            "heading",
+            "text"
+          ]
+        },
+        "t_1": {
+          "type": "_testimonial",
+          "settings": {
+            "color_scheme": "scheme-4"
+          }
+        },
+        "t_2": {
+          "type": "_testimonial",
+          "settings": {
+            "color_scheme": "scheme-3"
+          }
+        },
+        "t_3": {
+          "type": "_testimonial",
+          "settings": {
+            "color_scheme": "scheme-4"
+          }
+        }
+      },
+      "block_order": [
+        "t_1",
+        "t_2",
+        "t_3"
+      ]
+    }
+  ]
+}
+{% endschema %}

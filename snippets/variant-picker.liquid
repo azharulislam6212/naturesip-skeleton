@@ -1,0 +1,96 @@
+{% doc %}
+  Variant option picker. Each option renders as pills, colour swatches (when
+  the value has a swatch in the admin) or a dropdown. Enhanced by
+  <variant-picker>, which re-renders the section for the chosen option values.
+
+  @param {object} product - Product object.
+  @param {string} section_id - Owning section id (keeps radio names unique).
+  @param {string} [style] - 'buttons' (default) or 'dropdown'.
+  @param {boolean} [show_swatches] - Show swatches for values that have them. Default: true.
+
+  @example
+  {% render 'variant-picker', product: product, section_id: section.id, style: block.settings.picker_style %}
+{% enddoc %}
+
+{%- unless product.has_only_default_variant -%}
+  <variant-picker class="variant-picker" data-product-url="{{ product.url }}">
+    {%- for option in product.options_with_values -%}
+      {%- liquid
+        assign option_id = section_id | append: '-' | append: option.position
+        assign use_swatch = false
+        if show_swatches != false and option.values.first.swatch
+          assign use_swatch = true
+        endif
+      -%}
+
+      {%- if style == 'dropdown' and use_swatch == false -%}
+        <div class="field">
+          <label class="field__label" for="Option-{{ option_id }}">{{ option.name | escape }}</label>
+          <select class="select" id="Option-{{ option_id }}" name="option-{{ option_id }}">
+            {%- for value in option.values -%}
+              <option
+                value="{{ value | escape }}"
+                data-option-value-id="{{ value.id }}"
+                {% if value.selected %}
+                  selected
+                {% endif %}
+              >
+                {{- value | escape -}}
+                {%- unless value.available %} — {{ 'products.product.unavailable' | t }}{% endunless -%}
+              </option>
+            {%- endfor -%}
+          </select>
+        </div>
+      {%- else -%}
+        <fieldset class="option-list">
+          <legend>
+            {{ option.name | escape }}:
+            <span class="option-list__value">{{ option.selected_value | escape }}</span>
+          </legend>
+          {%- for value in option.values -%}
+            {%- liquid
+              assign value_unavailable = true
+              if value.available
+                assign value_unavailable = false
+              endif
+            -%}
+            <label class="option">
+              <input
+                type="radio"
+                name="option-{{ option_id }}"
+                value="{{ value | escape }}"
+                data-option-value-id="{{ value.id }}"
+                {% if value.selected %}
+                  checked
+                {% endif %}
+                {% unless value.available %}
+                  data-unavailable
+                {% endunless %}
+              >
+              {%- if use_swatch -%}
+                <span class="option__pill option__pill--swatch" title="{{ value | escape }}">
+                  {% render 'swatch', value: value, unavailable: value_unavailable %}
+                  <span class="visually-hidden">
+                    {{- value | escape -}}
+                    {%- unless value.available %}, {{ 'products.product.unavailable' | t }}{% endunless -%}
+                  </span>
+                </span>
+              {%- else -%}
+                <span class="option__pill">
+                  {{- value | escape -}}
+                  {%- unless value.available -%}
+                    <span class="visually-hidden">, {{ 'products.product.unavailable' | t }}</span>
+                  {%- endunless -%}
+                </span>
+              {%- endif -%}
+            </label>
+          {%- endfor -%}
+        </fieldset>
+      {%- endif -%}
+    {%- endfor -%}
+
+    <script type="application/json" data-selected-variant>
+      {{ product.selected_or_first_available_variant | json }}
+    </script>
+  </variant-picker>
+{%- endunless -%}

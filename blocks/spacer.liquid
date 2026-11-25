@@ -1,0 +1,58 @@
+{% doc %}
+  Spacer block: empty vertical space with separate desktop, tablet and mobile heights.
+
+  @example
+  {% content_for 'block', type: 'spacer', id: 'spacer' %}
+{% enddoc %}
+
+<div
+  class="spacer"
+  style="--spacer: {{ block.settings.height }}px; --spacer-tablet: {{ block.settings.height_tablet }}px; --spacer-mobile: {{ block.settings.height_mobile }}px;"
+  aria-hidden="true"
+  {{ block.shopify_attributes }}
+></div>
+
+{% schema %}
+{
+  "name": "t:blocks.spacer.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "range",
+      "id": "height",
+      "label": "t:settings.height",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "height_tablet",
+      "label": "t:settings.height_tablet",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "label": "t:settings.height_mobile",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.spacer.name",
+      "category": "t:categories.layout"
+    }
+  ]
+}
+{% endschema %}

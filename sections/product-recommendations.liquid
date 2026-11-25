@@ -1,0 +1,248 @@
+{%- comment -%} Related or complementary products, loaded after the page renders. {%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign url = routes.product_recommendations_url | append: '?section_id=' | append: section.id | append: '&product_id=' | append: product.id | append: '&limit=' | append: s.limit | append: '&intent=' | append: s.intent
+-%}
+
+<section class="section section-surface color-{{ s.color_scheme.id }} spacing-style" style="{%- render 'spacing-style', settings: s -%}">
+  <div class="section-surface__background" aria-hidden="true"></div>
+  <div class="layout-stack" style="--gap: var(--space-xl);">
+    <div class="section-heading layout-stack" style="--align: center; --gap: 12px;">
+      {% content_for 'blocks' %}
+    </div>
+    <product-recommendations data-url="{{ url }}">
+      {%- if recommendations.performed and recommendations.products_count > 0 -%}
+        <ul
+          class="grid"
+          role="list"
+          data-has-products
+          style="--columns-desktop: {{ s.columns_desktop }}; --columns-tablet: {{ s.columns_tablet }}; --columns-mobile: {{ s.columns_mobile }};"
+        >
+          {%- for recommendation in recommendations.products -%}
+            <li>{% render 'product-card', product: recommendation, section_id: section.id %}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </product-recommendations>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.product_recommendations.name",
+  "class": "section-wrapper",
+  "blocks": [
+    {
+      "type": "heading"
+    },
+    {
+      "type": "text"
+    },
+    {
+      "type": "button"
+    },
+    {
+      "type": "group"
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "settings": [
+    {
+      "type": "select",
+      "id": "intent",
+      "label": "t:settings.recommendation_type",
+      "options": [
+        {
+          "value": "related",
+          "label": "t:options.intent.related"
+        },
+        {
+          "value": "complementary",
+          "label": "t:options.intent.complementary"
+        }
+      ],
+      "default": "related",
+      "info": "t:info.complementary"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "t:settings.product_limit",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "t:settings.columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "t:settings.columns_tablet",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "t:settings.columns_mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "t:options.columns.one"
+        },
+        {
+          "value": "2",
+          "label": "t:options.columns.two"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "t:settings.background_image"
+    },
+    {
+      "type": "range",
+      "id": "background_image_opacity",
+      "label": "t:settings.background_image_opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ section.settings.background_image != blank }}"
+    },
+    {
+      "type": "select",
+      "id": "shape_bottom",
+      "label": "t:settings.shape_bottom",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.shape.none"
+        },
+        {
+          "value": "wave",
+          "label": "t:options.shape.wave"
+        },
+        {
+          "value": "curve",
+          "label": "t:options.shape.curve"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.product_recommendations.name",
+      "category": "t:categories.products",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "t:defaults.recommendations_heading",
+            "type_preset": "display_m",
+            "text_color": "gradient",
+            "stroke": true,
+            "shadow": true,
+            "alignment": "center",
+            "alignment_mobile": "center"
+          }
+        }
+      },
+      "block_order": [
+        "heading"
+      ]
+    }
+  ]
+}
+{% endschema %}

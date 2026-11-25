@@ -1,0 +1,100 @@
+{% doc %}
+  One row of the comparison table.
+
+  @example
+  {% content_for 'block', type: '_comparison-row', id: 'row' %}
+{% enddoc %}
+
+<tr class="comparison__row" {{ block.shopify_attributes }}>
+  <th scope="row">{{ block.settings.label | escape }}</th>
+  {%- assign cells = 'us,them' | split: ',' -%}
+  {%- for cell in cells -%}
+    {%- assign key = cell | append: '_value' -%}
+    {%- assign value = block.settings[key] -%}
+    <td class="comparison__{{ cell }}">
+      {%- case value -%}
+        {%- when 'yes' -%}
+          <span class="comparison__mark comparison__mark--yes">{% render 'icon', name: 'check' %}</span>
+          <span class="visually-hidden">{{ 'sections.comparison.yes' | t }}</span>
+        {%- when 'no' -%}
+          <span class="comparison__mark comparison__mark--no">{% render 'icon', name: 'close' %}</span>
+          <span class="visually-hidden">{{ 'sections.comparison.no' | t }}</span>
+        {%- else -%}
+          {%- assign text_key = cell | append: '_text' -%}
+          {{ block.settings[text_key] | escape }}
+      {%- endcase -%}
+    </td>
+  {%- endfor -%}
+</tr>
+
+{% schema %}
+{
+  "name": "t:blocks.comparison_row.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "t:settings.label",
+      "default": "t:defaults.comparison_row"
+    },
+    {
+      "type": "select",
+      "id": "us_value",
+      "label": "t:settings.us_value",
+      "options": [
+        {
+          "value": "yes",
+          "label": "t:options.comparison.yes"
+        },
+        {
+          "value": "no",
+          "label": "t:options.comparison.no"
+        },
+        {
+          "value": "text",
+          "label": "t:options.comparison.text"
+        }
+      ],
+      "default": "yes"
+    },
+    {
+      "type": "text",
+      "id": "us_text",
+      "label": "t:settings.us_text",
+      "visible_if": "{{ block.settings.us_value == 'text' }}"
+    },
+    {
+      "type": "select",
+      "id": "them_value",
+      "label": "t:settings.them_value",
+      "options": [
+        {
+          "value": "yes",
+          "label": "t:options.comparison.yes"
+        },
+        {
+          "value": "no",
+          "label": "t:options.comparison.no"
+        },
+        {
+          "value": "text",
+          "label": "t:options.comparison.text"
+        }
+      ],
+      "default": "no"
+    },
+    {
+      "type": "text",
+      "id": "them_text",
+      "label": "t:settings.them_text",
+      "visible_if": "{{ block.settings.them_value == 'text' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.comparison_row.name"
+    }
+  ]
+}
+{% endschema %}

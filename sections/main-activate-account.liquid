@@ -1,0 +1,107 @@
+{%- comment -%} Activate an invited customer account. {%- endcomment -%}
+
+{{ 'section-customer.css' | asset_url | stylesheet_tag }}
+
+<section class="section customer color-{{ section.settings.color_scheme.id }} spacing-style" style="{%- render 'spacing-style', settings: section.settings -%}">
+  <div class="customer__panel">
+    <h1 class="type-heading type-h2">{{ 'customer.activate.title' | t }}</h1>
+    <p>{{ 'customer.activate.subtext' | t }}</p>
+    {%- form 'activate_customer_password' -%}
+      {%- if form.errors -%}<div class="form-message form-message--error" role="alert">{{ form.errors | default_errors }}</div>{%- endif -%}
+      <div class="field">
+        <label class="field__label" for="ActivatePassword">{{ 'customer.password' | t }}</label>
+        <input class="input" id="ActivatePassword" type="password" name="customer[password]" autocomplete="new-password" required>
+      </div>
+      <div class="field">
+        <label class="field__label" for="ActivatePasswordConfirm">{{ 'customer.password_confirm' | t }}</label>
+        <input class="input" id="ActivatePasswordConfirm" type="password" name="customer[password_confirmation]" autocomplete="new-password" required>
+      </div>
+      {%- assign submit_label = 'customer.activate.submit' | t -%}
+      {% render 'button', label: submit_label, type: 'submit', full_width: true %}
+      <button class="link" type="submit" name="decline">{{ 'customer.activate.decline' | t }}</button>
+    {%- endform -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.main_activate_account.name",
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:headers.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 64,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 40,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    }
+  ]
+}
+{% endschema %}

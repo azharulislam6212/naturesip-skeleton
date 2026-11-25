@@ -1,0 +1,217 @@
+{%- comment -%}
+  Product page: media gallery (static block) beside product information
+  blocks. Supports app blocks. Variant changes re-render only the parts
+  marked with data-variant-update.
+{%- endcomment -%}
+
+{{ 'section-product.css' | asset_url | stylesheet_tag }}
+
+{%- assign s = section.settings -%}
+<section
+  class="section section-surface product-section color-{{ s.color_scheme.id }} spacing-style"
+  style="{%- render 'spacing-style', settings: s -%}"
+  data-product-section
+  data-section-id="{{ section.id }}"
+>
+  <div class="section-surface__background" aria-hidden="true"></div>
+  <div class="product product--media-{{ s.media_width }}{% if s.reverse %} product--reverse{% endif %}">
+    <div class="product__media">
+      {% content_for 'block', type: '_product-media-gallery', id: 'media-gallery' %}
+    </div>
+    <div class="product__info{% if s.sticky_info %} product__info--sticky{% endif %}">
+      {% content_for 'blocks' %}
+    </div>
+  </div>
+
+  <script type="application/ld+json">
+    {{ product | structured_data }}
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.main_product.name",
+  "class": "section-wrapper",
+  "blocks": [
+    {
+      "type": "_product-title"
+    },
+    {
+      "type": "_product-price"
+    },
+    {
+      "type": "_product-variant-picker"
+    },
+    {
+      "type": "_product-buy-buttons"
+    },
+    {
+      "type": "_product-description"
+    },
+    {
+      "type": "_product-inventory"
+    },
+    {
+      "type": "_product-sku"
+    },
+    {
+      "type": "_product-vendor"
+    },
+    {
+      "type": "_product-rating"
+    },
+    {
+      "type": "heading"
+    },
+    {
+      "type": "text"
+    },
+    {
+      "type": "button"
+    },
+    {
+      "type": "icon-text"
+    },
+    {
+      "type": "accordion"
+    },
+    {
+      "type": "group"
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "spacer"
+    },
+    {
+      "type": "image"
+    },
+    {
+      "type": "custom-liquid"
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "primary",
+      "label": "t:settings.primary_product",
+      "info": "t:info.primary_product",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:headers.layout"
+    },
+    {
+      "type": "select",
+      "id": "media_width",
+      "label": "t:settings.media_width",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:options.size.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:options.size.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:options.size.large"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "checkbox",
+      "id": "reverse",
+      "label": "t:settings.reverse",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_info",
+      "label": "t:settings.sticky_info",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:headers.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 24,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,55 @@
+{% doc %}
+  Country/region and language selectors (shown only when the store offers
+  more than one). Submits automatically via <localization-form>.
+
+  @param {string} id - Unique id prefix.
+  @param {boolean} [show_country] - Show the country selector.
+  @param {boolean} [show_language] - Show the language selector.
+
+  @example
+  {% render 'localization-form', id: 'Footer', show_country: true, show_language: true %}
+{% enddoc %}
+
+{%- liquid
+  assign country_enabled = false
+  if show_country and localization.available_countries.size > 1
+    assign country_enabled = true
+  endif
+  assign language_enabled = false
+  if show_language and localization.available_languages.size > 1
+    assign language_enabled = true
+  endif
+-%}
+
+{%- if country_enabled or language_enabled -%}
+  <localization-form class="localization">
+    {%- form 'localization', id: id -%}
+      <input type="hidden" name="return_to" value="{{ request.path }}">
+      {%- if country_enabled -%}
+        <div class="field">
+          <label class="field__label" for="{{ id }}-Country">{{ 'localization.country_label' | t }}</label>
+          <select class="select" id="{{ id }}-Country" name="country_code">
+            {%- for country in localization.available_countries -%}
+              <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
+                {{- country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+              </option>
+            {%- endfor -%}
+          </select>
+        </div>
+      {%- endif -%}
+      {%- if language_enabled -%}
+        <div class="field">
+          <label class="field__label" for="{{ id }}-Language">{{ 'localization.language_label' | t }}</label>
+          <select class="select" id="{{ id }}-Language" name="language_code">
+            {%- for language in localization.available_languages -%}
+              <option value="{{ language.iso_code }}" lang="{{ language.iso_code }}" {% if language.iso_code == localization.language.iso_code %}selected{% endif %}>
+                {{- language.endonym_name | capitalize -}}
+              </option>
+            {%- endfor -%}
+          </select>
+        </div>
+      {%- endif -%}
+      <noscript><button class="link" type="submit">{{ 'localization.update' | t }}</button></noscript>
+    {%- endform -%}
+  </localization-form>
+{%- endif -%}

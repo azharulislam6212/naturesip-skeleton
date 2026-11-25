@@ -1,0 +1,37 @@
+{%- comment -%} Holds the quick view modal. Content comes from sections/quick-view.liquid. {%- endcomment -%}
+
+{%- if settings.card_quick_action != 'none' -%}
+  {{ 'section-product.css' | asset_url | stylesheet_tag: preload: false }}
+  <quick-view-dialog>
+    <dialog class="modal quick-view color-{{ section.settings.color_scheme.id }}" ref="dialog" aria-label="{{ 'products.product.quick_view' | t }}" data-lenis-prevent>
+      <button class="icon-button modal__close" type="button" ref="close">
+        {%- render 'icon', name: 'close' -%}
+        <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
+      </button>
+      <div class="quick-view__content" ref="content" data-quick-view></div>
+    </dialog>
+  </quick-view-dialog>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.quick_view_dialog.name",
+  "enabled_on": {
+    "groups": [
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:info.quick_view"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-4"
+    }
+  ]
+}
+{% endschema %}

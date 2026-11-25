@@ -1,0 +1,128 @@
+{%- comment -%}
+  Announcement bar: rotating messages (one per block) with optional social
+  links and a contact line on desktop. Messages scroll natively; arrows
+  appear when there is more than one.
+{%- endcomment -%}
+
+{{ 'section-header.css' | asset_url | stylesheet_tag }}
+
+{%- assign s = section.settings -%}
+<div class="announcement-bar color-{{ s.color_scheme.id }}">
+  <div class="announcement-bar__inner page-width">
+    <div class="announcement-bar__side hide-mobile">
+      {%- if s.show_social -%}
+        {%- if s.social_label != blank -%}<span class="type-subheading">{{ s.social_label | escape }}</span>{%- endif -%}
+        {% render 'social-links' %}
+      {%- endif -%}
+    </div>
+
+    <slider-component class="announcement-bar__slider" aria-roledescription="{{ 'accessibility.carousel' | t }}">
+      {%- if section.blocks.size > 1 -%}
+        <button class="announcement-bar__arrow" type="button" ref="previous">
+          {%- render 'icon', name: 'chevron-left' -%}
+          <span class="visually-hidden">{{ 'accessibility.previous' | t }}</span>
+        </button>
+      {%- endif -%}
+      <ul class="slider__track announcement-bar__track" ref="track" role="list" data-lenis-prevent>
+        {% content_for 'blocks' %}
+      </ul>
+      {%- if section.blocks.size > 1 -%}
+        <button class="announcement-bar__arrow" type="button" ref="next">
+          {%- render 'icon', name: 'chevron-right' -%}
+          <span class="visually-hidden">{{ 'accessibility.next' | t }}</span>
+        </button>
+      {%- endif -%}
+    </slider-component>
+
+    <div class="announcement-bar__side announcement-bar__side--end hide-mobile">
+      {%- if s.contact_text != blank -%}
+        {%- if s.contact_link != blank -%}
+          <a class="announcement-bar__contact" href="{{ s.contact_link }}">{% render 'icon', name: s.contact_icon %}{{ s.contact_text | escape }}</a>
+        {%- else -%}
+          <span class="announcement-bar__contact">{% render 'icon', name: s.contact_icon %}{{ s.contact_text | escape }}</span>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.announcement_bar.name",
+  "enabled_on": {
+    "groups": [
+      "header"
+    ]
+  },
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "_announcement"
+    }
+  ],
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-3"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "label": "t:settings.show_social",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "social_label",
+      "label": "t:settings.social_label",
+      "default": "t:defaults.follow_us"
+    },
+    {
+      "type": "text",
+      "id": "contact_text",
+      "label": "t:settings.contact_text"
+    },
+    {
+      "type": "url",
+      "id": "contact_link",
+      "label": "t:settings.contact_link"
+    },
+    {
+      "type": "select",
+      "id": "contact_icon",
+      "label": "t:settings.icon",
+      "options": [
+        {
+          "value": "phone",
+          "label": "t:options.icon.phone"
+        },
+        {
+          "value": "mail",
+          "label": "t:options.icon.mail"
+        },
+        {
+          "value": "chat",
+          "label": "t:options.icon.chat"
+        },
+        {
+          "value": "pin",
+          "label": "t:options.icon.pin"
+        }
+      ],
+      "default": "phone"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.announcement_bar.name",
+      "blocks": [
+        {
+          "type": "_announcement"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

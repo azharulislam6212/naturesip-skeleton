@@ -1,0 +1,49 @@
+{% doc %}
+  Accessible numbered pagination.
+
+  @param {object} paginate - The paginate object.
+  @param {boolean} [facets] - Mark links for in-place loading by <facets-form>.
+
+  @example
+  {% render 'pagination', paginate: paginate, facets: true %}
+{% enddoc %}
+
+{%- if paginate.pages > 1 -%}
+  <nav aria-label="{{ 'general.pagination.label' | t }}">
+    <ul class="pagination" role="list">
+      {%- if paginate.previous -%}
+        <li>
+          <a href="{{ paginate.previous.url }}" {% if facets %}data-facets-link{% endif %}>
+            {%- render 'icon', name: 'chevron-left' -%}
+            <span class="visually-hidden">{{ 'general.pagination.previous' | t }}</span>
+          </a>
+        </li>
+      {%- endif -%}
+      {%- for part in paginate.parts -%}
+        <li>
+          {%- if part.is_link -%}
+            <a href="{{ part.url }}" {% if facets %}data-facets-link{% endif %}>
+              <span class="visually-hidden">{{ 'general.pagination.page' | t: number: part.title }}</span>
+              <span aria-hidden="true">{{ part.title }}</span>
+            </a>
+          {%- elsif part.title == paginate.current_page -%}
+            <span aria-current="page">
+              <span class="visually-hidden">{{ 'general.pagination.page' | t: number: part.title }}</span>
+              <span aria-hidden="true">{{ part.title }}</span>
+            </span>
+          {%- else -%}
+            <span>{{ part.title }}</span>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+      {%- if paginate.next -%}
+        <li>
+          <a href="{{ paginate.next.url }}" {% if facets %}data-facets-link{% endif %}>
+            {%- render 'icon', name: 'chevron-right' -%}
+            <span class="visually-hidden">{{ 'general.pagination.next' | t }}</span>
+          </a>
+        </li>
+      {%- endif -%}
+    </ul>
+  </nav>
+{%- endif -%}

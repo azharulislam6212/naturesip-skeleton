@@ -1,0 +1,39 @@
+{%- comment -%} Local pickup availability for a variant, rendered through the Section Rendering API. {%- endcomment -%}
+
+{%- assign availabilities = product_variant.store_availabilities | where: 'pick_up_enabled', true -%}
+{%- if availabilities.size > 0 -%}
+  <div class="pickup" data-pickup-content>
+    {%- assign nearest = availabilities.first -%}
+    {%- if nearest.available -%}
+      <p class="pickup__status">
+        {%- render 'icon', name: 'check' -%}
+        {%- assign escaped_value = nearest.location.name | escape -%}{{ 'products.pickup.available_at_html' | t: location: escaped_value }}
+      </p>
+      <p class="pickup__time">{{ nearest.pick_up_time }}</p>
+    {%- else -%}
+      <p class="pickup__status">{%- assign escaped_value = nearest.location.name | escape -%}{{ 'products.pickup.unavailable_at_html' | t: location: escaped_value }}</p>
+    {%- endif -%}
+    <details class="accordion pickup__details">
+      <summary class="accordion__summary">
+        {{ 'products.pickup.view_locations' | t }}
+        <span class="accordion__icon">{% render 'icon', name: 'plus' %}</span>
+      </summary>
+      <ul class="accordion__content pickup__list" role="list">
+        {%- for availability in availabilities -%}
+          <li>
+            <strong>{{ availability.location.name | escape }}</strong>
+            <span>{% if availability.available %}{{ availability.pick_up_time }}{% else %}{{ 'products.pickup.not_available' | t }}{% endif %}</span>
+            {{ availability.location.address | format_address }}
+            {%- if availability.location.address.phone != blank -%}<span>{{ availability.location.address.phone }}</span>{%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </details>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.pickup_availability.name"
+}
+{% endschema %}

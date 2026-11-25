@@ -1,0 +1,26 @@
+{% doc %}
+  Star rating from the standard `reviews` metafields that review apps write
+  (product.metafields.reviews.rating / rating_count). Renders nothing without data.
+
+  @param {object} product - Product object.
+  @param {boolean} [show_count] - Show the review count.
+
+  @example
+  {% render 'rating', product: product, show_count: true %}
+{% enddoc %}
+
+{%- assign rating = product.metafields.reviews.rating.value -%}
+{%- if rating != blank -%}
+  {%- assign count = product.metafields.reviews.rating_count.value | default: 0 -%}
+  <div class="rating">
+    <span
+      class="rating__stars"
+      role="img"
+      aria-label="{{ 'accessibility.star_rating' | t: rating: rating.rating, max: rating.scale_max }}"
+      style="--rating: {{ rating.rating }}; --rating-max: {{ rating.scale_max }};"
+    ></span>
+    {%- if show_count and count > 0 -%}
+      <span class="rating__count">{{ 'products.rating.count' | t: count: count }}</span>
+    {%- endif -%}
+  </div>
+{%- endif -%}

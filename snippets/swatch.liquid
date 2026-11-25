@@ -1,0 +1,27 @@
+{% doc %}
+  A colour/pattern swatch for a product option value, using Shopify's native
+  swatch data (colour or image) configured in the admin.
+
+  @param {object} value - product_option_value with a `swatch`.
+  @param {boolean} [unavailable] - Cross the swatch out.
+
+  @example
+  {% render 'swatch', value: value %}
+{% enddoc %}
+
+{%- liquid
+  assign swatch_style = ''
+  if value.swatch.image
+    assign swatch_url = value.swatch.image | image_url: width: 80
+    assign swatch_style = '--swatch-background: url(' | append: swatch_url | append: ');'
+  elsif value.swatch.color
+    assign swatch_style = '--swatch-background: ' | append: value.swatch.color | append: ';'
+  endif
+-%}
+<span
+  class="swatch{% if unavailable %} swatch--unavailable{% endif %}"
+  {% if swatch_style != blank %}
+    style="{{ swatch_style }}"
+  {% endif %}
+  aria-hidden="true"
+></span>

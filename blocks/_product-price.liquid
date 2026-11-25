@@ -1,0 +1,186 @@
+{% doc %}
+  Product price with compare-at price, unit price, tax note and Shop Pay
+  installments. Updates with the selected variant.
+
+  @example
+  {% content_for 'block', type: '_product-price', id: 'price' %}
+{% enddoc %}
+
+{%- assign product = closest.product -%}
+<div
+  class="product-price spacing-style"
+  style="{%- render 'spacing-style', settings: block.settings -%} --price-size: {{ block.settings.size | divided_by: 16.0 }}rem;"
+  data-variant-update="price-{{ block.id }}"
+  {{ block.shopify_attributes }}
+>
+  {% render 'price', product: product, variant: product.selected_or_first_available_variant, show_unit_price: true %}
+
+  {%- if block.settings.show_tax_note -%}
+    <p class="price__note">
+      {%- if cart.duties_included and cart.taxes_included -%}
+        {{ 'products.price.duties_and_taxes_included' | t }}
+      {%- elsif cart.taxes_included -%}
+        {{ 'products.price.taxes_included' | t }}
+      {%- elsif cart.duties_included -%}
+        {{ 'products.price.duties_included' | t }}
+      {%- endif -%}
+      {%- if shop.shipping_policy.body != blank -%}
+        {{ 'products.price.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+      {%- endif -%}
+    </p>
+  {%- endif -%}
+
+  {%- if block.settings.show_installments -%}
+    {%- assign installments_form = 'Installments-' | append: block.id -%}
+    {%- form 'product', product, id: installments_form, class: 'product-price__installments' -%}
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      {{ form | payment_terms }}
+    {%- endform -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.product_price.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "range",
+      "id": "size",
+      "label": "t:settings.font_size",
+      "min": 14,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tax_note",
+      "label": "t:settings.show_tax_note",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_installments",
+      "label": "t:settings.show_installments",
+      "info": "t:info.installments",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.product_price.name",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

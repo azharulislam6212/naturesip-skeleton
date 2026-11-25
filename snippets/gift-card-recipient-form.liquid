@@ -1,0 +1,41 @@
+{% doc %}
+  Lets a customer send a gift card to someone else (Shopify gift card
+  recipient feature). Fields reveal with CSS when the checkbox is ticked.
+
+  @param {string} form_id - Id of the product form.
+
+  @example
+  {% render 'gift-card-recipient-form', form_id: form_id %}
+{% enddoc %}
+
+{%- assign field_id = 'Recipient-' | append: form_id -%}
+<div class="recipient-form">
+  <label class="checkbox">
+    <input
+      type="checkbox"
+      id="{{ field_id }}-checkbox"
+      name="properties[__shopify_send_gift_card_to_recipient]"
+      value="on"
+    >
+    {{ 'gift_cards.recipient.checkbox' | t }}
+  </label>
+
+  <div class="recipient-form__fields">
+    <div class="field">
+      <label class="field__label" for="{{ field_id }}-email">{{ 'gift_cards.recipient.email' | t }}</label>
+      <input class="input" id="{{ field_id }}-email" type="email" name="properties[Recipient email]" autocomplete="email">
+    </div>
+    <div class="field">
+      <label class="field__label" for="{{ field_id }}-name">{{ 'gift_cards.recipient.name' | t }}</label>
+      <input class="input" id="{{ field_id }}-name" type="text" name="properties[Recipient name]" autocomplete="name">
+    </div>
+    <div class="field">
+      <label class="field__label" for="{{ field_id }}-message">{{ 'gift_cards.recipient.message' | t }}</label>
+      <textarea class="textarea" id="{{ field_id }}-message" name="properties[Message]" maxlength="200"></textarea>
+    </div>
+    <div class="field">
+      <label class="field__label" for="{{ field_id }}-date">{{ 'gift_cards.recipient.send_on' | t }}</label>
+      <input class="input" id="{{ field_id }}-date" type="date" name="properties[Send on]" pattern="\d{4}-\d{2}-\d{2}">
+    </div>
+  </div>
+</div>

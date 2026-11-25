@@ -1,0 +1,125 @@
+{% doc %}
+  Product media gallery: slider with thumbnails, PhotoSwipe zoom on images,
+  native players for video and 3D. Follows the selected variant.
+
+  @example
+  {% content_for 'block', type: '_product-media-gallery', id: 'media-gallery' %}
+{% enddoc %}
+
+{%- liquid
+  assign product = closest.product
+  assign s = block.settings
+  assign featured_id = product.selected_or_first_available_variant.featured_media.id | default: product.featured_media.id
+  case s.ratio
+    when 'square'
+      assign ratio = '1'
+    when 'portrait'
+      assign ratio = '0.8'
+    else
+      assign ratio = nil
+  endcase
+-%}
+
+<media-gallery
+  class="media-gallery media-gallery--{{ s.layout }}"
+  data-section-id="{{ section.id }}"
+  {{ block.shopify_attributes }}
+>
+  <ul class="media-gallery__track" ref="track" role="list" data-lenis-prevent>
+    {%- for media in product.media -%}
+      <li class="media-gallery__item" data-media-id="{{ media.id }}">
+        {% render 'product-media', media: media, zoom: s.zoom, eager: forloop.first, ratio: ratio %}
+      </li>
+    {%- else -%}
+      <li class="media-gallery__item">
+        <div class="media" style="--ratio: 1;">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+      </li>
+    {%- endfor -%}
+  </ul>
+
+  {%- if product.media.size > 1 and s.show_thumbnails -%}
+    <ul class="media-gallery__thumbnails" role="list" aria-label="{{ 'products.media.thumbnails' | t }}">
+      {%- for media in product.media -%}
+        <li>
+          <button
+            class="media-gallery__thumbnail media"
+            type="button"
+            ref="thumbnails[]"
+            data-media-id="{{ media.id }}"
+            aria-current="{% if media.id == featured_id %}true{% else %}false{% endif %}"
+          >
+            {{ media.preview_image | image_url: width: 192 | image_tag: loading: 'lazy', alt: '', sizes: '96px', widths: '96, 192' }}
+            <span class="visually-hidden">{{ 'products.media.show_media' | t: index: forloop.index, count: forloop.length }}</span>
+            {%- if media.media_type == 'video' or media.media_type == 'external_video' -%}
+              <span class="media-gallery__badge">{% render 'icon', name: 'play' %}</span>
+            {%- elsif media.media_type == 'model' -%}
+              <span class="media-gallery__badge">{% render 'icon', name: 'globe' %}</span>
+            {%- endif -%}
+          </button>
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</media-gallery>
+
+{% schema %}
+{
+  "name": "t:blocks.product_media_gallery.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "t:settings.layout",
+      "options": [
+        {
+          "value": "slider",
+          "label": "t:options.gallery_layout.slider"
+        },
+        {
+          "value": "grid",
+          "label": "t:options.gallery_layout.grid"
+        },
+        {
+          "value": "stacked",
+          "label": "t:options.gallery_layout.stacked"
+        }
+      ],
+      "default": "slider"
+    },
+    {
+      "type": "select",
+      "id": "ratio",
+      "label": "t:settings.aspect_ratio",
+      "options": [
+        {
+          "value": "natural",
+          "label": "t:options.ratio.natural"
+        },
+        {
+          "value": "square",
+          "label": "t:options.ratio.square"
+        },
+        {
+          "value": "portrait",
+          "label": "t:options.ratio.portrait"
+        }
+      ],
+      "default": "natural"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_thumbnails",
+      "label": "t:settings.show_thumbnails",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "zoom",
+      "label": "t:settings.zoom",
+      "info": "t:info.zoom",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

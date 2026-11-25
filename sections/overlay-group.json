@@ -1,0 +1,27 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "custom.overlay",
+  "name": "t:sections.groups.overlay",
+  "sections": {
+    "cart_drawer": {
+      "type": "cart-drawer",
+      "settings": {}
+    },
+    "quick_view": {
+      "type": "quick-view-dialog",
+      "settings": {}
+    }
+  },
+  "order": [
+    "cart_drawer",
+    "quick_view"
+  ]
+}

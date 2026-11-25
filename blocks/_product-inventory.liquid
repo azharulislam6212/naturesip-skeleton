@@ -1,0 +1,188 @@
+{% doc %}
+  Stock status from real inventory: in stock, low stock (below the threshold),
+  out of stock or available on backorder. Never shows invented numbers.
+
+  @example
+  {% content_for 'block', type: '_product-inventory', id: 'inventory' %}
+{% enddoc %}
+
+{%- liquid
+  assign variant = closest.product.selected_or_first_available_variant
+  assign status = ''
+  if variant.inventory_management == 'shopify'
+    if variant.inventory_quantity > 0 and variant.inventory_quantity <= block.settings.low_stock_threshold
+      assign status = 'low'
+    elsif variant.inventory_quantity > 0
+      assign status = 'in'
+    elsif variant.inventory_policy == 'continue'
+      assign status = 'backorder'
+    else
+      assign status = 'out'
+    endif
+  elsif variant.available
+    assign status = 'in'
+  endif
+-%}
+
+<p
+  class="inventory inventory--{{ status | default: 'none' }} spacing-style"
+  style="{%- render 'spacing-style', settings: block.settings -%}"
+  data-variant-update="inventory-{{ block.id }}"
+  role="status"
+  {{ block.shopify_attributes }}
+>
+  {%- case status -%}
+    {%- when 'low' -%}
+      <span class="inventory__dot" aria-hidden="true"></span>
+      {%- if block.settings.show_count -%}
+        {{ 'products.inventory.low_stock_count' | t: count: variant.inventory_quantity }}
+      {%- else -%}
+        {{ 'products.inventory.low_stock' | t }}
+      {%- endif -%}
+    {%- when 'in' -%}
+      <span class="inventory__dot" aria-hidden="true"></span>{{ 'products.inventory.in_stock' | t }}
+    {%- when 'backorder' -%}
+      <span class="inventory__dot" aria-hidden="true"></span>{{ 'products.inventory.backorder' | t }}
+    {%- when 'out' -%}
+      <span class="inventory__dot" aria-hidden="true"></span>{{ 'products.inventory.out_of_stock' | t }}
+  {%- endcase -%}
+</p>
+
+{% schema %}
+{
+  "name": "t:blocks.product_inventory.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "range",
+      "id": "low_stock_threshold",
+      "label": "t:settings.low_stock_threshold",
+      "info": "t:info.low_stock",
+      "min": 1,
+      "max": 50,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "type": "checkbox",
+      "id": "show_count",
+      "label": "t:settings.show_stock_count",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.product_inventory.name",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

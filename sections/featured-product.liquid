@@ -1,0 +1,285 @@
+{%- comment -%} Featured product: the product page layout for any chosen product, with app blocks. {%- endcomment -%}
+
+{{ 'section-product.css' | asset_url | stylesheet_tag }}
+
+{%- assign s = section.settings -%}
+<section
+  class="section section-surface product-section color-{{ s.color_scheme.id }} spacing-style"
+  style="{%- render 'spacing-style', settings: s -%}"
+  data-product-section
+  data-section-id="{{ section.id }}"
+  data-update-url="false"
+  data-shape-bottom="{{ s.shape_bottom }}"
+>
+  <div class="section-surface__background" aria-hidden="true">
+    {%- if s.background_image != blank -%}
+      {% render 'image', image: s.background_image, alt: '', sizes: '100vw' %}
+    {%- endif -%}
+  </div>
+  <div class="product product--media-{{ s.media_width }}{% if s.reverse %} product--reverse{% endif %}">
+    <div class="product__media">
+      {% content_for 'block', type: '_product-media-gallery', id: 'media-gallery' %}
+    </div>
+    <div class="product__info">
+      {% content_for 'blocks' %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.featured_product.name",
+  "class": "section-wrapper",
+  "blocks": [
+    {
+      "type": "_product-title"
+    },
+    {
+      "type": "_product-price"
+    },
+    {
+      "type": "_product-variant-picker"
+    },
+    {
+      "type": "_product-buy-buttons"
+    },
+    {
+      "type": "_product-description"
+    },
+    {
+      "type": "_product-inventory"
+    },
+    {
+      "type": "_product-sku"
+    },
+    {
+      "type": "_product-vendor"
+    },
+    {
+      "type": "_product-rating"
+    },
+    {
+      "type": "heading"
+    },
+    {
+      "type": "text"
+    },
+    {
+      "type": "button"
+    },
+    {
+      "type": "icon-text"
+    },
+    {
+      "type": "accordion"
+    },
+    {
+      "type": "group"
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "spacer"
+    },
+    {
+      "type": "image"
+    },
+    {
+      "type": "custom-liquid"
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "t:settings.product"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.layout"
+    },
+    {
+      "type": "select",
+      "id": "media_width",
+      "label": "t:settings.media_width",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:options.size.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:options.size.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:options.size.large"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "checkbox",
+      "id": "reverse",
+      "label": "t:settings.reverse",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:headers.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "t:settings.background_image"
+    },
+    {
+      "type": "range",
+      "id": "background_image_opacity",
+      "label": "t:settings.background_image_opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ section.settings.background_image != blank }}"
+    },
+    {
+      "type": "select",
+      "id": "shape_bottom",
+      "label": "t:settings.shape_bottom",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.shape.none"
+        },
+        {
+          "value": "wave",
+          "label": "t:options.shape.wave"
+        },
+        {
+          "value": "curve",
+          "label": "t:options.shape.curve"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.featured_product.name",
+      "category": "t:categories.products",
+      "blocks": {
+        "media-gallery": {
+          "type": "_product-media-gallery",
+          "static": true
+        },
+        "rating": {
+          "type": "_product-rating"
+        },
+        "title": {
+          "type": "_product-title"
+        },
+        "price": {
+          "type": "_product-price"
+        },
+        "description": {
+          "type": "_product-description"
+        },
+        "variant_picker": {
+          "type": "_product-variant-picker"
+        },
+        "inventory": {
+          "type": "_product-inventory"
+        },
+        "buy_buttons": {
+          "type": "_product-buy-buttons"
+        }
+      },
+      "block_order": [
+        "rating",
+        "title",
+        "price",
+        "description",
+        "variant_picker",
+        "inventory",
+        "buy_buttons"
+      ]
+    }
+  ]
+}
+{% endschema %}

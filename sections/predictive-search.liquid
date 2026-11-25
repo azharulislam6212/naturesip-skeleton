@@ -1,0 +1,60 @@
+{%- comment -%} Predictive search results, rendered through the Section Rendering API. {%- endcomment -%}
+
+{%- if predictive_search.performed -%}
+  <div class="predictive-search__content" data-predictive-results>
+    {%- assign resources = predictive_search.resources -%}
+    {%- if predictive_search.terms != blank and resources.products.size == 0 and resources.collections.size == 0 and resources.pages.size == 0 and resources.articles.size == 0 -%}
+      <p class="predictive-search__empty">{%- assign escaped_value = predictive_search.terms | escape -%}{{ 'search.no_results_html' | t: terms: escaped_value }}</p>
+    {%- else -%}
+      <ul class="predictive-search__list" role="listbox" aria-label="{{ 'search.suggestions' | t }}">
+        {%- for product in resources.products -%}
+          <li class="predictive-search__item" id="PredictiveProduct-{{ forloop.index }}" role="option" aria-selected="false">
+            <a class="predictive-search__link" href="{{ product.url }}" tabindex="-1">
+              {%- if product.featured_media -%}
+                {{ product.featured_media.preview_image | image_url: width: 120 | image_tag: alt: '', loading: 'lazy', class: 'predictive-search__image' }}
+              {%- endif -%}
+              <span>
+                <span class="predictive-search__title">{{ product.title | escape }}</span>
+                {% render 'price', product: product, show_from: true %}
+              </span>
+            </a>
+          </li>
+        {%- endfor -%}
+        {%- for collection in resources.collections -%}
+          <li class="predictive-search__item" id="PredictiveCollection-{{ forloop.index }}" role="option" aria-selected="false">
+            <a class="predictive-search__link" href="{{ collection.url }}" tabindex="-1">
+              <span class="predictive-search__type type-subheading">{{ 'search.collection' | t }}</span>
+              <span class="predictive-search__title">{{ collection.title | escape }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+        {%- for page in resources.pages -%}
+          <li class="predictive-search__item" id="PredictivePage-{{ forloop.index }}" role="option" aria-selected="false">
+            <a class="predictive-search__link" href="{{ page.url }}" tabindex="-1">
+              <span class="predictive-search__type type-subheading">{{ 'search.page' | t }}</span>
+              <span class="predictive-search__title">{{ page.title | escape }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+        {%- for article in resources.articles -%}
+          <li class="predictive-search__item" id="PredictiveArticle-{{ forloop.index }}" role="option" aria-selected="false">
+            <a class="predictive-search__link" href="{{ article.url }}" tabindex="-1">
+              <span class="predictive-search__type type-subheading">{{ 'search.article' | t }}</span>
+              <span class="predictive-search__title">{{ article.title | escape }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+      <a class="link predictive-search__all" href="{{ routes.search_url }}?q={{ predictive_search.terms | url_param_escape }}&amp;options%5Bprefix%5D=last">
+        {%- assign escaped_value = predictive_search.terms | escape -%}{{- 'search.view_all' | t: terms: escaped_value -}}
+        {%- render 'icon', name: 'arrow' -%}
+      </a>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.predictive_search.name"
+}
+{% endschema %}

@@ -490,6 +490,12 @@
     background-image: var(--gradient-background);
   }
 
+  /* Masked (wave, curve…) backgrounds with large images are costly to paint:
+     keep them on their own layer so scrolling does not repaint them. */
+  :is([data-shape-top], [data-shape-bottom]) > .section-surface__background {
+    will-change: transform;
+  }
+
   .section-surface__background > img {
     width: 100%;
     height: 100%;
@@ -819,6 +825,9 @@
   /* Hard shadow. drop-shadow (not text-shadow) so it also works under gradient text. */
   .text-shadow {
     filter: drop-shadow(var(--shadow-offset, var(--heading-shadow-offset)) var(--shadow-offset, var(--heading-shadow-offset)) 0 var(--shadow-color, var(--color-heading-stroke)));
+    /* Own layer: the filtered (and gradient-clipped) text is painted once and
+       moved while scrolling, instead of being repainted every frame. */
+    will-change: filter;
   }
 
   /* Highlight styles for italic words inside headings and text blocks. */
@@ -2215,7 +2224,10 @@
     overflow: clip;
   }
 
-  .lenis [data-lenis-prevent] {
+  /* Only areas that scroll on their own keep the wheel to themselves; a closed
+     dialog (desktop filter sidebar) must let the page scroll. */
+  .lenis [data-lenis-prevent]:not(dialog),
+  .lenis dialog[open] {
     overscroll-behavior: contain;
   }
 

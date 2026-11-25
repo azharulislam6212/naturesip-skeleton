@@ -107,6 +107,8 @@
   .header-wrapper[data-sticky='scroll-up'] {
     position: sticky;
     top: 0;
+    /* Own layer: showing / hiding and its shadow never repaint the hero below. */
+    will-change: translate;
   }
 
   .header-wrapper[data-scrolled] {

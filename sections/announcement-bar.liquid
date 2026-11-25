@@ -21,7 +21,7 @@
           <span class="visually-hidden">{{ 'accessibility.previous' | t }}</span>
         </button>
       {%- endif -%}
-      <ul class="slider__track announcement-bar__track" ref="track" role="list" data-lenis-prevent>
+      <ul class="slider__track announcement-bar__track" ref="track" role="list">
         {% content_for 'blocks' %}
       </ul>
       {%- if section.blocks.size > 1 -%}

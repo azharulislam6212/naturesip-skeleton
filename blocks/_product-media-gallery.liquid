@@ -28,7 +28,7 @@
   {% endif %}
   {{ block.shopify_attributes }}
 >
-  <ul class="media-gallery__track" ref="track" role="list" data-lenis-prevent>
+  <ul class="media-gallery__track" ref="track" role="list">
     {%- for media in product.media -%}
       <li class="media-gallery__item" data-media-id="{{ media.id }}">
         {% render 'product-media', media: media, zoom: s.zoom, eager: forloop.first, ratio: ratio %}

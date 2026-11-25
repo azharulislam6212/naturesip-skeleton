@@ -31,7 +31,16 @@ export async function initSmoothScroll() {
     // growing after load (lazy images, fonts, recommendations, reveal
     // animations) and a cached height stopped the scroll before the footer end.
     naiveDimensions: true,
-    prevent: (/** @type {HTMLElement} */ node) => node.closest('dialog, .pswp, [data-lenis-prevent]') !== null,
+    // Open drawers / modals, the lightbox and marked scroll areas scroll on
+    // their own. A closed <dialog> (the desktop filter sidebar shown in place)
+    // must not, or the page stops scrolling while the cursor is over it.
+    prevent: (/** @type {HTMLElement} */ node) =>
+      node.closest('dialog[open], .pswp, [data-lenis-prevent]:not(dialog)') !== null,
+    // Sideways gestures (trackpad swipes on sliders) stay native; Lenis only
+    // takes up/down. So slider tracks need no data-lenis-prevent, and the page
+    // keeps scrolling when the cursor passes over a slider.
+    virtualScroll: (/** @type {{ deltaX: number, deltaY: number }} */ { deltaX, deltaY }) =>
+      Math.abs(deltaY) >= Math.abs(deltaX),
   });
 
   const frame = (/** @type {number} */ time) => {

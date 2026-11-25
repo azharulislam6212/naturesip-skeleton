@@ -23,7 +23,7 @@
 
     {%- if s.layout == 'slider' -%}
       <slider-component class="featured-collection__slider product-grid--mobile-{{ s.columns_mobile }}" style="{{ column_style }} --slide-width-mobile: {{ 100 | divided_by: s.columns_mobile | minus: 8 }}%;">
-        <ul class="slider__track" ref="track" role="list" data-lenis-prevent>
+        <ul class="slider__track" ref="track" role="list">
           {%- for product in products limit: s.limit -%}
             <li class="slider__slide">{% render 'product-card', product: product, section_id: section.id %}</li>
           {%- else -%}

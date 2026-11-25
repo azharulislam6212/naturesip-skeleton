@@ -10,7 +10,7 @@
   {% render 'shape-attributes', settings: s %}
 >
   <slider-component class="slideshow__slider" aria-roledescription="{{ 'accessibility.carousel' | t }}" aria-label="{{ s.accessible_name | escape }}">
-    <ul class="slider__track slideshow__track" ref="track" role="list" data-lenis-prevent>
+    <ul class="slider__track slideshow__track" ref="track" role="list">
       {% content_for 'blocks' %}
     </ul>
     {%- if section.blocks.size > 1 -%}

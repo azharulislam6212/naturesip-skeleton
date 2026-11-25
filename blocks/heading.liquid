@@ -369,24 +369,54 @@
       "type": "text_alignment",
       "id": "alignment",
       "label": "t:settings.alignment",
+      "info": "t:info.alignment_parent",
       "default": "left"
     },
     {
       "type": "text_alignment",
       "id": "alignment_mobile",
       "label": "t:settings.alignment_mobile",
+      "info": "t:info.alignment_mobile_parent",
       "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "max_width_preset",
+      "label": "t:settings.max_width",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.max_width.none"
+        },
+        {
+          "value": "small",
+          "label": "t:options.max_width.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:options.max_width.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:options.max_width.large"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.max_width.custom"
+        }
+      ],
+      "default": "none"
     },
     {
       "type": "range",
       "id": "max_width",
-      "label": "t:settings.max_width",
-      "min": 0,
+      "label": "t:settings.max_width_custom",
+      "min": 10,
       "max": 100,
       "step": 5,
       "unit": "ch",
-      "default": 0,
-      "info": "t:info.max_width"
+      "default": 50,
+      "visible_if": "{{ block.settings.max_width_preset == 'custom' }}"
     },
     {
       "type": "header",

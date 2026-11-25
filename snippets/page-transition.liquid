@@ -1,0 +1,76 @@
+{% doc %}
+  Page transitions between pages, driven by the `page_transition` theme setting.
+  Render once, first thing inside <body>. Outputs nothing when the setting is 'none'.
+
+  - Link navigations in browsers with cross-document View Transitions animate
+    natively with the chosen style (fade, slide or reveal).
+  - Every other load fades in through <page-transition> (assets/page-transition.js):
+    first visit, reload, theme editor refresh, and all loads in browsers
+    without View Transitions. The inline script hides the page before the
+    first frame; a CSS failsafe reveals it anyway if the module never runs.
+
+  @example
+  {% render 'page-transition' %}
+{% enddoc %}
+
+{%- if settings.page_transition != 'none' -%}
+  <style>
+    @media (prefers-reduced-motion: no-preference) {
+      @view-transition {
+        navigation: auto;
+      }
+    }
+
+    @layer components {
+      {%- case settings.page_transition -%}
+        {%- when 'fade' -%}
+          ::view-transition-old(root) {
+            animation: fade-out var(--duration-base) var(--ease-in-out) both;
+          }
+          ::view-transition-new(root) {
+            animation: fade-in var(--duration-base) var(--ease-in-out) both;
+          }
+        {%- when 'slide' -%}
+          ::view-transition-old(root) {
+            animation: page-slide-out var(--duration-slow) var(--ease-in-out) both;
+          }
+          ::view-transition-new(root) {
+            animation: page-slide-in var(--duration-slow) var(--ease-in-out) both;
+          }
+        {%- when 'reveal' -%}
+          ::view-transition-old(root) {
+            animation: none;
+          }
+          ::view-transition-new(root) {
+            animation: page-reveal var(--duration-slow) var(--ease-in-out) both;
+          }
+      {%- endcase -%}
+
+      /* Fallback fade-in. If JavaScript never takes over, the page still
+         fades in after a short delay instead of staying hidden. */
+      :root[data-page-entering] body {
+        animation: fade-in var(--duration-base) var(--ease-in-out) 1.5s both;
+      }
+    }
+  </style>
+
+  <script>
+    (function () {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var root = document.documentElement;
+      if ('onpagereveal' in window) {
+        // Native view transitions animate link navigations. Every other load
+        // (first visit, reload, theme editor refresh) fades in instead.
+        // pagereveal fires before the first frame, so nothing flashes.
+        window.addEventListener('pagereveal', function (event) {
+          if (!event.viewTransition) root.setAttribute('data-page-entering', '');
+          root.setAttribute('data-page-revealed', '');
+        }, { once: true });
+      } else {
+        root.setAttribute('data-page-entering', '');
+      }
+    })();
+  </script>
+
+  <page-transition hidden></page-transition>
+{%- endif -%}

@@ -11,6 +11,10 @@
  * Content is always visible without JavaScript. Elements that are already on
  * screen when the page loads are never hidden (protects LCP and avoids a
  * flash). Under prefers-reduced-motion nothing is hidden or moved.
+ *
+ * Theme editor: animations run as on the storefront, and a section that the
+ * editor re-renders (any setting change) replays its on-screen animations,
+ * so a changed animation setting is previewed straight away.
  */
 import { playEntrance, whenInView } from '@theme/motion-engine';
 import { ContentUpdateEvent } from '@theme/events';
@@ -75,9 +79,12 @@ function reveal(element) {
   playEntrance(element, preset, { delay: delay + order * STAGGER_STEP });
 }
 
-/** @param {ParentNode} root */
-export function initAnimations(root = document) {
-  if (prefersReducedMotion() || isDesignMode()) return;
+/**
+ * @param {ParentNode} [root]
+ * @param { { replay?: boolean } } [options] replay: also animate elements that are already on screen.
+ */
+export function initAnimations(root = document, { replay = false } = {}) {
+  if (prefersReducedMotion()) return;
 
   const elements = [...root.querySelectorAll('[data-animate]:not([data-animated]):not([data-animate="none"])')];
   /** @type {Element[]} */
@@ -85,7 +92,8 @@ export function initAnimations(root = document) {
 
   for (const element of elements) {
     if (isOnScreen(element)) {
-      element.setAttribute('data-animated', '');
+      if (replay) reveal(element);
+      else element.setAttribute('data-animated', '');
     } else {
       element.setAttribute('data-animate-pending', '');
       if (element.getAttribute('data-animate-text') === 'words') splitWords(element);
@@ -98,4 +106,6 @@ export function initAnimations(root = document) {
 }
 
 document.addEventListener(ContentUpdateEvent.eventName, (event) => initAnimations(event.detail.root));
-document.addEventListener('shopify:section:load', (event) => initAnimations(/** @type {Element} */ (event.target)));
+document.addEventListener('shopify:section:load', (event) =>
+  initAnimations(/** @type {Element} */ (event.target), { replay: isDesignMode() })
+);

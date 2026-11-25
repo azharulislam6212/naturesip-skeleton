@@ -1306,7 +1306,7 @@
             "label": "t:options.font_role.accent"
           }
         ],
-        "default": "body"
+        "default": "accent"
       },
       {
         "type": "range",
@@ -1331,6 +1331,74 @@
       {
         "type": "select",
         "id": "type_subheading_case",
+        "label": "t:settings.case",
+        "options": [
+          {
+            "value": "none",
+            "label": "t:options.case.none"
+          },
+          {
+            "value": "uppercase",
+            "label": "t:options.case.uppercase"
+          },
+          {
+            "value": "lowercase",
+            "label": "t:options.case.lowercase"
+          },
+          {
+            "value": "capitalize",
+            "label": "t:options.case.capitalize"
+          }
+        ],
+        "default": "uppercase"
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.headers.navigation"
+      },
+      {
+        "type": "select",
+        "id": "type_navigation_font",
+        "label": "t:settings.font",
+        "options": [
+          {
+            "value": "heading",
+            "label": "t:options.font_role.heading"
+          },
+          {
+            "value": "body",
+            "label": "t:options.font_role.body"
+          },
+          {
+            "value": "accent",
+            "label": "t:options.font_role.accent"
+          }
+        ],
+        "default": "body"
+      },
+      {
+        "type": "range",
+        "id": "type_navigation_size",
+        "min": 10,
+        "max": 24,
+        "step": 1,
+        "unit": "px",
+        "label": "t:settings.font_size",
+        "default": 13
+      },
+      {
+        "type": "range",
+        "id": "type_navigation_letter_spacing",
+        "min": -2,
+        "max": 20,
+        "step": 1,
+        "unit": "%",
+        "label": "t:settings.letter_spacing",
+        "default": 4
+      },
+      {
+        "type": "select",
+        "id": "type_navigation_case",
         "label": "t:settings.case",
         "options": [
           {
@@ -1958,7 +2026,7 @@
         "id": "smooth_scroll",
         "label": "t:settings_schema.animations.smooth_scroll",
         "info": "t:settings_schema.animations.smooth_scroll_info",
-        "default": false
+        "default": true
       },
       {
         "type": "range",

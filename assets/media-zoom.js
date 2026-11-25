@@ -22,7 +22,7 @@ function loadStylesheet() {
 
 /** Warm the modules on hover/focus intent so the first open is instant. */
 export function preloadZoom() {
-  lightboxModule ??= import('@theme/vendor-photoswipe-lightbox');
+  lightboxModule ??= import('@theme/photoswipe-lightbox');
   loadStylesheet();
   return lightboxModule;
 }
@@ -49,7 +49,7 @@ export async function openZoom(items, index, { onChange } = {}) {
 
   const lightbox = new PhotoSwipeLightbox({
     dataSource,
-    pswpModule: () => import('@theme/vendor-photoswipe'),
+    pswpModule: () => import('@theme/photoswipe'),
     bgOpacity: 0.95,
     showHideAnimationType: 'zoom',
     closeTitle: t('close'),

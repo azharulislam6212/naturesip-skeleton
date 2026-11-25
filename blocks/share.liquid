@@ -1,0 +1,50 @@
+{% doc %}
+  Share block: social share links for the product or article it sits in
+  (falls back to the current page). Networks are chosen in
+  Theme settings > Social sharing.
+
+  @example
+  {% content_for 'block', type: 'share', id: 'share' %}
+{% enddoc %}
+
+{%- liquid
+  if closest.product != blank
+    assign share_path = closest.product.url
+    assign share_title = closest.product.title
+    assign share_image = closest.product.featured_image
+  elsif closest.article != blank
+    assign share_path = closest.article.url
+    assign share_title = closest.article.title
+    assign share_image = closest.article.image
+  else
+    assign share_path = request.path
+    assign share_title = page_title
+    assign share_image = blank
+  endif
+  assign share_url = request.origin | append: share_path
+-%}
+
+<div class="share-block" {{ block.shopify_attributes }}>
+  {% render 'share-buttons', url: share_url, title: share_title, image: share_image, label: block.settings.label %}
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.share.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "t:settings.label",
+      "default": "t:defaults.share_label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.share.name",
+      "category": "t:categories.links"
+    }
+  ]
+}
+{% endschema %}

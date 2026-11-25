@@ -15,6 +15,9 @@
   @param {string} [style] - Inline custom properties (custom colours).
   @param {string} [attributes] - Extra raw attributes.
 
+  Buttons carry their hover effect themselves: `data-hover` comes from the
+  `button_hover_effect` theme setting ('none', 'fade' or 'sweep').
+
   @example
   {% render 'button', label: block.settings.label, url: block.settings.link, icon: 'bag' %}
 {% enddoc %}
@@ -25,6 +28,7 @@
     assign classes = 'link'
   else
     assign classes = 'button button--' | append: variant
+    assign hover_attribute = 'data-hover="' | append: settings.button_hover_effect | append: '"'
     if size == 'small' or size == 'large'
       assign classes = classes | append: ' button--' | append: size
     endif
@@ -52,6 +56,7 @@
   <a
     class="{{ classes }}"
     href="{{ url }}"
+    {{ hover_attribute }}
     {% if new_tab %}
       target="_blank" rel="noopener"
     {% endif %}
@@ -67,6 +72,7 @@
   <button
     class="{{ classes }}"
     type="{{ type | default: 'button' }}"
+    {{ hover_attribute }}
     {% if style != blank %}
       style="{{ style }}"
     {% endif %}

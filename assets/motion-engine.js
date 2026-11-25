@@ -6,11 +6,11 @@
  */
 import { prefersReducedMotion } from '@theme/utilities';
 
-/** @type {Promise<typeof import('./vendor-motion.js')> | null} */
+/** @type {Promise<typeof import('./motion.js')> | null} */
 let loading = null;
 
 export function loadMotion() {
-  loading ??= import('@theme/vendor-motion');
+  loading ??= import('@theme/motion');
   return loading;
 }
 

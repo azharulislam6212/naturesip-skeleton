@@ -1,0 +1,20 @@
+{%- doc -%}
+  Prints the text direction of the current storefront language: 'rtl' or 'ltr'.
+  Use it for the `dir` attribute on <html>. Outputs no whitespace.
+
+  RTL languages (by ISO 639-1 primary code): Arabic, Persian, Hebrew, Urdu,
+  Pashto, Sindhi, Uyghur, Yiddish, Dhivehi, Central Kurdish (ckb).
+
+  @example
+  <html lang="{{ request.locale.iso_code }}" dir="{% render 'text-direction' %}">
+{%- enddoc -%}
+
+{%- liquid
+  assign language = request.locale.iso_code | downcase | split: '-' | first
+  assign rtl_languages = 'ar,fa,he,ur,ps,sd,ug,yi,dv,ckb' | split: ','
+  if rtl_languages contains language
+    echo 'rtl'
+  else
+    echo 'ltr'
+  endif
+-%}

@@ -16,6 +16,7 @@ import { isDesignMode, onIdle } from '@theme/utilities';
 
 /** @type {Record<string, { module: string, load: 'eager' | 'visible' | 'interaction' }>} */
 const REGISTRY = {
+  'page-transition': { module: '@theme/page-transition', load: 'eager' },
   'header-component': { module: '@theme/header', load: 'eager' },
   'header-menu': { module: '@theme/header', load: 'interaction' },
   'header-drawer': { module: '@theme/header', load: 'interaction' },
@@ -137,6 +138,9 @@ document.addEventListener('click', async (event) => {
 // Optional enhancements, after the page has settled.
 onIdle(() => {
   const settings = window.Theme?.settings ?? {};
-  if (settings.animations) import('@theme/animations').then(({ initAnimations }) => initAnimations());
+  // In the theme editor, on-screen elements animate too, so setting changes are visible on reload.
+  if (settings.animations) {
+    import('@theme/animations').then(({ initAnimations }) => initAnimations(document, { replay: debug }));
+  }
   if (settings.smoothScroll) import('@theme/smooth-scroll').then(({ initSmoothScroll }) => initSmoothScroll());
 });

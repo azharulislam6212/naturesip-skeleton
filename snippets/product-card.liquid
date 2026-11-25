@@ -46,7 +46,7 @@
   style="--card-ratio: {{ ratio }};"
   {% render 'animation-attributes' %}
 >
-  <div class="product-card__media media{{ ratio_class }}">
+  <div class="product-card__media media{{ ratio_class }}" data-hover="{{ settings.image_hover }}">
     {%- if product.featured_media -%}
       {% render 'image', image: product.featured_media.preview_image, sizes: sizes, eager: eager, max_width: 1200, class: 'product-card__image' %}
       {%- if second_image -%}

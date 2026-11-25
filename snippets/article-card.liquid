@@ -1,0 +1,48 @@
+{% doc %}
+  Article card for blog listings. Image ratio, author and excerpt length come
+  from Theme settings > Blog cards; date and excerpt visibility from the section.
+
+  @param {object} [article] - The article. Blank shows placeholder content.
+  @param {string} [heading_tag] - Title tag: 'h2' (default) or 'h3'.
+  @param {boolean} [show_date] - Show the publish date.
+  @param {boolean} [show_excerpt] - Show the excerpt.
+  @param {string} [sizes] - Image sizes attribute.
+
+  @example
+  {% render 'article-card', article: article, heading_tag: 'h3', show_date: true, show_excerpt: true %}
+{% enddoc %}
+
+{%- liquid
+  assign tag = heading_tag | default: 'h2'
+  case settings.blog_card_image_ratio
+    when 'square'
+      assign ratio = '1'
+    when 'portrait'
+      assign ratio = '0.8'
+    else
+      assign ratio = '1.5'
+  endcase
+  assign excerpt_words = settings.blog_card_excerpt_length | default: 20
+-%}
+
+<article class="article-card">
+  {%- if article != blank -%}
+    <div class="media media--hover" data-hover="{{ settings.image_hover }}" style="--ratio: {{ ratio }};">
+      {% render 'image', image: article.image, sizes: sizes, placeholder: 'lifestyle-2' %}
+    </div>
+    {%- if show_date or settings.blog_card_show_author -%}
+      <p class="type-subheading">
+        {%- if show_date -%}{{ article.published_at | time_tag: format: 'date' }}{%- endif -%}
+        {%- if show_date and settings.blog_card_show_author %} · {% endif -%}
+        {%- if settings.blog_card_show_author -%}{{ article.author | escape }}{%- endif -%}
+      </p>
+    {%- endif -%}
+    <{{ tag }} class="type-heading type-h5"><a class="product-card__link" href="{{ article.url }}">{{ article.title | escape }}</a></{{ tag }}>
+    {%- if show_excerpt -%}
+      <p>{{ article.excerpt_or_content | strip_html | truncatewords: excerpt_words }}</p>
+    {%- endif -%}
+  {%- else -%}
+    <div class="media" style="--ratio: {{ ratio }};">{{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+    <{{ tag }} class="type-heading type-h5">{{ 'onboarding.article_title' | t }}</{{ tag }}>
+  {%- endif -%}
+</article>

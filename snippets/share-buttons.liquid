@@ -1,0 +1,75 @@
+{% doc %}
+  Social share links for a page. Which networks show comes from
+  Theme settings > Social sharing. Outputs nothing when every option is off.
+
+  @param {string} url - Absolute URL to share.
+  @param {string} title - Title shared with the link.
+  @param {object} [image] - Image for Pinterest.
+  @param {string} [label] - Visible label before the buttons.
+
+  @example
+  {% render 'share-buttons', url: shop.url | append: product.url, title: product.title, image: product.featured_image %}
+{% enddoc %}
+
+{%- liquid
+  assign any = false
+  if settings.share_facebook or settings.share_x or settings.share_pinterest or settings.share_whatsapp or settings.share_email or settings.share_copy_link
+    assign any = true
+  endif
+  assign share_url = url | url_encode
+  assign share_title = title | strip_html | url_encode
+-%}
+
+{%- if any -%}
+  <div class="share-buttons">
+    {%- if label != blank -%}
+      <span class="share-buttons__label type-subheading">{{ label | escape }}</span>
+    {%- endif -%}
+    <ul class="share-buttons__list" role="list">
+      {%- if settings.share_facebook -%}
+        <li>
+          <a class="icon-button" href="https://www.facebook.com/sharer/sharer.php?u={{ share_url }}" target="_blank" rel="noopener">
+            {% render 'icon', name: 'facebook' %}<span class="visually-hidden">{{ 'general.share.facebook' | t }}</span>
+          </a>
+        </li>
+      {%- endif -%}
+      {%- if settings.share_x -%}
+        <li>
+          <a class="icon-button" href="https://x.com/intent/post?url={{ share_url }}&text={{ share_title }}" target="_blank" rel="noopener">
+            {% render 'icon', name: 'x' %}<span class="visually-hidden">{{ 'general.share.x' | t }}</span>
+          </a>
+        </li>
+      {%- endif -%}
+      {%- if settings.share_pinterest -%}
+        <li>
+          <a class="icon-button" href="https://pinterest.com/pin/create/button/?url={{ share_url }}&description={{ share_title }}{% if image %}&media={{ image | image_url: width: 1200 | prepend: 'https:' | url_encode }}{% endif %}" target="_blank" rel="noopener">
+            {% render 'icon', name: 'pinterest' %}<span class="visually-hidden">{{ 'general.share.pinterest' | t }}</span>
+          </a>
+        </li>
+      {%- endif -%}
+      {%- if settings.share_whatsapp -%}
+        <li>
+          <a class="icon-button" href="https://wa.me/?text={{ share_title }}%20{{ share_url }}" target="_blank" rel="noopener">
+            {% render 'icon', name: 'chat' %}<span class="visually-hidden">{{ 'general.share.whatsapp' | t }}</span>
+          </a>
+        </li>
+      {%- endif -%}
+      {%- if settings.share_email -%}
+        <li>
+          <a class="icon-button" href="mailto:?subject={{ share_title }}&body={{ share_url }}">
+            {% render 'icon', name: 'mail' %}<span class="visually-hidden">{{ 'general.share.email' | t }}</span>
+          </a>
+        </li>
+      {%- endif -%}
+      {%- if settings.share_copy_link -%}
+        <li>
+          <share-copy data-url="{{ url | escape }}">
+            <button class="icon-button" type="button" ref="button">
+              {% render 'icon', name: 'link' %}<span class="visually-hidden">{{ 'general.share.copy_link' | t }}</span>
+            </button>
+          </share-copy>
+        </li>
+      {%- endif -%}
+    </ul>
+  </div>
+{%- endif -%}

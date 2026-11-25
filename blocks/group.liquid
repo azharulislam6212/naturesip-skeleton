@@ -33,12 +33,18 @@
     assign classes = classes | append: ' section-surface'
   endif
 
+  # Each direction has its own pair of settings, so only valid options show:
+  # vertical stacks can't "space between" across, horizontal rows can't
+  # "stretch" along. The horizontal setting also sets the text alignment
+  # that heading/text blocks inside follow.
   if horizontal
-    assign justify = s.horizontal_alignment
-    assign align = s.vertical_alignment
+    assign justify = s.horizontal_alignment_row
+    assign align = s.vertical_alignment_row
+    assign horizontal_choice = s.horizontal_alignment_row
   else
-    assign justify = s.vertical_alignment | replace: 'stretch', 'flex-start'
-    assign align = s.horizontal_alignment | replace: 'space-between', 'flex-start'
+    assign justify = s.vertical_alignment
+    assign align = s.horizontal_alignment
+    assign horizontal_choice = s.horizontal_alignment
   endif
 -%}
 
@@ -51,8 +57,8 @@
     --justify: {{ justify }};
     --align: {{ align }};
     --gap: {{ s.gap }}px;
-    --gap-tablet: {{ s.gap_tablet }}px;
     --gap-mobile: {{ s.gap_mobile }}px;
+    --stack-text-align: {% case horizontal_choice %}{% when 'center' %}center{% when 'flex-end' %}end{% else %}start{% endcase %};
     --group-radius: {{ s.border_radius }}px;
     {%- if s.border %}--group-border-width: {{ s.border_width }}px; --group-border-opacity: {{ s.border_opacity }}%;{% endif -%}
     {%- if s.width == 'custom' %}--block-width: {{ s.custom_width }}%; --block-width-mobile: {{ s.custom_width_mobile }}%;{% endif -%}
@@ -137,15 +143,12 @@
           "label": "t:options.alignment.flex_end"
         },
         {
-          "value": "space-between",
-          "label": "t:options.alignment.space_between"
-        },
-        {
           "value": "stretch",
           "label": "t:options.alignment.stretch"
         }
       ],
-      "default": "flex-start"
+      "default": "flex-start",
+      "visible_if": "{{ block.settings.direction == 'column' }}"
     },
     {
       "type": "select",
@@ -165,26 +168,67 @@
           "label": "t:options.alignment.flex_end"
         },
         {
+          "value": "space-between",
+          "label": "t:options.alignment.space_between"
+        }
+      ],
+      "default": "center",
+      "visible_if": "{{ block.settings.direction == 'column' }}"
+    },
+    {
+      "type": "select",
+      "id": "horizontal_alignment_row",
+      "label": "t:settings.horizontal_alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.alignment.flex_start"
+        },
+        {
+          "value": "center",
+          "label": "t:options.alignment.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.alignment.flex_end"
+        },
+        {
+          "value": "space-between",
+          "label": "t:options.alignment.space_between"
+        }
+      ],
+      "default": "flex-start",
+      "visible_if": "{{ block.settings.direction == 'row' }}"
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment_row",
+      "label": "t:settings.vertical_alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.alignment.flex_start"
+        },
+        {
+          "value": "center",
+          "label": "t:options.alignment.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.alignment.flex_end"
+        },
+        {
           "value": "stretch",
           "label": "t:options.alignment.stretch"
         }
       ],
-      "default": "center"
+      "default": "center",
+      "visible_if": "{{ block.settings.direction == 'row' }}"
     },
     {
       "type": "range",
       "id": "gap",
       "label": "t:settings.gap",
-      "min": 0,
-      "max": 100,
-      "step": 2,
-      "unit": "px",
-      "default": 16
-    },
-    {
-      "type": "range",
-      "id": "gap_tablet",
-      "label": "t:settings.gap_tablet",
       "min": 0,
       "max": 100,
       "step": 2,
@@ -508,8 +552,8 @@
       "category": "t:categories.layout",
       "settings": {
         "direction": "row",
-        "horizontal_alignment": "stretch",
-        "vertical_alignment": "flex-start",
+        "horizontal_alignment_row": "flex-start",
+        "vertical_alignment_row": "flex-start",
         "gap": 32
       },
       "blocks": {

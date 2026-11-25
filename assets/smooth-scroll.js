@@ -19,7 +19,7 @@ let openDialogs = 0;
 export async function initSmoothScroll() {
   if (lenis || prefersReducedMotion() || isDesignMode() || isTouchDevice()) return;
 
-  const { default: Lenis } = await import('@theme/vendor-lenis');
+  const { default: Lenis } = await import('@theme/lenis');
   const lerp = Number(window.Theme?.settings?.smoothScrollLerp ?? 0.1);
 
   lenis = new Lenis({

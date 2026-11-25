@@ -15,7 +15,7 @@
       {%- for article in s.blog.articles limit: s.limit -%}
         <li>
           <article class="article-card">
-            <div class="media media--hover" style="--ratio: 1.5;">
+            <div class="media media--hover" data-hover="{{ settings.image_hover }}" style="--ratio: 1.5;">
               {% render 'image', image: article.image, sizes: '(min-width: 990px) 33vw, 100vw', placeholder: 'lifestyle-2' %}
             </div>
             {%- if s.show_date -%}<p class="type-subheading">{{ article.published_at | time_tag: format: 'date' }}</p>{%- endif -%}
@@ -226,7 +226,7 @@
                 "type_preset": "subheading",
                 "alignment": "center",
                 "alignment_mobile": "center",
-                "max_width": 70
+                "max_width_preset": "large"
               }
             }
           },

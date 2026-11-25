@@ -33,8 +33,9 @@
     assign custom_style = '--link-color: ' | append: s.link_color | append: ';'
   endif
 
+  # Fill and Custom size the wrapper; the button then fills the wrapper.
   assign full_width = false
-  if s.width == 'fill'
+  if s.width == 'fill' or s.width == 'custom'
     assign full_width = true
   endif
 -%}

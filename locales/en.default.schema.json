@@ -96,7 +96,7 @@
     "text": {
       "name": "Text",
       "presets": {
-        "heading": "Heading",
+        "heading": "Title",
         "subheading": "Subheading"
       }
     },
@@ -169,6 +169,8 @@
     "typography": "Typography"
   },
   "info": {
+    "alignment_mobile_parent": "Left uses the desktop alignment.",
+    "alignment_parent": "Left follows the alignment of the group or section around this block. Center and right always apply.",
     "animation": "Theme default follows Theme settings > Animations.",
     "autoplay": "Autoplaying videos are muted.",
     "button_style": "Edit button styles in Theme settings > Buttons and Colors.",
@@ -193,7 +195,6 @@
     "installments": "Requires Shop Pay Installments.",
     "low_stock": "Shows \"Low stock\" when real inventory is at or below this number.",
     "marquee_speed": "Time for one full loop. Higher is slower.",
-    "max_width": "0 means no limit.",
     "primary_product": "Uses an H1 title. Turn off when this section is not the page's main product.",
     "priority": "Turn on only for the first image on the page to load it faster.",
     "quick_view": "Used when product cards show a quick view button.",
@@ -380,6 +381,13 @@
       "grid": "Grid",
       "slider": "Slider"
     },
+    "max_width": {
+      "custom": "Custom",
+      "large": "Large",
+      "medium": "Medium",
+      "none": "None",
+      "small": "Small"
+    },
     "open_on": {
       "click": "Click",
       "hover": "Hover"
@@ -452,9 +460,9 @@
     },
     "type_preset": {
       "custom": "Custom",
-      "display_l": "Display L",
-      "display_m": "Display M",
-      "display_s": "Display S",
+      "display_l": "Display large",
+      "display_m": "Display medium",
+      "display_s": "Display small",
       "display_xl": "Display XL",
       "h1": "H1",
       "h2": "H2",
@@ -706,6 +714,7 @@
     "low_stock_threshold": "Low stock threshold",
     "marquee_speed": "Loop duration",
     "max_width": "Max width",
+    "max_width_custom": "Custom max width",
     "media_width": "Media width",
     "menu": "Menu",
     "menu_open_on": "Menu open on",
@@ -894,10 +903,10 @@
     },
     "headers": {
       "decorated_headings": "Decorated headings",
-      "display_l": "Display l",
-      "display_m": "Display m",
-      "display_s": "Display s",
-      "display_xl": "Display xl",
+      "display_l": "Display large",
+      "display_m": "Display medium",
+      "display_s": "Display small",
+      "display_xl": "Display XL",
       "fonts": "Fonts",
       "h1": "H1",
       "h2": "H2",
@@ -906,6 +915,7 @@
       "h5": "H5",
       "h6": "H6",
       "hover": "Hover",
+      "navigation": "Navigation",
       "page_transitions": "Page transitions",
       "paragraph": "Paragraph",
       "scroll_reveal": "Scroll reveal",

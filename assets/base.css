@@ -117,6 +117,16 @@
   inherits: false;
 }
 
+@property --align-self {
+  syntax: '*';
+  inherits: false;
+}
+
+@property --align-self-mobile {
+  syntax: '*';
+  inherits: false;
+}
+
 /* =========================================================== reset */
 @layer reset {
   *,
@@ -609,14 +619,37 @@
     }
   }
 
+  /* Text alignment priority:
+     1. the block's own alignment, when the merchant picks one;
+     2. inside a group/section stack: that container's horizontal alignment
+        (--stack-text-align, set inline on the stack);
+     3. anywhere else: inherited from the surrounding markup. */
   .text-block {
     max-width: var(--max-width, none);
-    text-align: var(--text-align-mobile, var(--text-align, start));
+    text-align: var(--text-align-mobile, var(--text-align, inherit));
+  }
+
+  .layout-stack > .text-block {
+    text-align: var(--text-align-mobile, var(--text-align, var(--stack-text-align, inherit)));
+  }
+
+  /* A block with its own alignment also positions itself in a vertical stack,
+     so a fit-content or max-width block lines up with its text. */
+  .layout-stack:not(.layout-stack--horizontal) > .text-block {
+    align-self: var(--align-self-mobile, var(--align-self, auto));
   }
 
   @media (min-width: 750px) {
     .text-block {
-      text-align: var(--text-align, start);
+      text-align: var(--text-align, inherit);
+    }
+
+    .layout-stack > .text-block {
+      text-align: var(--text-align, var(--stack-text-align, inherit));
+    }
+
+    .layout-stack:not(.layout-stack--horizontal) > .text-block {
+      align-self: var(--align-self, auto);
     }
   }
 
@@ -812,13 +845,14 @@
     height: 100%;
   }
 
-  [data-button-hover='sweep'] .button__fill--hover {
+  .button[data-hover='sweep'] .button__fill--hover {
     opacity: 1;
     transform: scaleX(0);
     transform-origin: left center;
   }
 
-  [data-button-hover='none'] :is(.button, .button__fill--hover) {
+  .button[data-hover='none'],
+  .button[data-hover='none'] .button__fill--hover {
     transition: none;
   }
 
@@ -948,21 +982,22 @@
     fill: color-mix(in srgb, var(--color-foreground) 35%, transparent);
   }
 
-  [data-image-hover='zoom'] .media--hover > img,
-  [data-image-hover='zoom'] .product-card__media img {
+  /* Image hover, set per element with data-hover (theme setting image_hover).
+     Applies to the img or to the SVG placeholder shown when no image is set. */
+  .media[data-hover='zoom'] > :is(img, svg) {
     transition: transform var(--duration-slow) var(--ease-out);
   }
 
   @media (hover: hover) {
-    [data-image-hover='zoom'] :is(.media--hover:hover, .product-card:hover .product-card__media) img {
+    :is(.media--hover:hover, .product-card:hover .product-card__media)[data-hover='zoom'] > :is(img, svg) {
       transform: scale(1.06);
     }
 
-    [data-image-hover='lift'] :is(.media--hover, .product-card__media) {
+    .media[data-hover='lift'] {
       transition: translate var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
     }
 
-    [data-image-hover='lift'] :is(.media--hover:hover, .product-card:hover .product-card__media) {
+    :is(.media--hover:hover, .product-card:hover .product-card__media)[data-hover='lift'] {
       translate: 0 -6px;
       box-shadow: 0 18px 32px -18px var(--color-shadow);
     }
@@ -1711,31 +1746,6 @@
 
   .word {
     display: inline-block;
-  }
-
-  /* Page transitions: cross-document View Transitions, enabled per setting in theme.liquid. */
-  :root[data-page-transition='fade']::view-transition-old(root) {
-    animation: fade-out var(--duration-base) var(--ease-in-out) both;
-  }
-
-  :root[data-page-transition='fade']::view-transition-new(root) {
-    animation: fade-in var(--duration-base) var(--ease-in-out) both;
-  }
-
-  :root[data-page-transition='slide']::view-transition-old(root) {
-    animation: page-slide-out var(--duration-slow) var(--ease-in-out) both;
-  }
-
-  :root[data-page-transition='slide']::view-transition-new(root) {
-    animation: page-slide-in var(--duration-slow) var(--ease-in-out) both;
-  }
-
-  :root[data-page-transition='reveal']::view-transition-new(root) {
-    animation: page-reveal var(--duration-slow) var(--ease-in-out) both;
-  }
-
-  :root[data-page-transition='reveal']::view-transition-old(root) {
-    animation: none;
   }
 
   /* Lenis */

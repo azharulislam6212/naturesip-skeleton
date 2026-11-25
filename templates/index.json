@@ -45,7 +45,7 @@
           "type": "text",
           "settings": {
             "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk — this is energy, done right.</p>",
-            "max_width": 45
+            "max_width_preset": "medium"
           }
         },
         "button": {
@@ -101,7 +101,7 @@
                 "type_preset": "subheading",
                 "alignment": "center",
                 "alignment_mobile": "center",
-                "max_width": 70
+                "max_width_preset": "large"
               }
             }
           },
@@ -301,7 +301,7 @@
                 "type_preset": "subheading",
                 "alignment": "center",
                 "alignment_mobile": "center",
-                "max_width": 70
+                "max_width_preset": "large"
               }
             }
           },
@@ -499,7 +499,7 @@
             "type_preset": "subheading",
             "alignment": "center",
             "alignment_mobile": "center",
-            "max_width": 70
+            "max_width_preset": "large"
           }
         }
       },
@@ -543,7 +543,7 @@
                 "type_preset": "subheading",
                 "alignment": "center",
                 "alignment_mobile": "center",
-                "max_width": 70
+                "max_width_preset": "large"
               }
             }
           },

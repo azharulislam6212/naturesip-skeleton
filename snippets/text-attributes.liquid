@@ -43,14 +43,39 @@
   if settings.shadow
     assign classes = classes | append: ' text-shadow'
   endif
+
+  # Alignment priority: the default (left) follows the parent group/section,
+  # so the container's alignment wins until the merchant picks center or
+  # right on the block itself. Mobile left follows the desktop alignment.
+  assign align = settings.alignment | default: 'left'
+  assign align_mobile = settings.alignment_mobile | default: 'left'
+  if align == 'left'
+    assign align = 'inherit'
+  endif
+  if align_mobile == 'left'
+    assign align_mobile = 'inherit'
+  endif
+
+  case settings.max_width_preset
+    when 'small'
+      assign max_width = '30ch'
+    when 'medium'
+      assign max_width = '45ch'
+    when 'large'
+      assign max_width = '70ch'
+    when 'custom'
+      assign max_width = settings.max_width | append: 'ch'
+    else
+      assign max_width = blank
+  endcase
 -%}
 
 class="{{ classes | strip }}"
 style="
   {%- render 'spacing-style', settings: settings -%}
-  --text-align: {{ settings.alignment | default: 'left' }};
-  --text-align-mobile: {{ settings.alignment_mobile | default: settings.alignment | default: 'left' }};
-  {%- if settings.max_width > 0 %}--max-width: {{ settings.max_width }}ch;{% endif -%}
+  {%- unless align == 'inherit' %}--text-align: {{ align }}; --align-self: {% case align %}{% when 'center' %}center{% when 'right' %}flex-end{% else %}flex-start{% endcase %};{% endunless -%}
+  {%- unless align_mobile == 'inherit' %}--text-align-mobile: {{ align_mobile }}; --align-self-mobile: {% case align_mobile %}{% when 'center' %}center{% when 'right' %}flex-end{% else %}flex-start{% endcase %};{% endunless -%}
+  {%- if max_width != blank %}--max-width: {{ max_width }};{% endif -%}
   {%- if preset == 'custom' -%}
     --custom-family: var(--font-{{ settings.custom_font }}--family);
     --custom-weight: var(--font-{{ settings.custom_font }}--weight);

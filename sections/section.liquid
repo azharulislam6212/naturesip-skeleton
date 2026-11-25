@@ -33,6 +33,7 @@
       --gap: {{ s.gap }}px;
       --gap-tablet: {{ s.gap_tablet }}px;
       --gap-mobile: {{ s.gap_mobile }}px;
+      --stack-text-align: {% case s.horizontal_alignment %}{% when 'center' %}center{% when 'flex-end' %}end{% else %}start{% endcase %};
       --child-flex: {% if s.equal_columns %}1 1 0{% else %}0 1 auto{% endif %};
     "
     {% if horizontal %}
@@ -329,6 +330,7 @@
             "text": "t:defaults.section_text",
             "alignment": "center",
             "alignment_mobile": "center",
+            "max_width_preset": "custom",
             "max_width": 60
           }
         },
@@ -470,7 +472,7 @@
           "type": "text",
           "settings": {
             "text": "t:defaults.section_text",
-            "max_width": 45
+            "max_width_preset": "medium"
           }
         },
         "button": {
@@ -538,6 +540,7 @@
             "text": "t:defaults.newsletter_text",
             "alignment": "center",
             "alignment_mobile": "center",
+            "max_width_preset": "custom",
             "max_width": 50
           }
         },

@@ -12,7 +12,7 @@
         {%- for article in blog.articles -%}
           <li>
             <article class="article-card">
-              <div class="media media--hover" style="--ratio: 1.5;">
+              <div class="media media--hover" data-hover="{{ settings.image_hover }}" style="--ratio: 1.5;">
                 {% render 'image', image: article.image, sizes: '(min-width: 990px) 33vw, 100vw', placeholder: 'lifestyle-2' %}
               </div>
               {%- if s.show_date -%}

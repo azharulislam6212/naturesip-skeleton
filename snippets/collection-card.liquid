@@ -1,0 +1,39 @@
+{% doc %}
+  Collection card: image with the collection title, used by the collection
+  list section and the all-collections page. Title position and product
+  count come from Theme settings > Collection cards.
+
+  @param {object} [collection] - The collection. Blank shows placeholder content.
+  @param {object} [image] - Image override; defaults to the collection image.
+  @param {string} [title] - Title override; defaults to the collection title.
+  @param {number} [ratio] - Image aspect ratio (width / height). Default 1.
+  @param {string} [sizes] - Image sizes attribute.
+
+  @example
+  {% render 'collection-card', collection: item, ratio: section.settings.image_ratio %}
+{% enddoc %}
+
+{%- liquid
+  assign card_image = image | default: collection.featured_image | default: collection.products.first.featured_media.preview_image
+  assign card_title = title | default: collection.title
+  if card_title == blank
+    assign card_title = 'onboarding.collection_title' | t
+  endif
+  assign card_url = collection.url | default: routes.collections_url
+  assign overlay = false
+  if settings.collection_card_title_position == 'overlay'
+    assign overlay = true
+  endif
+-%}
+
+<a class="collection-card{% if overlay %} collection-card--overlay{% endif %}" href="{{ card_url }}">
+  <span class="collection-card__media media media--hover" data-hover="{{ settings.image_hover }}" style="--ratio: {{ ratio | default: 1 }};">
+    {% render 'image', image: card_image, alt: '', sizes: sizes, placeholder: 'collection-1' %}
+  </span>
+  <span class="collection-card__info">
+    <span class="collection-card__title type-heading type-h5">{{ card_title | escape }}{% render 'icon', name: 'arrow' %}</span>
+    {%- if settings.collection_card_show_count and collection != blank -%}
+      <span class="collection-card__count">{{ 'collections.product_count' | t: count: collection.products_count }}</span>
+    {%- endif -%}
+  </span>
+</a>

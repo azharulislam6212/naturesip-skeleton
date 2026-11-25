@@ -218,10 +218,12 @@
     border: 1px solid color-mix(in srgb, var(--color-foreground) 40%, transparent);
     border-radius: 999px;
     color: inherit;
-    font-size: 0.8125rem;
-    font-weight: var(--font-body--weight-bold);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    font-family: var(--type-navigation-family);
+    font-style: var(--type-navigation-style);
+    font-size: var(--type-navigation-size);
+    font-weight: var(--type-navigation-weight);
+    letter-spacing: var(--type-navigation-letter-spacing);
+    text-transform: var(--type-navigation-case);
     text-decoration: none;
     cursor: pointer;
     list-style: none;
@@ -318,8 +320,10 @@
     justify-content: space-between;
     min-height: 3rem;
     border-block-end: 1px solid var(--color-border);
+    font-family: var(--type-navigation-family);
+    font-style: var(--type-navigation-style);
     font-size: 1.125rem;
-    font-weight: var(--font-body--weight-bold);
+    font-weight: var(--type-navigation-weight);
     text-decoration: none;
   }
 

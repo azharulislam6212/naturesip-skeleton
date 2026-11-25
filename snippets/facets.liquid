@@ -27,7 +27,7 @@
 <facets-form class="facets facets--{{ layout | default: 'sidebar' }}">
   <div class="facets__bar">
     {%- if enable_filtering != false and results.filters.size > 0 -%}
-      <button class="button button--secondary button--small facets__open" type="button" data-dialog-open="Facets-{{ section_id }}" aria-haspopup="dialog">
+      <button class="button button--secondary button--small facets__open" type="button" data-hover="{{ settings.button_hover_effect }}" data-dialog-open="Facets-{{ section_id }}" aria-haspopup="dialog">
         <span class="button__fill" aria-hidden="true"></span>
         <span class="button__fill button__fill--hover" aria-hidden="true"></span>
         <span class="button__icon">{% render 'icon', name: 'filter' %}</span>

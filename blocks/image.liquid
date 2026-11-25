@@ -37,6 +37,9 @@
 >
   <{{ tag }}
     class="media{% if s.link != blank or s.hover_effect %} media--hover{% endif %}"
+    {% if s.link != blank or s.hover_effect %}
+      data-hover="{{ settings.image_hover }}"
+    {% endif %}
     style="--ratio: {{ ratio }}; --media-radius: {{ s.radius }}px; --fit: {{ s.fit }};"
     {% if s.link != blank %}
       href="{{ s.link }}"
@@ -120,7 +123,7 @@
       "id": "hover_effect",
       "label": "t:settings.hover_effect",
       "info": "t:info.hover_effect",
-      "default": false
+      "default": true
     },
     {
       "type": "checkbox",

@@ -1,0 +1,45 @@
+{% doc %}
+  Font resource hints for <head>. The faces themselves are declared in
+  snippets/theme-styles.liquid; this only speeds up the ones seen first.
+
+  - Preloads at most two regular faces: the body font, and the font role
+    the largest heading (Display XL) uses. Follows the typography settings,
+    so a role change never preloads a font the page doesn't use.
+  - Same file twice is preloaded once; system fonts are never preloaded.
+  - Preconnects to fonts.shopifycdn.com only when a preloaded file is
+    actually served from there (otherwise it comes from the store domain).
+
+  @example
+  {% render 'font' %}
+{% enddoc %}
+
+{%- liquid
+  assign display_role_key = 'type_' | append: settings.display_xl_font | append: '_font'
+  assign display_font = settings[display_role_key]
+  assign body_font = settings.type_body_font
+
+  assign font_urls = ''
+  unless body_font.system?
+    assign font_urls = body_font | font_url
+  endunless
+
+  unless display_font.system?
+    assign display_url = display_font | font_url
+    if font_urls == blank
+      assign font_urls = display_url
+    elsif font_urls != display_url
+      assign font_urls = font_urls | append: '|' | append: display_url
+    endif
+  endunless
+-%}
+
+{%- if font_urls contains 'fonts.shopifycdn.com' -%}
+  <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+{%- endif -%}
+
+{%- if font_urls != blank -%}
+  {%- assign font_url_list = font_urls | split: '|' -%}
+  {%- for url in font_url_list -%}
+    {{ url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+  {%- endfor -%}
+{%- endif -%}

@@ -2,11 +2,7 @@
 <html
   class="no-js"
   lang="{{ request.locale.iso_code }}"
-  data-button-hover="{{ settings.button_hover_effect }}"
-  data-image-hover="{{ settings.image_hover }}"
-  {% if settings.page_transition != 'none' %}
-    data-page-transition="{{ settings.page_transition }}"
-  {% endif %}
+  dir="{% render 'text-direction' %}"
 >
   <head>
     <style>
@@ -15,34 +11,15 @@
 
     {% render 'meta-tags' %}
     {% render 'scripts' %}
-
-    {%- unless settings.type_body_font.system? and settings.type_accent_font.system? -%}
-      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
-    {%- endunless -%}
-    {%- unless settings.type_body_font.system? -%}
-      {{ settings.type_body_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
-    {%- endunless -%}
-    {%- unless settings.type_accent_font.system? -%}
-      {{ settings.type_accent_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
-    {%- endunless %}
-
+    {% render 'font' %}
     {% render 'theme-styles' %}
     {{ 'base.css' | asset_url | stylesheet_tag }}
-
-    {%- if settings.page_transition != 'none' -%}
-      <style>
-        @media (prefers-reduced-motion: no-preference) {
-          @view-transition {
-            navigation: auto;
-          }
-        }
-      </style>
-    {%- endif -%}
 
     {{ content_for_header }}
   </head>
 
   <body class="color-{{ settings.body_color_scheme.id }} template-{{ template.name }}">
+    {% render 'page-transition' %}
     <a class="skip-link" href="#MainContent">{{ 'accessibility.skip_to_content' | t }}</a>
 
     {% sections 'header-group' %}

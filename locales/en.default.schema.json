@@ -12,6 +12,9 @@
     "button": {
       "name": "Button"
     },
+    "button_pair": {
+      "name": "Button pair"
+    },
     "collection_card": {
       "name": "Collection card"
     },

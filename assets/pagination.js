@@ -122,7 +122,7 @@ class PaginationComponent extends Component {
         if (!next) throw new Error('No results in the rendered section');
         current.replaceWith(next);
       } else {
-        section.innerHTML = source.innerHTML;
+        section.replaceChildren(...source.childNodes);
       }
 
       if (push) history.pushState({ pagination: sectionId }, '', url);
@@ -196,7 +196,6 @@ class PaginationComponent extends Component {
       const next = doc.querySelector('pagination-component');
       if (next) this.replaceWith(next);
       else this.remove();
-
 
       section.dispatchEvent(new ContentUpdateEvent({ root: section }));
 

@@ -24,34 +24,21 @@
 </style>
 <script>
   (() => {
-    const KEY = 'theme:scroll:' + location.pathname + location.search;
-    const root = document.documentElement;
+    const key = 'theme:scroll:' + location.pathname + location.search;
+    let saved = 0;
 
-    let storage;
     try {
-      storage = window.sessionStorage;
+      addEventListener('pagehide', () => sessionStorage.setItem(key, String(Math.round(scrollY))));
+      saved = Number(sessionStorage.getItem(key)) || 0;
     } catch (e) {
       return;
     }
 
-    window.addEventListener('pagehide', () => {
-      try {
-        storage.setItem(KEY, String(Math.round(window.scrollY)));
-      } catch (e) {}
-    });
+    const type = performance.getEntriesByType('navigation')[0]?.type;
+    if (saved <= 0 || location.hash || (type !== 'reload' && type !== 'back_forward')) return;
 
-    const nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
-    const type = nav && nav.type;
-    if (type !== 'reload' && type !== 'back_forward') return;
-    if (location.hash) return;
-
-    let saved = 0;
-    try {
-      saved = Number(storage.getItem(KEY)) || 0;
-    } catch (e) {}
-    if (saved <= 0) return;
-
-    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    const root = document.documentElement;
+    history.scrollRestoration = 'manual';
     root.classList.add('is-restoring-scroll');
 
     let shown = false;
@@ -61,27 +48,17 @@
       root.classList.remove('is-restoring-scroll');
       document.dispatchEvent(new CustomEvent('theme:scroll-restored'));
     };
-    const restore = () => {
-      window.scrollTo(0, saved);
+
+    // Rendered in <head>, so the document is always still loading here.
+    document.addEventListener('DOMContentLoaded', () => {
+      scrollTo(0, saved);
       show();
-    };
+    }, { once: true });
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', restore, { once: true });
-    } else {
-      restore();
-    }
-
-    // Images and fonts can still change the height after DOMContentLoaded.
-    // Correct once on load, unless the visitor has already scrolled.
-    window.addEventListener(
-      'load',
-      () => {
-        if (Math.abs(window.scrollY - saved) > 2 && window.scrollY !== 0) return;
-        window.scrollTo(0, saved);
-      },
-      { once: true }
-    );
+    // Late images and fonts can change the height: correct once, unless the visitor scrolled.
+    addEventListener('load', () => {
+      if (scrollY === 0 || Math.abs(scrollY - saved) <= 2) scrollTo(0, saved);
+    }, { once: true });
 
     // Never leave the page hidden.
     setTimeout(show, 3000);

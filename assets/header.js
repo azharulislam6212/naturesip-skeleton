@@ -12,6 +12,7 @@ class HeaderComponent extends Component {
   /** @type {ResizeObserver | null} */
   #resizeObserver = null;
   #lastScroll = 0;
+  #height = 0;
 
   mount() {
     this.#resizeObserver = new ResizeObserver(() => this.#publishHeight());
@@ -28,14 +29,16 @@ class HeaderComponent extends Component {
     this.#resizeObserver?.disconnect();
   }
 
+  // Cached so the scroll handler never forces a layout read.
   #publishHeight() {
-    document.documentElement.style.setProperty('--header-height', `${Math.round(this.offsetHeight)}px`);
+    this.#height = Math.round(this.offsetHeight);
+    document.documentElement.style.setProperty('--header-height', `${this.#height}px`);
   }
 
   /** @param {string} mode */
   #onScroll(mode) {
     const current = window.scrollY;
-    const scrolled = current > this.offsetHeight;
+    const scrolled = current > this.#height;
     this.toggleAttribute('data-scrolled', scrolled);
 
     if (mode === 'scroll-up') {

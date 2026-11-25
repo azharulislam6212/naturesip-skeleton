@@ -212,6 +212,14 @@
     overflow: hidden;
   }
 
+  /* Nothing may widen the page: entrance animations, marquees and shapes
+     that poke past the edge would otherwise add a horizontal scrollbar.
+     `clip` (not `hidden`) keeps position: sticky working. */
+  html,
+  body {
+    overflow-x: clip;
+  }
+
   body {
     display: flex;
     flex-direction: column;

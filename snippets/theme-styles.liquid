@@ -21,6 +21,9 @@
   assign type_levels = 'display_xl,display_l,display_m,display_s,h1,h2,h3,h4,h5,h6' | split: ','
 -%}
 
+{%- liquid
+  assign body_scheme_id = settings.body_color_scheme.id | default: settings.color_schemes.first.id
+-%}
 {% style %}
   {{ settings.type_heading_font | font_face: font_display: 'swap' }}
   {{ heading_bold | font_face: font_display: 'swap' }}
@@ -176,7 +179,7 @@
         assign s = scheme.settings
         assign pairs = 'background:background_gradient,heading:heading_gradient,highlight:highlight_gradient,accent:accent_gradient,primary_button:primary_button_gradient,primary_button_hover:primary_button_gradient_hover,secondary_button:secondary_button_gradient,secondary_button_hover:secondary_button_gradient_hover' | split: ','
       -%}
-      {% if forloop.first %}:root,{% endif %}
+      {% if scheme.id == body_scheme_id %}:root,{% endif %}
       .color-{{ scheme.id }} {
         --color-background: {{ s.background }};
         --color-foreground: {{ s.text }};
@@ -216,5 +219,24 @@
         {%- endfor %}
       }
     {% endfor %}
+  }
+
+  /* Like Dawn: body takes the body scheme from :root; every scheme class
+     paints its own surface; `.gradient` adds the scheme's gradient on top. */
+  @layer base {
+    body
+    {%- for scheme in settings.color_schemes -%}
+      , .color-{{ scheme.id }}
+    {%- endfor %} {
+      color: var(--color-foreground);
+      background-color: var(--color-background);
+    }
+
+    .gradient
+    {%- for scheme in settings.color_schemes -%}
+      , .color-{{ scheme.id }}
+    {%- endfor %} {
+      background-image: var(--gradient-background);
+    }
   }
 {% endstyle %}

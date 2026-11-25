@@ -34,6 +34,7 @@ const REGISTRY = {
   'quantity-selector': { module: '@theme/quantity-selector', load: 'interaction' },
   'facets-form': { module: '@theme/facets', load: 'interaction' },
   'price-range': { module: '@theme/facets', load: 'interaction' },
+  'pagination-component': { module: '@theme/pagination', load: 'eager' },
   'product-recommendations': { module: '@theme/product-recommendations', load: 'visible' },
   'quick-view-button': { module: '@theme/quick-view', load: 'interaction' },
   'quick-view-dialog': { module: '@theme/quick-view', load: 'interaction' },

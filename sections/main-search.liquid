@@ -21,9 +21,9 @@
     {%- paginate search.results by section.settings.results_per_page -%}
       <div class="collection-layout collection-layout--{{ s.filter_layout }}">
         {% render 'facets', results: search, section_id: section.id, enable_filtering: s.enable_filtering, enable_sorting: s.enable_sorting, layout: s.filter_layout %}
-        <div class="collection-results" data-facets-results>
+        <div class="collection-results" data-facets-results data-pagination-results>
           {%- if search.results_count > 0 -%}
-            <ul class="grid product-grid" role="list" style="--columns-desktop: {{ s.columns_desktop }}; --columns-tablet: 3; --columns-mobile: 2;">
+            <ul class="grid product-grid product-grid--mobile-2" role="list" data-pagination-grid style="--columns-desktop: {{ s.columns_desktop }}; --columns-tablet: 3; --columns-mobile: 2;">
               {%- for item in search.results -%}
                 <li>
                   {%- case item.object_type -%}
@@ -44,7 +44,7 @@
                 </li>
               {%- endfor -%}
             </ul>
-            {% render 'pagination', paginate: paginate, facets: true %}
+            {% render 'pagination', paginate: paginate %}
           {%- else -%}
             <div class="empty-state">
               <p class="type-h5">{%- assign escaped_value = search.terms | escape -%}{{ 'search.no_results_html' | t: terms: escaped_value }}</p>

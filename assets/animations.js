@@ -60,13 +60,32 @@ function splitWords(element) {
   return [...element.querySelectorAll('.word')];
 }
 
+/** Max stagger steps in one batch, so long grids never wait seconds to show. */
+const MAX_STAGGER = 6;
+
+/** @type {WeakMap<Element, number>} stagger parent → cards revealed this frame */
+const staggerBatches = new WeakMap();
+
+/**
+ * Stagger order among the siblings entering view together, not the element's
+ * index in the whole list: a card deep in a long (or infinitely growing) grid
+ * would otherwise wait index × step seconds and leave empty rows.
+ * @param {Element} element
+ */
+function staggerOrder(element) {
+  const parent = element.parentElement?.closest('[data-animate-stagger]');
+  if (!parent) return 0;
+  const order = staggerBatches.get(parent) ?? 0;
+  if (order === 0) requestAnimationFrame(() => staggerBatches.delete(parent));
+  staggerBatches.set(parent, order + 1);
+  return Math.min(order, MAX_STAGGER);
+}
+
 /** @param {Element} element */
 function reveal(element) {
   const preset = element.getAttribute('data-animate') || 'fade';
   const delay = Number(element.getAttribute('data-animate-delay') || 0) / 1000;
-  const parent = element.parentElement?.closest('[data-animate-stagger]');
-  const siblings = parent ? [...parent.querySelectorAll(':scope > [data-animate], :scope > * > [data-animate]')] : [];
-  const order = Math.max(0, siblings.indexOf(element));
+  const order = staggerOrder(element);
 
   element.removeAttribute('data-animate-pending');
   element.setAttribute('data-animated', '');

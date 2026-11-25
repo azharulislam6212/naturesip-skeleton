@@ -260,6 +260,11 @@
       "drawer": "Drawer",
       "sidebar": "Sidebar"
     },
+    "pagination_type": {
+      "infinite": "Infinite scroll",
+      "load_more": "Load more button",
+      "numbered": "Numbered (AJAX)"
+    },
     "fit": {
       "contain": "Contain",
       "cover": "Cover"
@@ -729,6 +734,7 @@
     "priority": "Priority",
     "product": "Product",
     "product_limit": "Product limit",
+    "pagination_type": "Pagination",
     "products_per_page": "Products per page",
     "quote": "Quote",
     "rating": "Rating",
@@ -820,6 +826,7 @@
       "image_hover": "Image hover",
       "name": "Animations",
       "page_transition": "Page transition",
+      "page_transition_color": "Transition color",
       "reveal": "Reveal",
       "smooth_scroll": "Smooth scroll",
       "smooth_scroll_intensity": "Smooth scroll intensity",

@@ -2157,6 +2157,13 @@
         "default": "fade"
       },
       {
+        "type": "color",
+        "id": "page_transition_color",
+        "label": "t:settings_schema.animations.page_transition_color",
+        "default": "#000000",
+        "visible_if": "{{ settings.page_transition != 'none' }}"
+      },
+      {
         "type": "header",
         "content": "t:settings_schema.headers.smooth_scroll"
       },

@@ -32,11 +32,12 @@
     <div class="collection-layout collection-layout--{{ s.filter_layout }}">
       {% render 'facets', results: collection, section_id: section.id, enable_filtering: s.enable_filtering, enable_sorting: s.enable_sorting, layout: s.filter_layout %}
 
-      <div class="collection-results" data-facets-results>
+      <div class="collection-results" data-facets-results data-pagination-results>
         {%- if collection.products.size > 0 -%}
           <ul
-            class="grid product-grid"
+            class="grid product-grid product-grid--mobile-{{ s.columns_mobile }}"
             role="list"
+            data-pagination-grid
             style="--columns-desktop: {{ s.columns_desktop }}; --columns-tablet: {{ s.columns_tablet }}; --columns-mobile: {{ s.columns_mobile }};"
             {% render 'animation-attributes', stagger: true %}
           >
@@ -50,7 +51,7 @@
               <li>{% render 'product-card', product: product, eager: eager, section_id: section.id %}</li>
             {%- endfor -%}
           </ul>
-          {% render 'pagination', paginate: paginate, facets: true %}
+          {% render 'pagination', paginate: paginate, type: s.pagination_type %}
         {%- else -%}
           <div class="empty-state">
             <p class="type-h5">{{ 'products.facets.no_results' | t }}</p>
@@ -160,6 +161,26 @@
       "max": 48,
       "step": 4,
       "default": 24
+    },
+    {
+      "type": "select",
+      "id": "pagination_type",
+      "label": "t:settings.pagination_type",
+      "options": [
+        {
+          "value": "numbered",
+          "label": "t:options.pagination_type.numbered"
+        },
+        {
+          "value": "load_more",
+          "label": "t:options.pagination_type.load_more"
+        },
+        {
+          "value": "infinite",
+          "label": "t:options.pagination_type.infinite"
+        }
+      ],
+      "default": "load_more"
     },
     {
       "type": "range",

@@ -1,49 +1,88 @@
 /**
  * @layer L3
- * <page-transition>: fades the page in on load.
+ * <page-transition>: a full-screen curtain between pages.
  *
- * snippets/page-transition.liquid marks <html data-page-entering> before the
- * first frame, which keeps <body> hidden:
- *   - browsers without cross-document View Transitions: on every load;
- *   - browsers with them: on loads that are not a link navigation (first
- *     visit, reload, theme editor refresh). Link navigations use the native
- *     transition instead, so the two never run together.
- * This element plays the fade and clears the mark. Without the mark it does nothing.
+ * snippets/page-transition.liquid renders it covering the page (data-state="covered").
+ *   covered → out    : on load, the curtain animates away (fade / slide / reveal).
+ *   out     → ready  : parked off-screen without animating.
+ *   ready   → covered: on a same-site link click it animates back in, then navigates.
+ * The style of each state lives in the snippet's CSS; this only switches states.
  */
 import { Component, defineElement } from '@theme/component';
 import { prefersReducedMotion } from '@theme/utilities';
 
-const ENTERING = 'data-page-entering';
-const REVEALED = 'data-page-revealed';
-
 class PageTransition extends Component {
   mount() {
-    const root = document.documentElement;
-    if (root.hasAttribute(ENTERING)) {
-      this.#fadeIn();
+    this.setAttribute('data-armed', '');
+
+    if (prefersReducedMotion()) {
+      this.#setState('ready');
       return;
     }
 
-    // The module can run before `pagereveal` has fired; wait for it.
-    // The snippet's listener was registered first, so it has already run
-    // (and possibly set the mark) by the time this one does.
-    if ('onpagereveal' in window && !root.hasAttribute(REVEALED)) {
-      this.listen(window, 'pagereveal', () => {
-        if (root.hasAttribute(ENTERING)) this.#fadeIn();
-      }, { once: true });
-    }
+    // Let the first frame paint covered, then animate away.
+    requestAnimationFrame(() => requestAnimationFrame(() => this.#leave()));
+
+    this.listen(document, 'click', (event) => this.#onClick(event));
+
+    // Back/forward cache restores the page as it was left: covered.
+    this.listen(window, 'pageshow', (event) => {
+      if (event.persisted) this.#leave();
+    });
   }
 
-  #fadeIn() {
-    const root = document.documentElement;
-    if (!prefersReducedMotion()) {
-      const styles = getComputedStyle(root);
-      const duration = parseFloat(styles.getPropertyValue('--duration-slow')) || 600;
-      const easing = styles.getPropertyValue('--ease-out').trim() || 'ease-out';
-      // Start before clearing the mark so the body never flashes at full opacity.
-      document.body.animate([{ opacity: 0 }, { opacity: 1 }], { duration, easing, fill: 'backwards' });
-    }
-    root.removeAttribute(ENTERING);
+  #setState(state) {
+    this.dataset.state = state;
+  }
+
+  #afterTransition(callback) {
+    const ms = parseFloat(getComputedStyle(this).getPropertyValue('--page-transition-duration')) || 700;
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      this.removeEventListener('transitionend', onEnd);
+      callback();
+    };
+    const onEnd = (event) => {
+      if (event.target === this) finish();
+    };
+    this.addEventListener('transitionend', onEnd);
+    setTimeout(finish, ms + 100);
+  }
+
+  #leave() {
+    this.#setState('out');
+    this.#afterTransition(() => {
+      if (this.dataset.state === 'out') this.#setState('ready');
+    });
+  }
+
+  /** @param {MouseEvent} event */
+  #onClick(event) {
+    if (event.defaultPrevented || event.button !== 0) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (window.Shopify?.designMode) return;
+
+    const link = /** @type {HTMLElement} */ (event.target)?.closest?.('a[href]');
+    if (!(link instanceof HTMLAnchorElement)) return;
+    if (link.target && link.target !== '_self') return;
+    if (link.hasAttribute('download') || link.hasAttribute('data-no-transition')) return;
+
+    const url = new URL(link.href, location.href);
+    if (url.origin !== location.origin) return;
+    if (!/^https?:$/.test(url.protocol)) return;
+    // Same page, different hash: let it scroll.
+    if (url.pathname === location.pathname && url.search === location.search && url.hash) return;
+
+    event.preventDefault();
+    this.#setState('ready');
+    // Commit the parked position before animating in.
+    void this.offsetWidth;
+    this.#setState('covered');
+    this.#afterTransition(() => {
+      location.href = url.href;
+    });
   }
 }
 

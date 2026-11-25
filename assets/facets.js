@@ -43,6 +43,12 @@ class FacetsForm extends Component {
       this.#apply(/** @type {HTMLAnchorElement} */ (link).href);
     });
     this.listen(window, 'popstate', () => this.#apply(window.location.href, false));
+
+    // Swatch tooltips float above everything, so the clipping filter
+    // accordion and drawer never cut them off.
+    const place = (/** @type {Event} */ event) => placeSwatchTooltip(/** @type {Element} */ (event.target));
+    this.listen(this.section, 'pointerover', place);
+    this.listen(this.section, 'focusin', place);
   }
 
   #urlFromForms() {
@@ -81,6 +87,34 @@ class FacetsForm extends Component {
       results?.removeAttribute('aria-busy');
     }
   }
+}
+
+/**
+ * Positions a swatch's tooltip under the swatch with `position: fixed`,
+ * kept inside the viewport. Measures its own containing block first, so it
+ * is also right inside a transformed ancestor (an animating drawer).
+ * @param {Element} target
+ */
+function placeSwatchTooltip(target) {
+  const swatch = target.closest?.('.facets__swatch');
+  const tip = /** @type {HTMLElement | null} */ (swatch?.querySelector('.facets__swatch-tooltip'));
+  if (!swatch || !tip) return;
+
+  tip.classList.add('is-floating');
+  tip.style.left = '0px';
+  tip.style.top = '0px';
+  const origin = tip.getBoundingClientRect();
+  const box = swatch.getBoundingClientRect();
+  const width = tip.offsetWidth;
+  const gutter = 8;
+
+  const centre = box.left + box.width / 2;
+  const x = Math.min(Math.max(centre - width / 2, gutter), window.innerWidth - width - gutter);
+  const y = box.bottom + 6;
+
+  tip.style.left = `${x - origin.left}px`;
+  tip.style.top = `${y - origin.top}px`;
+  tip.style.setProperty('--arrow-x', `${centre - x}px`);
 }
 
 class PriceRange extends Component {

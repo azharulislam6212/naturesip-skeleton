@@ -1,49 +1,97 @@
 {% doc %}
-  Accessible numbered pagination.
+  Pagination for every paginated list (collection, search, blog, comments,
+  collection list, orders, addresses), loaded in place with fetch() through
+  the Section Rendering API by <pagination-component> (assets/pagination.js).
+
+  - numbered: page links. A click fetches the section for that page, replaces
+    `[data-pagination-results]` (or the whole section), and updates the URL.
+  - load_more / infinite: appends the next page's items to `[data-pagination-grid]`.
+  Every control is a real link, so pagination still works without JavaScript.
 
   @param {object} paginate - The paginate object.
-  @param {boolean} [facets] - Mark links for in-place loading by <facets-form>.
+  @param {string} [type] - 'numbered' (default), 'load_more' or 'infinite'.
+    load_more / infinite need a `[data-pagination-grid]` in the section.
+  @param {boolean} [facets] - Deprecated; pagination is always in place now.
 
   @example
-  {% render 'pagination', paginate: paginate, facets: true %}
+  {% render 'pagination', paginate: paginate, type: 'load_more' %}
 {% enddoc %}
 
+{%- assign type = type | default: 'numbered' -%}
+
 {%- if paginate.pages > 1 -%}
-  <nav aria-label="{{ 'general.pagination.label' | t }}">
-    <ul class="pagination" role="list">
-      {%- if paginate.previous -%}
-        <li>
-          <a href="{{ paginate.previous.url }}" {% if facets %}data-facets-link{% endif %}>
-            {%- render 'icon', name: 'chevron-left' -%}
-            <span class="visually-hidden">{{ 'general.pagination.previous' | t }}</span>
-          </a>
-        </li>
-      {%- endif -%}
-      {%- for part in paginate.parts -%}
-        <li>
-          {%- if part.is_link -%}
-            <a href="{{ part.url }}" {% if facets %}data-facets-link{% endif %}>
-              <span class="visually-hidden">{{ 'general.pagination.page' | t: number: part.title }}</span>
-              <span aria-hidden="true">{{ part.title }}</span>
-            </a>
-          {%- elsif part.title == paginate.current_page -%}
-            <span aria-current="page">
-              <span class="visually-hidden">{{ 'general.pagination.page' | t: number: part.title }}</span>
-              <span aria-hidden="true">{{ part.title }}</span>
-            </span>
-          {%- else -%}
-            <span>{{ part.title }}</span>
+  {%- if type == 'numbered' -%}
+    <pagination-component class="pagination-component" data-type="numbered">
+      <nav aria-label="{{ 'general.pagination.label' | t }}">
+        <ul class="pagination" role="list">
+          {%- if paginate.previous -%}
+            <li>
+              <a href="{{ paginate.previous.url }}" data-pagination-link>
+                {%- render 'icon', name: 'chevron-left' -%}
+                <span class="visually-hidden">{{ 'general.pagination.previous' | t }}</span>
+              </a>
+            </li>
           {%- endif -%}
-        </li>
-      {%- endfor -%}
+          {%- for part in paginate.parts -%}
+            <li>
+              {%- if part.is_link -%}
+                <a href="{{ part.url }}" data-pagination-link>
+                  <span class="visually-hidden">{{ 'general.pagination.page' | t: number: part.title }}</span>
+                  <span aria-hidden="true">{{ part.title }}</span>
+                </a>
+              {%- elsif part.title == paginate.current_page -%}
+                <span aria-current="page">
+                  <span class="visually-hidden">{{ 'general.pagination.page' | t: number: part.title }}</span>
+                  <span aria-hidden="true">{{ part.title }}</span>
+                </span>
+              {%- else -%}
+                <span>{{ part.title }}</span>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+          {%- if paginate.next -%}
+            <li>
+              <a href="{{ paginate.next.url }}" data-pagination-link>
+                {%- render 'icon', name: 'chevron-right' -%}
+                <span class="visually-hidden">{{ 'general.pagination.next' | t }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+        </ul>
+      </nav>
+    </pagination-component>
+  {%- else -%}
+    {%- liquid
+      assign shown = paginate.current_offset | plus: paginate.page_size
+      if shown > paginate.items
+        assign shown = paginate.items
+      endif
+      assign progress = shown | times: 100 | divided_by: paginate.items
+    -%}
+    <pagination-component
+      class="pagination-component load-more"
+      data-type="{{ type }}"
+      data-next-url="{{ paginate.next.url }}"
+    >
+      <p class="load-more__status" role="status">
+        {{ 'general.pagination.showing' | t: shown: shown, total: paginate.items }}
+      </p>
+      <div class="load-more__progress" aria-hidden="true">
+        <span style="width: {{ progress }}%;"></span>
+      </div>
       {%- if paginate.next -%}
-        <li>
-          <a href="{{ paginate.next.url }}" {% if facets %}data-facets-link{% endif %}>
-            {%- render 'icon', name: 'chevron-right' -%}
-            <span class="visually-hidden">{{ 'general.pagination.next' | t }}</span>
-          </a>
-        </li>
+        <a
+          class="button button--secondary load-more__button"
+          href="{{ paginate.next.url }}"
+          data-hover="{{ settings.button_hover_effect }}"
+          data-load-more
+        >
+          <span class="button__fill" aria-hidden="true"></span>
+          <span class="button__fill button__fill--hover" aria-hidden="true"></span>
+          <span class="button__label">{{ 'general.pagination.load_more' | t }}</span>
+        </a>
+        <span class="load-more__spinner" aria-hidden="true"></span>
       {%- endif -%}
-    </ul>
-  </nav>
+    </pagination-component>
+  {%- endif -%}
 {%- endif -%}

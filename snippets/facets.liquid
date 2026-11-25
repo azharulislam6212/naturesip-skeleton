@@ -286,7 +286,7 @@
                         <ul class="facets__swatches" role="list">
                           {%- for value in filter.values -%}
                             <li>
-                              <label class="facets__swatch" title="{{ value.label | escape }} ({{ value.count }})">
+                              <label class="facets__swatch">
                                 <input
                                   class="visually-hidden"
                                   type="checkbox"
@@ -297,7 +297,7 @@
                                 >
                                 {%- liquid
                                   # Colour from Shopify's swatch data, else the value name when it
-                                  # is a CSS colour (Black, Navy…), else a neutral swatch with its initial.
+                                  # is a CSS colour (Black, Navy…), else a blank neutral swatch.
                                   assign swatch_style = ''
                                   assign colour_name = value.label | downcase | remove: ' ' | remove: '-'
                                   assign colour_key = ',' | append: colour_name | append: ','
@@ -311,13 +311,14 @@
                                   endif
                                 -%}
                                 <span
-                                  class="swatch{% if swatch_style == blank %} swatch--text{% endif %}"
+                                  class="swatch{% if swatch_style == blank %} swatch--blank{% endif %}"
                                   {% if swatch_style != blank %}
                                     style="{{ swatch_style }}"
                                   {% endif %}
                                   aria-hidden="true"
-                                >
-                                  {%- if swatch_style == blank -%}{{ value.label | slice: 0 | upcase }}{%- endif -%}
+                                ></span>
+                                <span class="facets__swatch-tooltip" aria-hidden="true">
+                                  {{- value.label | escape }} <span class="facets__swatch-count">({{ value.count }})</span>
                                 </span>
                                 <span class="visually-hidden">{{ value.label | escape }} ({{ value.count }})</span>
                               </label>

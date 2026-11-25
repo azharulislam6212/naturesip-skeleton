@@ -22,7 +22,7 @@
     </div>
 
     {%- if s.layout == 'slider' -%}
-      <slider-component class="featured-collection__slider" style="{{ column_style }} --slide-width-mobile: {{ 100 | divided_by: s.columns_mobile | minus: 8 }}%;">
+      <slider-component class="featured-collection__slider product-grid--mobile-{{ s.columns_mobile }}" style="{{ column_style }} --slide-width-mobile: {{ 100 | divided_by: s.columns_mobile | minus: 8 }}%;">
         <ul class="slider__track" ref="track" role="list" data-lenis-prevent>
           {%- for product in products limit: s.limit -%}
             <li class="slider__slide">{% render 'product-card', product: product, section_id: section.id %}</li>
@@ -48,7 +48,7 @@
         </div>
       </slider-component>
     {%- else -%}
-      <ul class="grid product-grid" role="list" style="{{ column_style }}" {% render 'animation-attributes', stagger: true %}>
+      <ul class="grid product-grid product-grid--mobile-{{ s.columns_mobile }}" role="list" style="{{ column_style }}" {% render 'animation-attributes', stagger: true %}>
         {%- for product in products limit: s.limit -%}
           <li>{% render 'product-card', product: product, section_id: section.id %}</li>
         {%- else -%}

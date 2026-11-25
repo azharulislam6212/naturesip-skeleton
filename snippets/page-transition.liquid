@@ -1,13 +1,12 @@
 {% doc %}
-  Page transitions between pages, driven by the `page_transition` theme setting.
+  Page transitions between pages, driven by the `page_transition` theme setting
+  (fade, slide or reveal) and coloured by `page_transition_color`.
   Render once, first thing inside <body>. Outputs nothing when the setting is 'none'.
 
-  - Link navigations in browsers with cross-document View Transitions animate
-    natively with the chosen style (fade, slide or reveal).
-  - Every other load fades in through <page-transition> (assets/page-transition.js):
-    first visit, reload, theme editor refresh, and all loads in browsers
-    without View Transitions. The inline script hides the page before the
-    first frame; a CSS failsafe reveals it anyway if the module never runs.
+  A full-screen curtain (<page-transition>, assets/page-transition.js):
+  - is drawn covering the page on first paint, then animates away once the page loads;
+  - animates back in when a same-site link is clicked, then navigates.
+  A CSS failsafe removes the curtain if the module never runs.
 
   @example
   {% render 'page-transition' %}
@@ -15,62 +14,71 @@
 
 {%- if settings.page_transition != 'none' -%}
   <style>
-    @media (prefers-reduced-motion: no-preference) {
-      @view-transition {
-        navigation: auto;
-      }
-    }
-
     @layer components {
+      page-transition {
+        --page-transition-duration: 700ms;
+        position: fixed;
+        inset: 0;
+        z-index: 2147483000;
+        display: block;
+        background-color: {{ settings.page_transition_color | default: '#000000' }};
+        pointer-events: none;
+        will-change: opacity, transform, clip-path;
+        transition-property: opacity, transform, clip-path, visibility;
+        transition-duration: var(--page-transition-duration);
+        transition-timing-function: var(--ease-in-out, cubic-bezier(0.65, 0, 0.35, 1));
+      }
+
+      /* Covering the page: block clicks while it is up. */
+      page-transition[data-state='covered'] {
+        pointer-events: auto;
+      }
+
+      /* Waiting off-screen for the next click; jump there without animating. */
+      page-transition[data-state='ready'] {
+        visibility: hidden;
+        transition: none;
+      }
+
+      /* Failsafe: if the module never runs, get out of the way. */
+      page-transition:not([data-armed]) {
+        animation: page-transition-failsafe 0.4s ease 2.5s forwards;
+      }
+
+      @keyframes page-transition-failsafe {
+        to { opacity: 0; visibility: hidden; pointer-events: none; }
+      }
+
       {%- case settings.page_transition -%}
         {%- when 'fade' -%}
-          ::view-transition-old(root) {
-            animation: fade-out var(--duration-base) var(--ease-in-out) both;
-          }
-          ::view-transition-new(root) {
-            animation: fade-in var(--duration-base) var(--ease-in-out) both;
+          page-transition:is([data-state='out'], [data-state='ready']) {
+            opacity: 0;
           }
         {%- when 'slide' -%}
-          ::view-transition-old(root) {
-            animation: page-slide-out var(--duration-slow) var(--ease-in-out) both;
+          /* Leaves through the top, comes back from the bottom. */
+          page-transition[data-state='out'] {
+            transform: translateY(-100%);
           }
-          ::view-transition-new(root) {
-            animation: page-slide-in var(--duration-slow) var(--ease-in-out) both;
+          page-transition[data-state='ready'] {
+            transform: translateY(100%);
           }
         {%- when 'reveal' -%}
-          ::view-transition-old(root) {
-            animation: none;
+          /* Wipes up off the page, wipes up over it again. */
+          page-transition[data-state='out'] {
+            clip-path: inset(0 0 100% 0);
           }
-          ::view-transition-new(root) {
-            animation: page-reveal var(--duration-slow) var(--ease-in-out) both;
+          page-transition[data-state='ready'] {
+            clip-path: inset(100% 0 0 0);
           }
       {%- endcase -%}
 
-      /* Fallback fade-in. If JavaScript never takes over, the page still
-         fades in after a short delay instead of staying hidden. */
-      :root[data-page-entering] body {
-        animation: fade-in var(--duration-base) var(--ease-in-out) 1.5s both;
+      @media (prefers-reduced-motion: reduce) {
+        page-transition {
+          display: none;
+        }
       }
     }
   </style>
 
-  <script>
-    (function () {
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      var root = document.documentElement;
-      if ('onpagereveal' in window) {
-        // Native view transitions animate link navigations. Every other load
-        // (first visit, reload, theme editor refresh) fades in instead.
-        // pagereveal fires before the first frame, so nothing flashes.
-        window.addEventListener('pagereveal', function (event) {
-          if (!event.viewTransition) root.setAttribute('data-page-entering', '');
-          root.setAttribute('data-page-revealed', '');
-        }, { once: true });
-      } else {
-        root.setAttribute('data-page-entering', '');
-      }
-    })();
-  </script>
-
-  <page-transition hidden></page-transition>
+  <page-transition data-state="covered" aria-hidden="true"></page-transition>
 {%- endif -%}

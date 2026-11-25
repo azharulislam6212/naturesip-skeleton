@@ -239,12 +239,7 @@
     outline: none;
   }
 
-  /* Colour scheme surfaces: solid colour first, gradient (or wrapped solid) on top. */
-  [class*='color-scheme-'] {
-    color: var(--color-foreground);
-    background-color: var(--color-background);
-    background-image: var(--gradient-background);
-  }
+  /* Colour scheme surfaces (body, .color-scheme-*) are generated in snippets/theme-styles.liquid. */
 
   a {
     color: inherit;
@@ -2031,6 +2026,141 @@
     color: var(--color-background);
   }
 
+  .pagination-component {
+    display: block;
+  }
+
+  /* No scroll anchoring in paginated lists. Load more / infinite scroll only
+     add content below the viewport, so anchoring has nothing to keep in place,
+     and Chrome anchoring to the sticky filter sidebar or to the moving
+     pagination block shifts the page, which Lenis then pulls back: a jump. */
+  .collection-layout,
+  [data-pagination-results],
+  [data-pagination-grid],
+  .pagination-component {
+    overflow-anchor: none;
+  }
+
+  /* While a page is being fetched. */
+  [data-pagination-results][aria-busy='true'],
+  .shopify-section[aria-busy='true'] {
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+
+  /* Load more / infinite scroll */
+  .load-more {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-sm);
+    margin-block-start: var(--space-xl);
+    text-align: center;
+  }
+
+  .load-more__status {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--color-subtext, var(--color-foreground));
+  }
+
+  .load-more__progress {
+    width: min(14rem, 100%);
+    height: 3px;
+    border-radius: 999px;
+    background-color: color-mix(in srgb, var(--color-foreground) 12%, transparent);
+    overflow: hidden;
+  }
+
+  .load-more__progress > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background-image: var(--gradient-accent);
+    background-color: var(--color-accent);
+    transition: width var(--duration-slow) var(--ease-out);
+  }
+
+  .load-more__spinner {
+    display: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 2px solid color-mix(in srgb, var(--color-foreground) 18%, transparent);
+    border-block-start-color: var(--color-foreground);
+    border-radius: 50%;
+    animation: load-more-spin 0.8s linear infinite;
+  }
+
+  .load-more[aria-busy='true'] .load-more__spinner {
+    display: block;
+  }
+
+  .load-more[aria-busy='true'] .load-more__button {
+    display: none;
+  }
+
+  /* Infinite scroll loads on its own; the link stays only as a no-JS fallback. */
+  .load-more[data-type='infinite'][data-ready] .load-more__button {
+    display: none;
+  }
+
+  /* Infinite scroll: status + progress float at the bottom of the screen while
+     the grid scrolls, so progress stays visible. Back in place on the last page. */
+  .load-more[data-type='infinite'][data-ready]:not([data-next-url='']) {
+    position: sticky;
+    inset-block-end: var(--space-md);
+    z-index: 5;
+    grid-template-columns: auto auto;
+    align-items: center;
+    column-gap: var(--space-sm);
+    row-gap: var(--space-2xs);
+    width: fit-content;
+    margin-inline: auto;
+    padding: var(--space-xs) var(--space-md);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background-color: var(--color-card, var(--color-background));
+    color: var(--color-foreground);
+    box-shadow: 0 12px 32px -16px var(--color-shadow);
+  }
+
+  .load-more[data-type='infinite'][data-ready]:not([data-next-url='']) .load-more__status {
+    grid-column: 1;
+  }
+
+  .load-more[data-type='infinite'][data-ready]:not([data-next-url='']) .load-more__progress {
+    grid-column: 1;
+    width: 100%;
+    min-width: 10rem;
+  }
+
+  .load-more[data-type='infinite'][data-ready]:not([data-next-url='']) .load-more__spinner {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  /* Keep the pill the same size while loading (spinner swaps visibility only). */
+  .load-more[data-type='infinite'][data-ready]:not([data-next-url='']) .load-more__spinner {
+    display: block;
+    visibility: hidden;
+  }
+
+  .load-more[data-type='infinite'][data-ready][aria-busy='true'] .load-more__spinner {
+    visibility: visible;
+  }
+
+  @keyframes load-more-spin {
+    to { rotate: 360deg; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .load-more__spinner {
+      animation-duration: 2.4s;
+    }
+  }
+
   /* ---------- Breadcrumbs, social, misc ---------- */
   .social-links {
     display: flex;
@@ -2343,12 +2473,17 @@
 
 @layer sections {
   /* ---------- Marquee ---------- */
+  /* Only clip sideways, so a tilted ribbon can poke into its neighbours. */
   .marquee-section {
-    overflow: hidden;
+    overflow-x: clip;
+    overflow-y: visible;
   }
 
+  /* The ribbon sits above a neighbour's shape divider (which is z-index: 1),
+     so it overlaps the previous / next section instead of hiding under it. */
   .marquee {
     position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -2773,11 +2908,13 @@
     flex-wrap: wrap;
     gap: var(--space-2xs);
     margin: 0;
-    padding: 0;
+    /* Room for the last row's tooltip inside the clipping accordion. */
+    padding: 0 0 0.875rem;
     list-style: none;
   }
 
   .facets__swatch {
+    position: relative;
     display: inline-grid;
     place-items: center;
     padding: 3px;
@@ -2793,13 +2930,73 @@
     transition: scale var(--duration-fast) var(--ease-out);
   }
 
-  /* Value with no colour data: neutral circle with its initial. */
-  .facets__swatch .swatch--text {
-    display: inline-grid;
-    place-items: center;
+  /* Value with no matching colour: a blank neutral circle; the name is in the tooltip. */
+  .facets__swatch .swatch--blank {
+    background: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+  }
+
+  /* Colour name on hover / keyboard focus. Shown below the swatch: the
+     accordion clips its content, and there is no room above the first row. */
+  .facets__swatch-tooltip {
+    position: absolute;
+    inset-block-start: calc(100% + 6px);
+    inset-inline-start: 50%;
+    z-index: 3;
+    translate: -50% -4px;
+    padding: 0.3em 0.6em;
+    border-radius: var(--radius-input, 6px);
+    background-color: var(--color-foreground);
+    color: var(--color-background);
     font-size: 0.75rem;
-    font-weight: var(--font-body--weight-bold);
-    color: var(--color-foreground);
+    line-height: 1.2;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      translate var(--duration-fast) var(--ease-out),
+      visibility var(--duration-fast);
+  }
+
+  .facets__swatch-tooltip::after {
+    content: '';
+    position: absolute;
+    inset-block-end: 100%;
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    border: 5px solid transparent;
+    border-block-end-color: var(--color-foreground);
+  }
+
+  .facets__swatch-count {
+    opacity: 0.7;
+  }
+
+  .facets__swatch:hover .facets__swatch-tooltip,
+  .facets__swatch:has(input:focus-visible) .facets__swatch-tooltip {
+    opacity: 1;
+    visibility: visible;
+    translate: -50% 0;
+  }
+
+  /* Placed by assets/facets.js: fixed, so no clipping container cuts it. */
+  .facets__swatch-tooltip.is-floating {
+    position: fixed;
+    inset: auto;
+    z-index: 100;
+    translate: none;
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      visibility var(--duration-fast);
+  }
+
+  .facets__swatch:is(:hover, :has(input:focus-visible)) .facets__swatch-tooltip.is-floating {
+    translate: none;
+  }
+
+  .facets__swatch-tooltip.is-floating::after {
+    inset-inline-start: var(--arrow-x, 50%);
   }
 
   .facets__swatch:hover .swatch {

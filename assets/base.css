@@ -2257,18 +2257,221 @@
   }
 
   /* ---------- Animations ----------
-     Animated elements start hidden so content on screen at load animates too
-     (see assets/animations.js). If the script never arms them, the failsafe
-     shows them after a moment. Reduced motion: nothing is ever hidden. */
+     Entrances are CSS animations, as in Dawn: content on screen when the page
+     paints animates straight away, with no script to wait for, so it never
+     shows first and then jumps. assets/animations.js only holds back what is
+     below the fold (data-animate-pending), restarts it on scroll and splits
+     its text into words or letters.
+
+     A preset only sets its start state (--from-*); one keyframe plays it to
+     the element's normal state. Fill mode backwards: the start state shows
+     during the delay and the element's own styles return afterwards. */
+  @keyframes animate-in {
+    from {
+      opacity: var(--from-opacity, 1);
+      transform: var(--from-transform, none);
+    }
+  }
+
+  @keyframes animate-in-clip {
+    from {
+      opacity: var(--from-opacity, 1);
+      transform: var(--from-transform, none);
+      clip-path: var(--from-clip);
+    }
+
+    to {
+      clip-path: var(--to-clip);
+    }
+  }
+
+  @keyframes animate-in-blur {
+    from {
+      opacity: var(--from-opacity, 1);
+      transform: var(--from-transform, none);
+      filter: var(--from-filter);
+    }
+  }
+
+  /* Reset first, so a nested animated element never inherits its parent's preset. */
+  [data-animate] {
+    --animate-name: animate-in;
+    --animate-delay: 0ms;
+    --from-opacity: 1;
+    --from-transform: none;
+    --from-clip: none;
+    --to-clip: none;
+    --from-filter: none;
+  }
+
+  [data-animate='fade'] {
+    --from-opacity: 0;
+  }
+
+  [data-animate='fade-up'] {
+    --from-opacity: 0;
+    --from-transform: translateY(28px);
+  }
+
+  [data-animate='rise'] {
+    --from-opacity: 0;
+    --from-transform: translateY(48px);
+  }
+
+  [data-animate='zoom'] {
+    --from-opacity: 0;
+    --from-transform: scale(0.94);
+  }
+
+  [data-animate='zoom-out'] {
+    --from-opacity: 0;
+    --from-transform: scale(1.12);
+  }
+
+  [data-animate='slide-start'] {
+    --from-opacity: 0;
+    --from-transform: translateX(-40px);
+  }
+
+  [data-animate='slide-end'] {
+    --from-opacity: 0;
+    --from-transform: translateX(40px);
+  }
+
+  [dir='rtl'] [data-animate='slide-start'] {
+    --from-transform: translateX(40px);
+  }
+
+  [dir='rtl'] [data-animate='slide-end'] {
+    --from-transform: translateX(-40px);
+  }
+
+  [data-animate='flip-up'] {
+    --from-opacity: 0;
+    --from-transform: perspective(800px) rotateX(-35deg) translateY(24px);
+    transform-origin: 50% 100%;
+  }
+
+  [data-animate='blur'] {
+    --animate-name: animate-in-blur;
+    --from-opacity: 0;
+    --from-filter: blur(12px);
+  }
+
+  [data-animate='clip-up'] {
+    --animate-name: animate-in-clip;
+    --from-opacity: 0;
+    --from-transform: translateY(24px);
+    --from-clip: inset(100% 0 0 0);
+    --to-clip: inset(0 0 0 0);
+  }
+
+  /* Mask reveal, no opacity: the element rises while its clip window stays put. */
+  [data-animate='reveal'] {
+    --animate-name: animate-in-clip;
+    --from-transform: translateY(100%);
+    --from-clip: inset(-110% -10% 100% -10%);
+    --to-clip: inset(-10% -10% 0% -10%);
+  }
+
+  [data-animate-delay='50'] { --animate-delay: 50ms; }
+  [data-animate-delay='100'] { --animate-delay: 100ms; }
+  [data-animate-delay='150'] { --animate-delay: 150ms; }
+  [data-animate-delay='200'] { --animate-delay: 200ms; }
+  [data-animate-delay='250'] { --animate-delay: 250ms; }
+  [data-animate-delay='300'] { --animate-delay: 300ms; }
+  [data-animate-delay='350'] { --animate-delay: 350ms; }
+  [data-animate-delay='400'] { --animate-delay: 400ms; }
+  [data-animate-delay='450'] { --animate-delay: 450ms; }
+  [data-animate-delay='500'] { --animate-delay: 500ms; }
+  [data-animate-delay='550'] { --animate-delay: 550ms; }
+  [data-animate-delay='600'] { --animate-delay: 600ms; }
+  [data-animate-delay='650'] { --animate-delay: 650ms; }
+  [data-animate-delay='700'] { --animate-delay: 700ms; }
+  [data-animate-delay='750'] { --animate-delay: 750ms; }
+  [data-animate-delay='800'] { --animate-delay: 800ms; }
+  [data-animate-delay='850'] { --animate-delay: 850ms; }
+  [data-animate-delay='900'] { --animate-delay: 900ms; }
+  [data-animate-delay='950'] { --animate-delay: 950ms; }
+  [data-animate-delay='1000'] { --animate-delay: 1000ms; }
+
+  /* Children of a stagger parent play one after another. Above the fold this
+     is the child's position; on scroll the script sets the order within the
+     batch entering view. */
+  [data-animate-stagger] > * { --stagger-index: 0; }
+  [data-animate-stagger] > :nth-child(2) { --stagger-index: 1; }
+  [data-animate-stagger] > :nth-child(3) { --stagger-index: 2; }
+  [data-animate-stagger] > :nth-child(4) { --stagger-index: 3; }
+  [data-animate-stagger] > :nth-child(5) { --stagger-index: 4; }
+  [data-animate-stagger] > :nth-child(6) { --stagger-index: 5; }
+  [data-animate-stagger] > :nth-child(n + 7) { --stagger-index: 6; }
+
+  /* Split text: each piece plays its mode, one after another (--piece-index
+     is set by the script). */
+  [data-animate-text] .animate-piece {
+    --animate-name: animate-in;
+    --animate-duration: 0.6s;
+    --from-opacity: 0;
+    --from-transform: translateY(0.6em);
+    --piece-step: 40ms;
+  }
+
+  [data-animate-text='chars'] .animate-piece {
+    --animate-duration: 0.5s;
+    --from-transform: translateY(0.35em);
+    --piece-step: 25ms;
+  }
+
+  [data-animate-text='mask'] .animate-piece {
+    --animate-duration: 0.8s;
+    --from-opacity: 1;
+    --from-transform: translateY(110%);
+    --piece-step: 50ms;
+  }
+
+  [data-animate-text='blur'] .animate-piece {
+    --animate-name: animate-in-blur;
+    --animate-duration: 0.8s;
+    --from-filter: blur(10px);
+    --from-transform: translateY(8px);
+    --piece-step: 50ms;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
-    .js.animations-on [data-animate]:not([data-animate='none'], [data-animate-pending], [data-animated]) {
+    .animations-on [data-animate]:not([data-animate='none'], [data-animate-pending], [data-animate-text]),
+    .animations-on [data-split]:not([data-animate-pending]) .animate-piece {
+      animation: var(--animate-name, animate-in) var(--animate-duration, 0.9s) cubic-bezier(0.22, 1, 0.36, 1)
+        calc(var(--animate-delay, 0ms) + var(--stagger-index, 0) * 120ms + var(--piece-index, 0) * var(--piece-step, 0ms))
+        backwards;
+    }
+
+    /* Split text needs the script: it stays transparent until its words are
+       split, then only the words animate, so it never shows whole first.
+       Failsafe: shown anyway if the script hasn't run after a moment. */
+    .animations-on [data-animate-text]:not([data-split]) {
       opacity: 0;
       animation: animate-failsafe 0s 2.5s forwards;
     }
 
-    .animations-ready [data-animate-pending]:not([data-animate-text]),
-    .animations-ready [data-animate-pending] .animate-piece {
-      opacity: 0;
+    /* Waiting below the fold: just hidden, never moved, so the scroll
+       observer sees the element where it really is. The animation's first
+       frame then starts from the same invisible state. */
+    .animations-on [data-animate-pending]:not([data-split]) {
+      opacity: var(--from-opacity, 1);
+    }
+
+    .animations-on [data-animate-pending]:is([data-animate='reveal'], [data-animate='clip-up']):not([data-split]) {
+      clip-path: inset(0 0 100% 0);
+    }
+
+    /* Split pieces may move: they aren't what the observer watches. */
+    .animations-on [data-animate-pending] .animate-piece {
+      opacity: var(--from-opacity, 1);
+      transform: var(--from-transform, none);
+    }
+
+    .animations-on [data-animate-pending][data-animate-text='blur'] .animate-piece {
+      filter: var(--from-filter);
     }
   }
 
@@ -2300,10 +2503,6 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-  }
-
-  [data-animate='flip-up'] {
-    transform-origin: 50% 100%;
   }
 
   /* Lenis */

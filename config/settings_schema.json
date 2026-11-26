@@ -2080,9 +2080,13 @@
           {
             "value": "flip-up",
             "label": "t:options.animation.flip_up"
+          },
+          {
+            "value": "reveal",
+            "label": "t:options.animation.reveal"
           }
         ],
-        "default": "rise"
+        "default": "reveal"
       },
       {
         "type": "select",
@@ -2110,7 +2114,7 @@
             "label": "t:options.text_animation.blur"
           }
         ],
-        "default": "chars"
+        "default": "mask"
       },
       {
         "type": "select",

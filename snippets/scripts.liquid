@@ -23,11 +23,9 @@
       "@theme/dialog": "{{ 'dialog.js' | asset_url }}",
       "@theme/custom-select": "{{ 'custom-select.js' | asset_url }}",
       "@theme/carousel": "{{ 'carousel.js' | asset_url }}",
-      "@theme/motion-engine": "{{ 'motion-engine.js' | asset_url }}",
       "@theme/animations": "{{ 'animations.js' | asset_url }}",
       "@theme/smooth-scroll": "{{ 'smooth-scroll.js' | asset_url }}",
       "@theme/scroll-to-top": "{{ 'scroll-to-top.js' | asset_url }}",
-      "@theme/motion": "{{ 'motion.js' | asset_url }}",
       "@theme/lenis": "{{ 'lenis.js' | asset_url }}",
       "@theme/store-utilities": "{{ 'store-utilities.js' | asset_url }}"
       {%- unless is_password -%},
@@ -98,6 +96,10 @@
 
 <link rel="modulepreload" href="{{ 'global.js' | asset_url }}">
 <link rel="modulepreload" href="{{ 'utilities.js' | asset_url }}">
+{%- if settings.animations_reveal %}
+  <link rel="modulepreload" href="{{ 'animations.js' | asset_url }}">
+  <link rel="modulepreload" href="{{ 'events.js' | asset_url }}">
+{%- endif %}
 
 {%- unless is_password -%}
   {%- if settings.cart_type == 'drawer' -%}

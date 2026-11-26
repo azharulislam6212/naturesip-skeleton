@@ -2,46 +2,40 @@
  * @layer L3
  * Scroll-reveal for sections, blocks, headings and images.
  *
- * Markup (written by Liquid, see snippets/animation-attributes.liquid):
- *   data-animate="rise"          entrance preset (fade, fade-up, rise, zoom, zoom-out,
- *                                slide-start, slide-end, blur, clip-up, flip-up)
- *   data-animate-text="words"    split text: words, chars, mask or blur
+ * The entrances themselves are CSS animations (assets/base.css, "Animations"),
+ * as in Dawn: whatever is on screen when the page paints animates straight
+ * away, before any script runs, so content never shows first and then jumps.
+ *
+ * This module:
+ *   - splits text for data-animate-text (words, chars, mask, blur); that text
+ *     waits transparent until then, so it never shows whole first,
+ *   - holds what is below the fold in its start state (data-animate-pending),
+ *   - releases it as it scrolls into view, which restarts its CSS animation,
+ *     with the stagger order of the batch entering view together.
+ *
+ * Markup (snippets/animation-attributes.liquid):
+ *   data-animate="reveal"        entrance preset
+ *   data-animate-text="mask"     split text mode
  *   data-animate-delay="150"     extra delay in ms
- *   data-animate-stagger         on a parent: children animate one after another
+ *   data-animate-stagger         on a parent: children play one after another
  *
- * Everything animates as it enters the viewport, including what is already on
- * screen at load or reload (after the restored scroll position settles). CSS hides armed elements before this runs and shows them
- * anyway if it never does. Under prefers-reduced-motion nothing is hidden.
- *
- * Theme editor: a section the editor re-renders (any setting change) replays
- * its animations, so a changed animation setting is previewed straight away.
+ * Theme editor: a re-rendered section replays the animations on screen, as
+ * its new markup gets the CSS animation again.
  */
-import { playEntrance, whenInView } from '@theme/motion-engine';
 import { ContentUpdateEvent } from '@theme/events';
 import { prefersReducedMotion } from '@theme/utilities';
 
-const STAGGER_STEP = 0.15;
+const SELECTOR = '[data-animate]:not([data-animated]):not([data-animate="none"])';
 
 /** Max stagger steps in one batch, so long grids never wait seconds to show. */
 const MAX_STAGGER = 6;
 
-/**
- * How each text mode plays on its split pieces.
- * @type {Record<string, { preset: string, duration: number, staggerBy: number }>}
- */
-const TEXT_MODES = {
-  words: { preset: 'rise', duration: 0.6, staggerBy: 0.04 },
-  chars: { preset: 'fade-up', duration: 0.5, staggerBy: 0.025 },
-  mask: { preset: 'text-mask', duration: 0.8, staggerBy: 0.05 },
-  blur: { preset: 'text-blur', duration: 0.8, staggerBy: 0.05 },
-};
-
-/** Longest a split text may take to finish staggering, in seconds. */
-const MAX_TEXT_STAGGER = 1.2;
+/** Most stagger steps a split text takes, however long it is. */
+const MAX_PIECE_STEPS = 40;
 
 /**
  * @param {string} className
- * @param {string} text
+ * @param {string} [text]
  */
 function span(className, text = '') {
   const element = document.createElement('span');
@@ -51,8 +45,8 @@ function span(className, text = '') {
 }
 
 /**
- * Builds the pieces for one word. Letters stay inside a word span so lines
- * still wrap between words only.
+ * One word's markup. Letters stay inside a word span so lines still wrap
+ * between words only.
  * @param {string} word
  * @param {string} mode
  */
@@ -71,42 +65,92 @@ function buildWord(word, mode) {
 
 /**
  * Splits every text node into words (or letters), keeping nested markup
- * (links, <em>, <strong>) intact. Runs once per element.
+ * (links, <em>, <strong>) intact, and numbers the pieces. Runs once.
  * @param {Element} element
  * @param {string} mode
  */
 function splitText(element, mode) {
-  if (!element.hasAttribute('data-split')) {
-    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
-    /** @type {Text[]} */
-    const textNodes = [];
-    while (walker.nextNode()) textNodes.push(/** @type {Text} */ (walker.currentNode));
+  if (element.hasAttribute('data-split')) return;
 
-    // Screen readers would spell out split letters: give them the whole text.
-    if (mode === 'chars' && !element.querySelector('a, button')) {
-      element.setAttribute('aria-label', element.textContent?.trim() ?? '');
-    }
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  /** @type {Text[]} */
+  const textNodes = [];
+  while (walker.nextNode()) textNodes.push(/** @type {Text} */ (walker.currentNode));
 
-    for (const node of textNodes) {
-      const fragment = document.createDocumentFragment();
-      for (const part of (node.nodeValue ?? '').split(/(\s+)/)) {
-        if (!part) continue;
-        fragment.append(/^\s+$/.test(part) ? part : buildWord(part, mode));
-      }
-      node.replaceWith(fragment);
-    }
-    element.setAttribute('data-split', mode);
+  // Screen readers would spell out split letters: give them the whole text.
+  if (mode === 'chars' && !element.querySelector('a, button')) {
+    element.setAttribute('aria-label', element.textContent?.trim() ?? '');
   }
-  return [...element.querySelectorAll('.animate-piece')];
+
+  for (const node of textNodes) {
+    const fragment = document.createDocumentFragment();
+    for (const part of (node.nodeValue ?? '').split(/(\s+)/)) {
+      if (!part) continue;
+      fragment.append(/^\s+$/.test(part) ? part : buildWord(part, mode));
+    }
+    node.replaceWith(fragment);
+  }
+
+  const pieces = [...element.querySelectorAll('.animate-piece')];
+  const perStep = Math.max(1, pieces.length / MAX_PIECE_STEPS);
+  pieces.forEach((piece, index) => {
+    /** @type {HTMLElement} */ (piece).style.setProperty('--piece-index', String(Math.floor(index / perStep)));
+  });
+  element.setAttribute('data-split', mode);
 }
 
-/** @type {WeakMap<Element, number>} stagger parent → cards revealed this frame */
+/** Elements whose own gradient is clipped to their text. */
+const GRADIENT_TEXT = '.text-gradient, .highlight-gradient em';
+
+/**
+ * Gradient text: a parent's background-clip: text can't follow pieces that
+ * move on their own layer (the fill would paint apart from the stroke).
+ * While they animate, each piece paints its own slice of the parent's
+ * gradient, so the text still reads as one gradient; afterwards the parent
+ * takes it back.
+ * @param {Element} element
+ */
+function sliceGradient(element) {
+  const pieces = /** @type {HTMLElement[]} */ ([...element.querySelectorAll('.animate-piece')]);
+  /** @type {Map<HTMLElement, string>} */
+  const owners = new Map();
+  for (const piece of pieces) {
+    const owner = /** @type {HTMLElement | null} */ (piece.parentElement?.closest(GRADIENT_TEXT) ?? null);
+    if (!owner || !element.contains(owner)) continue;
+    if (!owners.has(owner)) owners.set(owner, getComputedStyle(owner).backgroundImage);
+
+    // Offsets ignore transforms, so this holds while pieces sit in their start state.
+    const x = piece.offsetParent === owner ? piece.offsetLeft : piece.offsetLeft - owner.offsetLeft;
+    const y = piece.offsetParent === owner ? piece.offsetTop : piece.offsetTop - owner.offsetTop;
+    Object.assign(piece.style, {
+      backgroundImage: owners.get(owner),
+      backgroundSize: `${owner.offsetWidth}px ${owner.offsetHeight}px`,
+      backgroundPosition: `${-x}px ${-y}px`,
+    });
+    piece.setAttribute('data-slice', '');
+  }
+  if (!owners.size) return;
+  for (const owner of owners.keys()) owner.setAttribute('data-sliced', '');
+
+  pieces.at(-1)?.addEventListener(
+    'animationend',
+    () => {
+      for (const owner of owners.keys()) owner.removeAttribute('data-sliced');
+      for (const piece of pieces) {
+        piece.removeAttribute('data-slice');
+        Object.assign(/** @type {HTMLElement} */ (piece).style, { backgroundImage: '', backgroundSize: '', backgroundPosition: '' });
+      }
+    },
+    { once: true }
+  );
+}
+
+/** @type {WeakMap<Element, number>} stagger parent → elements released this frame */
 const staggerBatches = new WeakMap();
 
 /**
- * Stagger order among the siblings entering view together, not the element's
- * index in the whole list: a card deep in a long (or infinitely growing) grid
- * would otherwise wait index × step seconds and leave empty rows.
+ * Order among the siblings entering view together, not the index in the
+ * whole list: a card deep in a long grid would otherwise wait for nothing.
  * @param {Element} element
  */
 function staggerOrder(element) {
@@ -118,104 +162,89 @@ function staggerOrder(element) {
   return Math.min(order, MAX_STAGGER);
 }
 
-/** Elements whose own gradient is clipped to their text. */
-const GRADIENT_TEXT = '.text-gradient, .highlight-gradient em';
-
-/**
- * Gradient text: a parent's background-clip: text can't follow pieces that
- * move on their own layer (Chrome paints the fill at the old place, apart from
- * the stroke). While they animate, each piece paints its own slice of the
- * parent's gradient, so the text still reads as one continuous gradient.
- * Returns a function that hands the gradient back to the parent.
- * @param {Element} element
- * @param {Element[]} pieces
- */
-function sliceGradient(element, pieces) {
-  const owners = new Map();
-  for (const piece of pieces) {
-    const owner = piece.parentElement?.closest(GRADIENT_TEXT);
-    if (!owner || !element.contains(owner)) continue;
-    if (!owners.has(owner)) {
-      owners.set(owner, { rect: owner.getBoundingClientRect(), image: getComputedStyle(owner).backgroundImage });
-    }
-    const { rect, image } = owners.get(owner);
-    const box = piece.getBoundingClientRect();
-    Object.assign(/** @type {HTMLElement} */ (piece).style, {
-      backgroundImage: image,
-      backgroundSize: `${rect.width}px ${rect.height}px`,
-      backgroundPosition: `${rect.left - box.left}px ${rect.top - box.top}px`,
-    });
-    piece.setAttribute('data-slice', '');
-  }
-  for (const owner of owners.keys()) owner.setAttribute('data-sliced', '');
-
-  return () => {
-    for (const owner of owners.keys()) owner.removeAttribute('data-sliced');
-    for (const piece of pieces) {
-      if (!piece.hasAttribute('data-slice')) continue;
-      piece.removeAttribute('data-slice');
-      Object.assign(/** @type {HTMLElement} */ (piece).style, { backgroundImage: '', backgroundSize: '', backgroundPosition: '' });
-    }
-  };
-}
-
 /** @param {Element} element */
-function reveal(element) {
-  const preset = element.getAttribute('data-animate') || 'fade';
-  const delay = Number(element.getAttribute('data-animate-delay') || 0) / 1000 + staggerOrder(element) * STAGGER_STEP;
-  const mode = TEXT_MODES[element.getAttribute('data-animate-text') ?? ''];
+function release(element) {
+  /** @type {HTMLElement} */ (element).style.setProperty('--stagger-index', String(staggerOrder(element)));
+  if (element.hasAttribute('data-split')) sliceGradient(element);
 
+  // Dropping the attribute starts the element's (or its pieces') CSS animation.
   element.removeAttribute('data-animate-pending');
   element.setAttribute('data-animated', '');
-
-  if (mode) {
-    const pieces = splitText(element, /** @type {string} */ (element.getAttribute('data-animate-text')));
-    const staggerBy = Math.min(mode.staggerBy, MAX_TEXT_STAGGER / Math.max(pieces.length, 1));
-    const restoreGradient = sliceGradient(element, pieces);
-    playEntrance(pieces, mode.preset, { delay, duration: mode.duration, staggerBy }).then(restoreGradient);
-    return;
-  }
-  playEntrance(element, preset, { delay });
 }
 
-/** Resolves once a reload's scroll restore (snippets/scroll-restore.liquid) has put the page in place. */
-async function pageSettled() {
-  if (!document.documentElement.classList.contains('is-restoring-scroll')) return;
-  await new Promise((resolve) => document.addEventListener('theme:scroll-restored', resolve, { once: true }));
+const observer =
+  'IntersectionObserver' in window
+    ? new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            observer?.unobserve(entry.target);
+            release(entry.target);
+          }
+        },
+        // Any part of the element 10% above the viewport's bottom edge: tall
+        // elements still trigger, and the motion is seen, not finished below.
+        { rootMargin: '0px 0px -10% 0px', threshold: 0 }
+      )
+    : null;
+
+/**
+ * On screen by its layout position. getBoundingClientRect() would include the
+ * entrance transform it is playing (a mask reveal starts a full height lower).
+ * Hidden elements (closed drawers) count as off screen.
+ * @param {Element} element
+ */
+function isOnScreen(element) {
+  if (!(element instanceof HTMLElement) || !element.offsetParent) return false;
+  let top = 0;
+  for (let node = /** @type {HTMLElement | null} */ (element); node; node = /** @type {HTMLElement | null} */ (node.offsetParent)) {
+    top += node.offsetTop;
+  }
+  top -= window.scrollY;
+  return top < window.innerHeight && top + element.offsetHeight > 0;
 }
 
 /**
- * Hides every not-yet-animated element under root (text is split first, so
- * only its pieces are hidden) and returns them.
- * @param {ParentNode} root
+ * What is on screen keeps the CSS animation it already started; everything
+ * else is held back until it scrolls in.
+ * @param {ParentNode} [root]
  */
-function arm(root) {
-  const selector = '[data-animate]:not([data-animated]):not([data-animate="none"])';
-  const elements = [...root.querySelectorAll(selector)];
-  if (root instanceof Element && root.matches(selector)) elements.unshift(root);
+export function initAnimations(root = document) {
+  if (prefersReducedMotion() || !observer) return;
+
+  const elements = [...root.querySelectorAll(SELECTOR)];
+  if (root instanceof Element && root.matches(SELECTOR)) elements.unshift(root);
 
   for (const element of elements) {
     const mode = element.getAttribute('data-animate-text');
-    if (mode && mode in TEXT_MODES) splitText(element, mode);
+    const onScreen = isOnScreen(element);
+
+    // Split text waits transparent for this script (base.css). If the
+    // failsafe already showed it, the visitor has seen it: leave it.
+    if (mode && onScreen && getComputedStyle(element).opacity !== '0') {
+      element.setAttribute('data-animated', '');
+      continue;
+    }
+
+    if (onScreen && !mode) {
+      // Already playing its CSS animation since the first paint.
+      element.setAttribute('data-animated', '');
+      continue;
+    }
+
     element.setAttribute('data-animate-pending', '');
+    if (mode) splitText(element, mode);
+    if (onScreen) release(element);
+    else observer.observe(element);
   }
-  document.documentElement.classList.add('animations-ready');
-  return elements;
 }
 
-/** @param {ParentNode} [root] */
-export function initAnimations(root = document) {
-  if (prefersReducedMotion()) return;
-  const elements = arm(root);
-  if (elements.length) whenInView(elements, reveal);
-}
-
-/** First run: arm everything now, reveal once the page has settled. */
+/** First run, once a reload's scroll restore (snippets/scroll-restore.liquid) has put the page in place. */
 export async function startAnimations() {
-  if (prefersReducedMotion()) return;
-  const elements = arm(document);
-  await pageSettled();
-  if (elements.length) whenInView(elements, reveal);
+  if (document.documentElement.classList.contains('is-restoring-scroll')) {
+    await new Promise((resolve) => document.addEventListener('theme:scroll-restored', resolve, { once: true }));
+  }
+  initAnimations(document);
 }
 
 document.addEventListener(ContentUpdateEvent.eventName, (event) => initAnimations(event.detail.root));

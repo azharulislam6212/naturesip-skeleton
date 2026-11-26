@@ -139,7 +139,7 @@ document.addEventListener('click', async (event) => {
   /** @type {any} */ (owner).open(opener);
 });
 
-// Entrance animations start right away: above-the-fold content is hidden until they run.
+// Entrances are CSS animations; this holds back what is below the fold until it scrolls in.
 if (window.Theme?.settings?.animations) {
   import('@theme/animations').then(({ startAnimations }) => startAnimations());
 }

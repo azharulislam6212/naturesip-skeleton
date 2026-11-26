@@ -17,6 +17,7 @@
           class="grid"
           role="list"
           data-has-products
+          {% render 'animation-attributes', animation: 'none', stagger: true %}
           style="--columns-desktop: {{ s.columns_desktop }}; --columns-tablet: {{ s.columns_tablet }}; --columns-mobile: {{ s.columns_mobile }};"
         >
           {%- for recommendation in recommendations.products -%}

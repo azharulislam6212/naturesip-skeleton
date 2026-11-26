@@ -6,7 +6,7 @@
 {% enddoc %}
 
 {%- assign s = block.settings -%}
-<li class="testimonial slider__slide" {{ block.shopify_attributes }}>
+<li class="testimonial slider__slide" {% render 'animation-attributes' %} {{ block.shopify_attributes }}>
   <figure class="testimonial__card color-{{ s.color_scheme.id }}">
     {%- if s.rating > 0 -%}
       <span

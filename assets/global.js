@@ -140,12 +140,13 @@ document.addEventListener('click', async (event) => {
   /** @type {any} */ (owner).open(opener);
 });
 
+// Entrance animations start right away: above-the-fold content is hidden until they run.
+if (window.Theme?.settings?.animations) {
+  import('@theme/animations').then(({ startAnimations }) => startAnimations());
+}
+
 // Optional enhancements, after the page has settled.
 onIdle(() => {
   const settings = window.Theme?.settings ?? {};
-  // In the theme editor, on-screen elements animate too, so setting changes are visible on reload.
-  if (settings.animations) {
-    import('@theme/animations').then(({ initAnimations }) => initAnimations(document, { replay: debug }));
-  }
   if (settings.smoothScroll) import('@theme/smooth-scroll').then(({ initSmoothScroll }) => initSmoothScroll());
 });

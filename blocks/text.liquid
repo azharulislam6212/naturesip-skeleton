@@ -6,9 +6,21 @@
   {% content_for 'block', type: 'text', id: 'text' %}
 {% enddoc %}
 
+{%- liquid
+  # Theme default: subheadings rise, body text fades up.
+  assign animation = block.settings.animation
+  if animation == 'theme'
+    if block.settings.type_preset == 'subheading'
+      assign animation = 'rise'
+    else
+      assign animation = 'fade-up'
+    endif
+  endif
+-%}
+
 <div
   {% render 'text-attributes', settings: block.settings, class: 'rte' %}
-  {% render 'animation-attributes', animation: block.settings.animation, delay: block.settings.animation_delay %}
+  {% render 'animation-attributes', animation: animation, text: block.settings.text_animation, delay: block.settings.animation_delay %}
   {{ block.shopify_attributes }}
 >
   {{ block.settings.text }}
@@ -513,9 +525,57 @@
         {
           "value": "slide-end",
           "label": "t:options.animation.slide_end"
+        },
+        {
+          "value": "fade-up",
+          "label": "t:options.animation.fade_up"
+        },
+        {
+          "value": "blur",
+          "label": "t:options.animation.blur"
+        },
+        {
+          "value": "clip-up",
+          "label": "t:options.animation.clip_up"
+        },
+        {
+          "value": "flip-up",
+          "label": "t:options.animation.flip_up"
         }
       ],
       "default": "theme"
+    },
+    {
+      "type": "select",
+      "id": "text_animation",
+      "label": "t:settings.text_animation",
+      "options": [
+        {
+          "value": "theme",
+          "label": "t:options.text_animation.theme"
+        },
+        {
+          "value": "none",
+          "label": "t:options.text_animation.none"
+        },
+        {
+          "value": "words",
+          "label": "t:options.text_animation.words"
+        },
+        {
+          "value": "chars",
+          "label": "t:options.text_animation.chars"
+        },
+        {
+          "value": "mask",
+          "label": "t:options.text_animation.mask"
+        },
+        {
+          "value": "blur",
+          "label": "t:options.text_animation.blur"
+        }
+      ],
+      "default": "none"
     },
     {
       "type": "range",

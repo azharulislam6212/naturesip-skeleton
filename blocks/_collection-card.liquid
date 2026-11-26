@@ -5,7 +5,7 @@
   {% content_for 'block', type: '_collection-card', id: 'collection' %}
 {% enddoc %}
 
-<li class="slider__slide" {{ block.shopify_attributes }}>
+<li class="slider__slide" {% render 'animation-attributes' %} {{ block.shopify_attributes }}>
   {% render 'collection-card',
     collection: block.settings.collection,
     image: block.settings.image,

@@ -23,7 +23,7 @@
         {% render 'facets', results: search, section_id: section.id, enable_filtering: s.enable_filtering, enable_sorting: s.enable_sorting, layout: s.filter_layout %}
         <div class="collection-results" data-facets-results data-pagination-results>
           {%- if search.results_count > 0 -%}
-            <ul class="grid product-grid product-grid--mobile-2" role="list" data-pagination-grid style="--columns-desktop: {{ s.columns_desktop }}; --columns-tablet: 3; --columns-mobile: 2;">
+            <ul class="grid product-grid product-grid--mobile-2" role="list" data-pagination-grid {% render 'animation-attributes', animation: 'none', stagger: true %} style="--columns-desktop: {{ s.columns_desktop }}; --columns-tablet: 3; --columns-mobile: 2;">
               {%- for item in search.results -%}
                 <li>
                   {%- case item.object_type -%}

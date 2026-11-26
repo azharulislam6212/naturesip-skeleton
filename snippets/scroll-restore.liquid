@@ -1,14 +1,4 @@
 {% doc %}
-  Reload / back-forward opens on the section you were on, without first
-  painting the top of the page (hero) and then jumping down.
-
-  Saves the scroll position per URL on pagehide. On the next reload or
-  back/forward visit to that URL it hides the page, takes over scroll
-  restoration, scrolls once the document is parsed, then shows the page.
-  Normal navigations are untouched. A timeout always shows the page again.
-  The page-transition curtain stays visible meanwhile and waits for
-  `theme:scroll-restored` before it animates away.
-
   Render once inside <head>, as early as possible.
 
   @example

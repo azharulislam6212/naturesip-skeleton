@@ -194,7 +194,11 @@
       "stretch": "Stretch"
     },
     "animation": {
-      "fade": "Fade",
+      "blur": "Blur in",
+      "clip_up": "Clip reveal",
+      "fade": "Fade in",
+      "fade_up": "Fade up",
+      "flip_up": "Flip up",
       "none": "None",
       "rise": "Rise",
       "slide_end": "Slide from end",
@@ -447,6 +451,9 @@
       "p": "Paragraph"
     },
     "text_animation": {
+      "blur": "Blur words",
+      "chars": "Split text (letters)",
+      "mask": "Mask slide up",
       "none": "None",
       "theme": "Theme default",
       "words": "Word by word"

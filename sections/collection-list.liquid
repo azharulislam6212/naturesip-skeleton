@@ -10,7 +10,7 @@
   <div class="layout-stack" style="--gap: var(--space-xl);">
     {% content_for 'block', type: 'group', id: 'heading' %}
     <slider-component class="collection-list__items collection-list__items--{{ s.layout }}">
-      <ul class="{% if s.layout == 'slider' %}slider__track{% else %}grid{% endif %}" ref="track" role="list">
+      <ul class="{% if s.layout == 'slider' %}slider__track{% else %}grid{% endif %}" ref="track" role="list" {% render 'animation-attributes', animation: 'none', stagger: true %}>
         {% content_for 'blocks' %}
       </ul>
       {%- if s.layout == 'slider' -%}

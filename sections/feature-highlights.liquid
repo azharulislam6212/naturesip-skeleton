@@ -17,7 +17,7 @@
 
   <div class="layout-stack" style="--gap: var(--space-2xl);">
     {% content_for 'block', type: 'group', id: 'heading' %}
-    <div class="feature-highlights__grid">
+    <div class="feature-highlights__grid" {% render 'animation-attributes', animation: 'none', stagger: true %}>
       <div class="feature-highlights__image" {% render 'animation-attributes', image: true %}>
         {% render 'image', image: s.image, alt: s.image.alt, sizes: '(min-width: 990px) 33vw, 80vw', placeholder: 'product-2' %}
       </div>

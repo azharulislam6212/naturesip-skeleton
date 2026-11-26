@@ -2203,15 +2203,53 @@
   }
 
   /* ---------- Animations ----------
-     Elements are only hidden once JavaScript has armed them and they are
-     below the fold (see assets/animations.js). */
-  .animations-ready [data-animate-pending]:not([data-animate-text]),
-  .animations-ready [data-animate-pending][data-animate-text] .word {
-    opacity: 0;
+     Animated elements start hidden so content on screen at load animates too
+     (see assets/animations.js). If the script never arms them, the failsafe
+     shows them after a moment. Reduced motion: nothing is ever hidden. */
+  @media (prefers-reduced-motion: no-preference) {
+    .js.animations-on [data-animate]:not([data-animate='none'], [data-animate-pending], [data-animated]) {
+      opacity: 0;
+      animation: animate-failsafe 0s 2.5s forwards;
+    }
+
+    .animations-ready [data-animate-pending]:not([data-animate-text]),
+    .animations-ready [data-animate-pending] .animate-piece {
+      opacity: 0;
+    }
   }
 
-  .word {
+  @keyframes animate-failsafe {
+    to {
+      opacity: 1;
+    }
+  }
+
+  :is(.word, .char, .word-mask) {
     display: inline-block;
+  }
+
+  .word-mask {
+    overflow: clip;
+    vertical-align: top;
+    padding-block: 0.12em;
+    margin-block: -0.12em;
+  }
+
+  /* Gradient text while its split pieces animate: each piece clips its own
+     slice of the gradient (set inline by assets/animations.js). */
+  :is(.text-gradient, .highlight-gradient em)[data-sliced] {
+    background-image: none;
+  }
+
+  [data-slice] {
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  [data-animate='flip-up'] {
+    transform-origin: 50% 100%;
   }
 
   /* Lenis */

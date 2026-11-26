@@ -4,6 +4,7 @@
 
   @param {string} [animation] - Block/section choice: 'theme' (theme default), 'none', or a preset name.
   @param {string} [text] - Text animation: 'none', 'theme', 'words', 'chars', 'mask' or 'blur'.
+    The element's content must then be rendered through snippets/split-text.liquid.
   @param {number} [delay] - Delay in ms.
   @param {boolean} [stagger] - Animate direct children one after another.
   @param {boolean} [image] - Element is an image: uses the theme image reveal setting.
@@ -27,7 +28,7 @@
     endif
   -%}
   {%- if preset != 'none' or text_effect != 'none' %} data-animate="{% if preset == 'none' %}fade{% else %}{{ preset }}{% endif %}"{% endif -%}
-  {%- if text_effect != 'none' %} data-animate-text="{{ text_effect }}"{% endif -%}
+  {%- if text_effect != 'none' %} data-animate-text="{{ text_effect }}" data-split="{{ text_effect }}"{% endif -%}
   {%- if delay > 0 %} data-animate-delay="{{ delay }}"{% endif -%}
   {%- if stagger %} data-animate-stagger{% endif -%}
 {%- endif -%}

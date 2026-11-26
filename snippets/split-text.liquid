@@ -1,0 +1,139 @@
+{% doc %}
+  Splits rich text into animated words or letters on the server, so a split
+  entrance plays from the first paint like any other (no script to wait for,
+  nothing shows whole first). Tags (<p>, <em>, <a>…) are kept as they are;
+  only the text between them is split. HTML entities stay one letter.
+
+  Each piece carries its own delay: the mode's step, shortened so the whole
+  text plays out within about a second however long it is.
+
+  @param {string} html - Rich text to split.
+  @param {string} mode - Block choice: 'theme' (theme default), 'words', 'chars', 'mask' or 'blur'; anything else, or animations off, prints the text as is.
+
+  @example
+  {% render 'split-text', html: block.settings.heading, mode: 'chars' %}
+{% enddoc %}
+
+{%- liquid
+  if mode == 'theme'
+    assign mode = settings.animations_text
+  endif
+  unless settings.animations_reveal
+    assign mode = 'none'
+  endunless
+
+  case mode
+    when 'chars', 'words'
+      assign base_step = 40
+    when 'mask', 'blur'
+      assign base_step = 50
+    else
+      echo html
+      assign base_step = 0
+  endcase
+-%}
+
+{%- if base_step > 0 -%}
+{%- liquid
+  assign plain = html | strip_html | strip
+  if mode == 'chars'
+    assign count = plain | split: ' ' | join: '' | size
+  else
+    assign count = plain | split: ' ' | size
+  endif
+  assign count = count | at_least: 1
+  assign step = 1000.0 | divided_by: count | at_most: base_step
+  assign index = 0
+
+  # Letters read one by one to screen readers: give them the whole text,
+  # unless it holds links or blocks that must stay in the reading order.
+  assign hide_pieces = false
+  if mode == 'chars'
+    unless html contains '<a' or html contains '<p' or html contains '<li'
+      assign hide_pieces = true
+    endunless
+  endif
+-%}
+
+{%- if hide_pieces -%}
+  <span class="visually-hidden">{{ plain }}</span>
+  {%- echo '<span aria-hidden="true">' -%}
+{%- endif -%}
+
+{%- assign parts = html | split: '<' -%}
+{%- for part in parts -%}
+  {%- liquid
+    if forloop.first
+      assign text = part
+    else
+      assign tag = part | split: '>' | first
+      assign text = part | remove_first: tag | remove_first: '>'
+      echo '<' | append: tag | append: '>'
+    endif
+
+    if text == empty
+      continue
+    endif
+
+    assign trimmed = text | strip
+    if trimmed == empty
+      echo text
+      continue
+    endif
+
+    assign edge = text | slice: 0 | strip
+    if edge == empty
+      echo ' '
+    endif
+  -%}
+
+  {%- assign words = text | strip | split: ' ' -%}
+  {%- assign first_word = true -%}
+  {%- for word in words -%}
+    {%- if word == empty -%}{%- continue -%}{%- endif -%}
+    {%- unless first_word -%}{{ ' ' }}{%- endunless -%}
+    {%- assign first_word = false -%}
+
+    {%- if mode == 'chars' -%}
+      <span class="word">
+        {%- assign entity = '' -%}
+        {%- assign letters = word | split: '' -%}
+        {%- for letter in letters -%}
+          {%- liquid
+            assign piece = letter
+            if entity != ''
+              assign entity = entity | append: letter
+              if letter != ';'
+                continue
+              endif
+              assign piece = entity
+              assign entity = ''
+            elsif letter == '&'
+              assign entity = '&'
+              continue
+            endif
+          -%}
+          <span class="char animate-piece" style="--piece-delay: {{ index | times: step | round }}ms;">{{ piece }}</span>
+          {%- assign index = index | plus: 1 -%}
+        {%- endfor -%}
+        {%- if entity != '' -%}{{ entity }}{%- endif -%}
+      </span>
+    {%- elsif mode == 'mask' -%}
+      <span class="word-mask"><span class="word animate-piece" style="--piece-delay: {{ index | times: step | round }}ms;">{{ word }}</span></span>
+      {%- assign index = index | plus: 1 -%}
+    {%- else -%}
+      <span class="word animate-piece" style="--piece-delay: {{ index | times: step | round }}ms;">{{ word }}</span>
+      {%- assign index = index | plus: 1 -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- liquid
+    assign edge = text | slice: -1 | strip
+    if edge == empty
+      echo ' '
+    endif
+  -%}
+{%- endfor -%}
+
+{%- if hide_pieces -%}{%- echo '</span>' -%}{%- endif -%}
+{%- endif -%}

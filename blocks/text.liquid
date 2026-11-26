@@ -24,7 +24,7 @@
   {% render 'animation-attributes', animation: animation, text: block.settings.text_animation, delay: block.settings.animation_delay %}
   {{ block.shopify_attributes }}
 >
-  {{ block.settings.text }}
+  {% render 'split-text', html: block.settings.text, mode: block.settings.text_animation %}
 </div>
 
 {% schema %}

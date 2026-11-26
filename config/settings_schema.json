@@ -2082,7 +2082,7 @@
             "label": "t:options.animation.reveal"
           }
         ],
-        "default": "reveal"
+        "default": "fade-up"
       },
       {
         "type": "select",
@@ -2110,7 +2110,7 @@
             "label": "t:options.text_animation.blur"
           }
         ],
-        "default": "mask"
+        "default": "chars"
       },
       {
         "type": "select",
@@ -2134,7 +2134,7 @@
             "label": "t:options.image_animation.reveal"
           }
         ],
-        "default": "image-reveal"
+        "default": "zoom-out"
       },
       {
         "type": "header",

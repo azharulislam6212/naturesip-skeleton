@@ -74,12 +74,11 @@
       },
       "blocks": {
         "heading": {
-          "type": "group",
+          "type": "section-heading",
           "static": true,
           "settings": {
-            "horizontal_alignment": "center",
-            "gap": 12,
-            "width": "fill"
+            "alignment": "center",
+            "gap": 12
           },
           "blocks": {
             "heading": {
@@ -274,12 +273,11 @@
       },
       "blocks": {
         "heading": {
-          "type": "group",
+          "type": "section-heading",
           "static": true,
           "settings": {
-            "horizontal_alignment": "center",
-            "gap": 12,
-            "width": "fill"
+            "alignment": "center",
+            "gap": 12
           },
           "blocks": {
             "heading": {
@@ -407,12 +405,11 @@
       },
       "blocks": {
         "heading": {
-          "type": "group",
+          "type": "section-heading",
           "static": true,
           "settings": {
-            "horizontal_alignment": "center",
-            "gap": 12,
-            "width": "fill"
+            "alignment": "center",
+            "gap": 12
           },
           "blocks": {
             "heading": {
@@ -481,32 +478,41 @@
       },
       "blocks": {
         "heading": {
-          "type": "heading",
+          "type": "section-heading",
+          "static": true,
           "settings": {
-            "heading": "Choose your experience",
-            "type_preset": "display_m",
-            "text_color": "gradient",
-            "stroke": true,
-            "shadow": true,
-            "alignment": "center",
-            "alignment_mobile": "center"
-          }
-        },
-        "text": {
-          "type": "text",
-          "settings": {
-            "text": "<p>A blend for every moment: an energy boost, digestive support or simply a flavorful treat.</p>",
-            "type_preset": "subheading",
-            "alignment": "center",
-            "alignment_mobile": "center",
-            "max_width_preset": "large"
-          }
+            "alignment": "center"
+          },
+          "blocks": {
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "Choose your experience",
+                "type_preset": "display_m",
+                "text_color": "gradient",
+                "stroke": true,
+                "shadow": true,
+                "alignment": "center",
+                "alignment_mobile": "center"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>A blend for every moment: an energy boost, digestive support or simply a flavorful treat.</p>",
+                "type_preset": "subheading",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "max_width_preset": "large"
+              }
+            }
+          },
+          "block_order": [
+            "heading",
+            "text"
+          ]
         }
-      },
-      "block_order": [
-        "heading",
-        "text"
-      ]
+      }
     },
     "testimonials": {
       "type": "testimonials",
@@ -516,12 +522,11 @@
       },
       "blocks": {
         "heading": {
-          "type": "group",
+          "type": "section-heading",
           "static": true,
           "settings": {
-            "horizontal_alignment": "center",
-            "gap": 12,
-            "width": "fill"
+            "alignment": "center",
+            "gap": 12
           },
           "blocks": {
             "heading": {

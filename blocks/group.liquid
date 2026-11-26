@@ -1,7 +1,8 @@
 {% doc %}
-  Group block: a flexible container for any other blocks. Direction, gaps,
-  alignment, width, colour scheme (with gradient), background image, border,
-  sticky positioning and device-aware padding.
+  Group block: a flexible container for any other blocks. Direction, gaps
+  (with a separate row gap when wrapping), alignment, desktop and mobile
+  width, colour scheme (with gradient), background image, border, sticky
+  positioning and device-aware padding.
 
   @example
   {% content_for 'block', type: 'group', id: 'group' %}
@@ -28,6 +29,27 @@
     assign classes = classes | append: ' section-surface'
   endif
 
+  # Max width caps any width (Fill grows to the parent up to it). Alignment
+  # places a capped or fit group in its parent; 'inherit' follows the parent.
+  assign align_self = blank
+  assign align_self_mobile = blank
+  case s.alignment
+    when 'left'
+      assign align_self = 'flex-start'
+    when 'center'
+      assign align_self = 'center'
+    when 'right'
+      assign align_self = 'flex-end'
+  endcase
+  case s.alignment_mobile
+    when 'left'
+      assign align_self_mobile = 'flex-start'
+    when 'center'
+      assign align_self_mobile = 'center'
+    when 'right'
+      assign align_self_mobile = 'flex-end'
+  endcase
+
   # Each direction has its own pair of settings, so only valid options show:
   # vertical stacks can't "space between" across, horizontal rows can't
   # "stretch" along. The horizontal setting also sets the text alignment
@@ -42,6 +64,8 @@
     assign horizontal_choice = s.horizontal_alignment
   endif
 -%}
+{%- capture max_width -%}{% render 'max-width', settings: s %}{%- endcapture -%}
+{%- assign max_width = max_width | strip -%}
 
 <div
   class="{{ classes }}"
@@ -54,14 +78,21 @@
     --gap: {{ s.gap }}px;
     --gap-tablet: {{ s.gap }}px;
     --gap-mobile: {{ s.gap_mobile }}px;
+    {%- if horizontal and s.wrap %}--row-gap: {{ s.row_gap }}px;{% endif %}
     --stack-text-align: {% case horizontal_choice %}{% when 'center' %}center{% when 'flex-end' %}end{% else %}start{% endcase %};
     --group-radius: {{ s.border_radius }}px;
     {%- if s.border %}--group-border-width: {{ s.border_width }}px; --group-border-opacity: {{ s.border_opacity }}%;{% endif -%}
     {% render 'size-style', settings: s %}
     {%- if s.min_height > 0 %}min-height: {{ s.min_height }}px;{% endif -%}
+    {%- if max_width != blank %}max-width: {{ max_width }};{% endif -%}
+    {%- if align_self != blank %}--align-self: {{ align_self }};{% endif -%}
+    {%- if align_self_mobile != blank %}--align-self-mobile: {{ align_self_mobile }};{% endif -%}
   "
   {% if horizontal and s.stack_on_mobile %}
     data-stack-mobile
+  {% endif %}
+  {% if horizontal and s.wrap %}
+    data-row-gap
   {% endif %}
   {% render 'animation-attributes', animation: s.animation, delay: s.animation_delay, stagger: s.stagger_children %}
   {{ block.shopify_attributes }}
@@ -240,6 +271,17 @@
       "default": 12
     },
     {
+      "type": "range",
+      "id": "row_gap",
+      "label": "t:settings.row_gap",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 16,
+      "visible_if": "{{ block.settings.direction == 'row' and block.settings.wrap }}"
+    },
+    {
       "type": "select",
       "id": "width",
       "label": "t:settings.width",
@@ -271,6 +313,30 @@
       "visible_if": "{{ block.settings.width == 'custom' }}"
     },
     {
+      "type": "select",
+      "id": "width_mobile",
+      "label": "t:settings.width_mobile",
+      "options": [
+        {
+          "value": "same",
+          "label": "t:options.width.same"
+        },
+        {
+          "value": "fit",
+          "label": "t:options.width.fit"
+        },
+        {
+          "value": "fill",
+          "label": "t:options.width.fill"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.width.custom"
+        }
+      ],
+      "default": "same"
+    },
+    {
       "type": "range",
       "id": "custom_width_mobile",
       "label": "t:settings.custom_width_mobile",
@@ -279,7 +345,94 @@
       "step": 1,
       "unit": "%",
       "default": 100,
-      "visible_if": "{{ block.settings.width == 'custom' }}"
+      "visible_if": "{{ block.settings.width_mobile == 'custom' or block.settings.width_mobile == 'same' and block.settings.width == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "max_width_preset",
+      "label": "t:settings.max_width",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.max_width.none"
+        },
+        {
+          "value": "small",
+          "label": "t:options.max_width.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:options.max_width.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:options.max_width.large"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.max_width.custom"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "t:settings.max_width_custom",
+      "min": 200,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 600,
+      "visible_if": "{{ block.settings.max_width_preset == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "t:settings.alignment",
+      "options": [
+        {
+          "value": "inherit",
+          "label": "t:options.text_align.inherit"
+        },
+        {
+          "value": "left",
+          "label": "t:options.text_align.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.text_align.center"
+        },
+        {
+          "value": "right",
+          "label": "t:options.text_align.right"
+        }
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "select",
+      "id": "alignment_mobile",
+      "label": "t:settings.alignment_mobile",
+      "options": [
+        {
+          "value": "inherit",
+          "label": "t:options.text_align.same"
+        },
+        {
+          "value": "left",
+          "label": "t:options.text_align.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.text_align.center"
+        },
+        {
+          "value": "right",
+          "label": "t:options.text_align.right"
+        }
+      ],
+      "default": "inherit"
     },
     {
       "type": "range",

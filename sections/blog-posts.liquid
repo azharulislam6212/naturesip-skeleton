@@ -8,7 +8,7 @@
 >
   {% render 'background' %}
   <div class="layout-stack" style="--gap: var(--space-xl);">
-    {% content_for 'block', type: 'group', id: 'heading' %}
+    {% content_for 'block', type: 'section-heading', id: 'heading' %}
     <ul class="grid" role="list" style="--columns-desktop: {{ s.columns_desktop }}; --columns-tablet: 2; --columns-mobile: 1;" {% render 'animation-attributes', stagger: true %}>
       {%- for article in s.blog.articles limit: s.limit -%}
         <li>
@@ -33,11 +33,7 @@
 {
   "name": "t:sections.blog_posts.name",
   "class": "section-wrapper",
-  "blocks": [
-    {
-      "type": "group"
-    }
-  ],
+  "blocks": [],
   "settings": [
     {
       "type": "blog",
@@ -280,12 +276,10 @@
       "category": "t:categories.sections.blog",
       "blocks": {
         "heading": {
-          "type": "group",
+          "type": "section-heading",
           "static": true,
           "settings": {
-            "horizontal_alignment": "center",
-            "gap": 12,
-            "width": "fill"
+            "alignment": "center"
           },
           "blocks": {
             "heading": {

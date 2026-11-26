@@ -16,7 +16,6 @@ import { isDesignMode, onIdle } from '@theme/utilities';
 
 /** @type {Record<string, { module: string, load: 'eager' | 'visible' | 'interaction' }>} */
 const REGISTRY = {
-  'page-transition': { module: '@theme/page-transition', load: 'eager' },
   'header-component': { module: '@theme/header', load: 'eager' },
   'header-menu': { module: '@theme/header', load: 'interaction' },
   'header-drawer': { module: '@theme/header', load: 'interaction' },

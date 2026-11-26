@@ -33,6 +33,24 @@
     assign custom_style = '--link-color: ' | append: s.link_color | append: ';'
   endif
 
+  assign align_self = ''
+  case s.alignment
+    when 'left'
+      assign align_self = '--align-self: flex-start;'
+    when 'center'
+      assign align_self = '--align-self: center;'
+    when 'right'
+      assign align_self = '--align-self: flex-end;'
+  endcase
+  case s.alignment_mobile
+    when 'left'
+      assign align_self = align_self | append: ' --align-self-mobile: flex-start;'
+    when 'center'
+      assign align_self = align_self | append: ' --align-self-mobile: center;'
+    when 'right'
+      assign align_self = align_self | append: ' --align-self-mobile: flex-end;'
+  endcase
+
   # Fill and Custom size the wrapper; the button then fills the wrapper.
   assign full_width = false
   if s.width == 'fill' or s.width == 'custom'
@@ -42,7 +60,7 @@
 
 <div
   class="button-block spacing-style size-style"
-  style="{%- render 'spacing-style', settings: s -%} {% render 'size-style', settings: s %}"
+  style="{%- render 'spacing-style', settings: s -%} {% render 'size-style', settings: s %} {{ align_self }}"
   {% render 'animation-attributes', animation: s.animation, delay: s.animation_delay %}
   {{ block.shopify_attributes }}
 >
@@ -235,6 +253,56 @@
     {
       "type": "header",
       "content": "t:headers.layout"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "t:settings.alignment",
+      "options": [
+        {
+          "value": "inherit",
+          "label": "t:options.text_align.inherit"
+        },
+        {
+          "value": "left",
+          "label": "t:options.text_align.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.text_align.center"
+        },
+        {
+          "value": "right",
+          "label": "t:options.text_align.right"
+        }
+      ],
+      "default": "inherit",
+      "visible_if": "{{ block.settings.width != 'fill' }}"
+    },
+    {
+      "type": "select",
+      "id": "alignment_mobile",
+      "label": "t:settings.alignment_mobile",
+      "options": [
+        {
+          "value": "inherit",
+          "label": "t:options.text_align.same"
+        },
+        {
+          "value": "left",
+          "label": "t:options.text_align.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.text_align.center"
+        },
+        {
+          "value": "right",
+          "label": "t:options.text_align.right"
+        }
+      ],
+      "default": "inherit",
+      "visible_if": "{{ block.settings.width != 'fill' }}"
     },
     {
       "type": "select",

@@ -1,0 +1,510 @@
+{% doc %}
+  Section heading: the heading area at the top of a section, holding nested
+  heading, text and button blocks.
+
+  Vertical: a centred (or start/end aligned) stack capped at a max width.
+  Horizontal: the stack on one side, actions on the other: a button, slider
+  arrows that drive the section's <slider-component> (assets/carousel.js), or
+  both. Arrows stay hidden until a slider in the same section claims them, so
+  they never show for a grid layout.
+
+  @example
+  {% content_for 'block', type: 'section-heading', id: 'heading' %}
+{% enddoc %}
+
+{%- liquid
+  assign s = block.settings
+  assign horizontal = false
+  if s.layout == 'horizontal'
+    assign horizontal = true
+  endif
+
+  assign show_button = false
+  assign show_arrows = false
+  if horizontal
+    if s.action == 'button' or s.action == 'both'
+      if s.button_label != blank
+        assign show_button = true
+      endif
+    endif
+    if s.action == 'arrows' or s.action == 'both'
+      assign show_arrows = true
+    endif
+  endif
+
+  if horizontal
+    assign align = 'flex-start'
+  else
+    assign align = s.alignment
+  endif
+
+  case s.arrow_style
+    when 'arrow'
+      assign icon_previous = 'arrow-left'
+      assign icon_next = 'arrow'
+    when 'chevron'
+      assign icon_previous = 'chevron-left'
+      assign icon_next = 'chevron-right'
+    when 'diagonal'
+      assign icon_previous = 'diagonal'
+      assign icon_next = 'diagonal'
+    else
+      assign icon_previous = 'undo'
+      assign icon_next = 'redo'
+  endcase
+-%}
+{%- # No cap by default: each block's own max width decides how narrow it gets. -%}
+{%- capture max_width -%}{% render 'max-width', settings: s %}{%- endcapture -%}
+{%- assign max_width = max_width | strip -%}
+
+<div
+  class="section-heading section-heading--{{ s.layout }} spacing-style"
+  style="
+    {%- render 'spacing-style', settings: s -%}
+    --heading-width: {{ max_width | default: 'none' }};
+    --heading-align: {{ align }};
+    --heading-actions-align: {{ s.vertical_alignment }};
+  "
+  {{ block.shopify_attributes }}
+>
+  <div
+    class="section-heading__content layout-stack"
+    style="
+      --align: {{ align }};
+      --gap: {{ s.gap }}px;
+      --gap-tablet: {{ s.gap }}px;
+      --gap-mobile: {{ s.gap_mobile }}px;
+      --stack-text-align: {% case align %}{% when 'center' %}center{% when 'flex-end' %}end{% else %}start{% endcase %};
+    "
+    {% render 'animation-attributes', animation: 'none', stagger: s.stagger_children %}
+  >
+    {% content_for 'blocks' %}
+  </div>
+
+  {%- if show_button or show_arrows -%}
+    <div class="section-heading__actions" {% render 'animation-attributes' %}>
+      {%- if show_button -%}
+        {% render 'button', label: s.button_label, url: s.button_link, variant: s.button_style %}
+      {%- endif -%}
+      {%- if show_arrows -%}
+        <div class="section-heading__arrows section-heading__arrows--{{ s.arrow_style }}" data-slider-controls hidden>
+          <button class="icon-button" type="button" data-slider-step="-1">
+            {%- render 'icon', name: icon_previous -%}
+            <span class="visually-hidden">{{ 'accessibility.previous' | t }}</span>
+          </button>
+          <button class="icon-button" type="button" data-slider-step="1">
+            {%- render 'icon', name: icon_next -%}
+            <span class="visually-hidden">{{ 'accessibility.next' | t }}</span>
+          </button>
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.section_heading.name",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "heading"
+    },
+    {
+      "type": "text"
+    },
+    {
+      "type": "button"
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:headers.layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "t:settings.layout",
+      "options": [
+        {
+          "value": "vertical",
+          "label": "t:options.heading_layout.vertical"
+        },
+        {
+          "value": "horizontal",
+          "label": "t:options.heading_layout.horizontal"
+        }
+      ],
+      "default": "vertical"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "t:settings.alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.alignment.flex_start"
+        },
+        {
+          "value": "center",
+          "label": "t:options.alignment.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.alignment.flex_end"
+        }
+      ],
+      "default": "center",
+      "visible_if": "{{ block.settings.layout == 'vertical' }}"
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment",
+      "label": "t:settings.vertical_alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.alignment.flex_start"
+        },
+        {
+          "value": "center",
+          "label": "t:options.alignment.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.alignment.flex_end"
+        }
+      ],
+      "default": "flex-end",
+      "visible_if": "{{ block.settings.layout == 'horizontal' }}"
+    },
+    {
+      "type": "select",
+      "id": "max_width_preset",
+      "label": "t:settings.max_width",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.max_width.none"
+        },
+        {
+          "value": "small",
+          "label": "t:options.max_width.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:options.max_width.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:options.max_width.large"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.max_width.custom"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "t:settings.max_width_custom",
+      "min": 320,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 900,
+      "visible_if": "{{ block.settings.max_width_preset == 'custom' }}"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "label": "t:settings.gap_mobile",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "t:headers.actions",
+      "visible_if": "{{ block.settings.layout == 'horizontal' }}"
+    },
+    {
+      "type": "select",
+      "id": "action",
+      "label": "t:settings.action",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.heading_action.none"
+        },
+        {
+          "value": "button",
+          "label": "t:options.heading_action.button"
+        },
+        {
+          "value": "arrows",
+          "label": "t:options.heading_action.arrows"
+        },
+        {
+          "value": "both",
+          "label": "t:options.heading_action.both"
+        }
+      ],
+      "default": "arrows",
+      "visible_if": "{{ block.settings.layout == 'horizontal' }}"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:settings.button_label",
+      "default": "t:defaults.view_all",
+      "visible_if": "{{ block.settings.layout == 'horizontal' and block.settings.action != 'none' and block.settings.action != 'arrows' }}"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:settings.link",
+      "visible_if": "{{ block.settings.layout == 'horizontal' and block.settings.action != 'none' and block.settings.action != 'arrows' }}"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "t:settings.button_style",
+      "options": [
+        {
+          "value": "primary",
+          "label": "t:options.button_style.primary"
+        },
+        {
+          "value": "secondary",
+          "label": "t:options.button_style.secondary"
+        },
+        {
+          "value": "link",
+          "label": "t:options.button_style.link"
+        }
+      ],
+      "default": "secondary",
+      "visible_if": "{{ block.settings.layout == 'horizontal' and block.settings.action != 'none' and block.settings.action != 'arrows' }}"
+    },
+    {
+      "type": "select",
+      "id": "arrow_style",
+      "label": "t:settings.arrow_style",
+      "options": [
+        {
+          "value": "curved",
+          "label": "t:options.arrow_style.curved"
+        },
+        {
+          "value": "arrow",
+          "label": "t:options.arrow_style.arrow"
+        },
+        {
+          "value": "chevron",
+          "label": "t:options.arrow_style.chevron"
+        },
+        {
+          "value": "diagonal",
+          "label": "t:options.arrow_style.diagonal"
+        }
+      ],
+      "default": "curved",
+      "visible_if": "{{ block.settings.layout == 'horizontal' and block.settings.action != 'none' and block.settings.action != 'button' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.animation"
+    },
+    {
+      "type": "checkbox",
+      "id": "stagger_children",
+      "label": "t:settings.stagger_children",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.section_heading.presets.vertical",
+      "category": "t:categories.blocks.text",
+      "settings": {
+        "layout": "vertical",
+        "alignment": "center"
+      },
+      "blocks": {
+        "subheading": {
+          "type": "text",
+          "settings": {
+            "text": "t:defaults.subheading",
+            "type_preset": "subheading"
+          }
+        },
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "t:defaults.heading",
+            "type_preset": "display_m"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "t:defaults.section_text",
+            "text_color": "subtext",
+            "max_width_preset": "large"
+          }
+        }
+      },
+      "block_order": [
+        "subheading",
+        "heading",
+        "text"
+      ]
+    },
+    {
+      "name": "t:blocks.section_heading.presets.horizontal",
+      "category": "t:categories.blocks.text",
+      "settings": {
+        "layout": "horizontal",
+        "action": "both"
+      },
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "t:defaults.heading",
+            "type_preset": "display_m"
+          }
+        }
+      },
+      "block_order": [
+        "heading"
+      ]
+    }
+  ]
+}
+{% endschema %}

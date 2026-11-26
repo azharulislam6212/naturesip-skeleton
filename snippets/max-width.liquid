@@ -1,0 +1,24 @@
+{% doc %}
+  Outputs the CSS max-width for the shared Max width setting, or nothing for
+  'none'. Fixed sizes, not `ch`: a `ch` grows with the font, so a display
+  heading would never be capped.
+
+  Reads: max_width_preset ('none', 'small', 'medium', 'large', 'custom') and
+  max_width (px, for custom).
+
+  @param {object} settings - block.settings
+
+  @example
+  {%- capture max_width -%}{% render 'max-width', settings: block.settings %}{%- endcapture -%}
+{% enddoc %}
+
+{%- case settings.max_width_preset -%}
+  {%- when 'small' -%}
+    480px
+  {%- when 'medium' -%}
+    720px
+  {%- when 'large' -%}
+    960px
+  {%- when 'custom' -%}
+    {{- settings.max_width | default: 600 }}px
+{%- endcase -%}

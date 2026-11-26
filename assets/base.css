@@ -679,6 +679,10 @@
     }
   }
 
+  .layout-stack[data-row-gap] {
+    row-gap: var(--row-gap);
+  }
+
   .layout-stack--horizontal > * {
     flex: var(--child-flex, 0 1 auto);
   }
@@ -715,6 +719,55 @@
       top: calc(var(--header-height) + var(--space-md));
       align-self: flex-start;
     }
+  }
+
+  /* ---------- Section heading (blocks/section-heading.liquid) ---------- */
+  .section-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: var(--heading-align, center);
+    gap: var(--space-md);
+    width: 100%;
+  }
+
+  .section-heading__content {
+    max-width: var(--heading-width, none);
+  }
+
+  .section-heading__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .section-heading__arrows {
+    display: flex;
+    gap: var(--space-2xs);
+  }
+
+  .section-heading__arrows[hidden] {
+    display: none;
+  }
+
+  /* Diagonal: next points up-end, previous mirrors it. */
+  .section-heading__arrows--diagonal [data-slider-step='-1'] svg {
+    transform: rotate(180deg);
+  }
+
+  .section-heading--horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: var(--heading-actions-align, flex-end);
+  }
+
+  .section-heading--horizontal .section-heading__content {
+    flex: 1 1 20rem;
+  }
+
+  [dir='rtl'] .section-heading__arrows:not(.section-heading__arrows--diagonal) svg {
+    transform: scaleX(-1);
   }
 
   /* ---------- Typography presets for blocks ---------- */
@@ -766,8 +819,9 @@
   }
 
   /* A block with its own alignment also positions itself in a vertical stack,
-     so a fit-content or max-width block lines up with its text. */
-  .layout-stack:not(.layout-stack--horizontal) > .text-block {
+     so a fit-content or max-width block lines up with its text. Without one
+     it follows the stack's alignment (align-self: auto). */
+  .layout-stack:not(.layout-stack--horizontal) > :is(.text-block, .button-block, .group) {
     align-self: var(--align-self-mobile, var(--align-self, auto));
   }
 
@@ -780,7 +834,7 @@
       text-align: var(--text-align, var(--stack-text-align, inherit));
     }
 
-    .layout-stack:not(.layout-stack--horizontal) > .text-block {
+    .layout-stack:not(.layout-stack--horizontal) > :is(.text-block, .button-block, .group) {
       align-self: var(--align-self, auto);
     }
   }
@@ -4089,4 +4143,21 @@
       animation: none;
     }
   }
+}
+
+/* ---------- Page transitions ----------
+   Native cross-document view transition: the current page stays on screen
+   until the next one has rendered, then cross-fades into it, so a
+   navigation never flashes a blank page. Browsers without support simply
+   navigate as usual. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }

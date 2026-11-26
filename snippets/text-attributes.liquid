@@ -44,38 +44,20 @@
     assign classes = classes | append: ' text-shadow'
   endif
 
-  # Alignment priority: the default (left) follows the parent group/section,
-  # so the container's alignment wins until the merchant picks center or
-  # right on the block itself. Mobile left follows the desktop alignment.
+  # Alignment: the block's own left, center or right, on desktop and mobile.
   assign align = settings.alignment | default: 'left'
-  assign align_mobile = settings.alignment_mobile | default: 'left'
-  if align == 'left'
-    assign align = 'inherit'
-  endif
-  if align_mobile == 'left'
-    assign align_mobile = 'inherit'
-  endif
-
-  case settings.max_width_preset
-    when 'small'
-      assign max_width = '30ch'
-    when 'medium'
-      assign max_width = '45ch'
-    when 'large'
-      assign max_width = '70ch'
-    when 'custom'
-      assign max_width = settings.max_width | append: 'ch'
-    else
-      assign max_width = blank
-  endcase
+  assign align_mobile = settings.alignment_mobile | default: align
 -%}
+{%- # Max width caps any width: Fill grows to the parent up to this size. -%}
+{%- capture max_width -%}{% render 'max-width', settings: settings %}{%- endcapture -%}
+{%- assign max_width = max_width | strip -%}
 
 class="{{ classes | strip }}"
 style="
   {%- render 'spacing-style', settings: settings -%}
   {%- render 'size-style', settings: settings -%}
-  {%- unless align == 'inherit' %}--text-align: {{ align }}; --align-self: {% case align %}{% when 'center' %}center{% when 'right' %}flex-end{% else %}flex-start{% endcase %};{% endunless -%}
-  {%- unless align_mobile == 'inherit' %}--text-align-mobile: {{ align_mobile }}; --align-self-mobile: {% case align_mobile %}{% when 'center' %}center{% when 'right' %}flex-end{% else %}flex-start{% endcase %};{% endunless -%}
+  --text-align: {% case align %}{% when 'center' %}center{% when 'right' %}end{% else %}start{% endcase %}; --align-self: {% case align %}{% when 'center' %}center{% when 'right' %}flex-end{% else %}flex-start{% endcase %};
+  --text-align-mobile: {% case align_mobile %}{% when 'center' %}center{% when 'right' %}end{% else %}start{% endcase %}; --align-self-mobile: {% case align_mobile %}{% when 'center' %}center{% when 'right' %}flex-end{% else %}flex-start{% endcase %};
   {%- if max_width != blank %}--max-width: {{ max_width }};{% endif -%}
   {%- if preset == 'custom' -%}
     --custom-family: var(--font-{{ settings.custom_font }}--family);

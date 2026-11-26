@@ -84,6 +84,13 @@
     "product_vendor": {
       "name": "Product vendor"
     },
+    "section_heading": {
+      "name": "Section heading",
+      "presets": {
+        "horizontal": "Section heading: side by side",
+        "vertical": "Section heading: stacked"
+      }
+    },
     "share": {
       "name": "Share"
     },
@@ -168,9 +175,11 @@
     "testimonials_heading": "Real people, <em>really</em> good",
     "text": "<p>Share details about your brand, a product or a promotion. Use <em>italic</em> to highlight words.</p>",
     "them_label": "Others",
-    "us_label": "Our brand"
+    "us_label": "Our brand",
+    "view_all": "View all"
   },
   "headers": {
+    "actions": "Actions",
     "animation": "Animation",
     "appearance": "Appearance",
     "banner": "Banner",
@@ -205,6 +214,12 @@
       "slide_start": "Slide from start",
       "theme": "Theme default",
       "zoom": "Zoom"
+    },
+    "arrow_style": {
+      "arrow": "Arrow",
+      "chevron": "Chevron",
+      "curved": "Curved",
+      "diagonal": "Diagonal"
     },
     "badge_position": {
       "top_end": "Top right",
@@ -267,11 +282,6 @@
       "drawer": "Drawer",
       "sidebar": "Sidebar"
     },
-    "pagination_type": {
-      "infinite": "Infinite scroll",
-      "load_more": "Load more button",
-      "numbered": "Numbered (AJAX)"
-    },
     "fit": {
       "contain": "Contain",
       "cover": "Cover"
@@ -295,6 +305,16 @@
     "header_layout": {
       "logo_center": "Logo center",
       "logo_left": "Logo left"
+    },
+    "heading_action": {
+      "arrows": "Slider arrows",
+      "both": "Button and arrows",
+      "button": "Button",
+      "none": "None"
+    },
+    "heading_layout": {
+      "horizontal": "Side by side",
+      "vertical": "Stacked"
     },
     "height": {
       "full": "Full screen",
@@ -384,11 +404,10 @@
       "click": "Click",
       "hover": "Hover"
     },
-    "page_transition": {
-      "fade": "Fade",
-      "none": "None",
-      "reveal": "Reveal",
-      "slide": "Slide"
+    "pagination_type": {
+      "infinite": "Infinite scroll",
+      "load_more": "Load more button",
+      "numbered": "Numbered (AJAX)"
     },
     "picker_style": {
       "buttons": "Buttons",
@@ -450,6 +469,13 @@
       "h6": "H6",
       "p": "Paragraph"
     },
+    "text_align": {
+      "center": "Center",
+      "inherit": "Inherit from parent",
+      "left": "Left",
+      "right": "Right",
+      "same": "Same as desktop"
+    },
     "text_animation": {
       "blur": "Blur words",
       "chars": "Split text (letters)",
@@ -486,7 +512,8 @@
     "width": {
       "custom": "Custom",
       "fill": "Fill",
-      "fit": "Fit content"
+      "fit": "Fit content",
+      "same": "Same as desktop"
     }
   },
   "sections": {
@@ -627,10 +654,12 @@
   },
   "settings": {
     "accessible_name": "Accessible name",
+    "action": "Action",
     "alignment": "Alignment",
     "alignment_mobile": "Alignment on mobile",
     "animation": "Animation",
     "animation_delay": "Animation delay",
+    "arrow_style": "Arrow style",
     "aspect_ratio": "Aspect ratio",
     "author": "Author",
     "author_photo": "Author photo",
@@ -738,13 +767,13 @@
     "padding_right": "Right",
     "padding_top": "Top",
     "page_content": "Page content",
+    "pagination_type": "Pagination",
     "picker_style": "Picker style",
     "post_limit": "Post limit",
     "primary_product": "Primary product",
     "priority": "Priority",
     "product": "Product",
     "product_limit": "Product limit",
-    "pagination_type": "Pagination",
     "products_per_page": "Products per page",
     "quote": "Quote",
     "rating": "Rating",
@@ -752,6 +781,7 @@
     "reverse": "Reverse",
     "reverse_direction": "Reverse direction",
     "role": "Role",
+    "row_gap": "Row gap",
     "separator": "Separator",
     "shadow_color": "Shadow color",
     "shadow_offset": "Shadow offset",
@@ -827,6 +857,7 @@
     "video_url": "Video url",
     "view_all": "View all",
     "width": "Width",
+    "width_mobile": "Mobile width",
     "wrap": "Wrap",
     "zoom": "Zoom"
   },
@@ -835,8 +866,6 @@
       "image": "Image",
       "image_hover": "Image hover",
       "name": "Animations",
-      "page_transition": "Page transition",
-      "page_transition_color": "Transition color",
       "reveal": "Reveal",
       "smooth_scroll": "Smooth scroll",
       "smooth_scroll_intensity": "Smooth scroll intensity",
@@ -943,7 +972,6 @@
       "h6": "H6",
       "hover": "Hover",
       "navigation": "Navigation",
-      "page_transitions": "Page transitions",
       "paragraph": "Paragraph",
       "sale_badge": "Sale badge",
       "scroll_reveal": "Scroll reveal",

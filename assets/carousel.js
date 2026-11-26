@@ -9,6 +9,11 @@
  *     <button ref="previous">…</button> <button ref="next">…</button>
  *     <span ref="progress"></span> <span ref="counter"></span>
  *   </slider-component>
+ *
+ * Arrows can also live outside, in the section heading
+ * (blocks/section-heading.liquid): `[data-slider-controls]` holding buttons
+ * with `data-slider-step="-1|1"`. The first slider in the section claims them,
+ * reveals them and hides its own buttons.
  */
 import { Component, defineElement } from '@theme/component';
 import { t } from '@theme/utilities';
@@ -16,6 +21,9 @@ import { t } from '@theme/utilities';
 export class SliderComponent extends Component {
   /** @type {ResizeObserver | null} */
   #resizeObserver = null;
+
+  /** @type {HTMLButtonElement[]} Previous/next buttons from the section heading. */
+  #externalButtons = [];
 
   get slides() {
     return /** @type {HTMLElement[]} */ ([...(this.refs.track?.children ?? [])]);
@@ -55,6 +63,7 @@ export class SliderComponent extends Component {
 
     if (previous) this.listen(previous, 'click', () => this.step(-1));
     if (next) this.listen(next, 'click', () => this.step(1));
+    this.#claimExternalControls();
     this.listen(track, 'scroll', () => this.update(), { passive: true });
 
     this.#resizeObserver = new ResizeObserver(() => this.update());
@@ -64,6 +73,21 @@ export class SliderComponent extends Component {
 
   unmount() {
     this.#resizeObserver?.disconnect();
+    this.#externalButtons[0]?.closest('[data-slider-controls]')?.removeAttribute('data-claimed');
+    this.#externalButtons = [];
+  }
+
+  #claimExternalControls() {
+    const controls = this.closest('.shopify-section')?.querySelector('[data-slider-controls]');
+    if (!(controls instanceof HTMLElement) || controls.hasAttribute('data-claimed')) return;
+
+    controls.setAttribute('data-claimed', '');
+    controls.hidden = false;
+    this.setAttribute('data-external-controls', '');
+    this.#externalButtons = /** @type {HTMLButtonElement[]} */ ([...controls.querySelectorAll('[data-slider-step]')]);
+    for (const button of this.#externalButtons) {
+      this.listen(button, 'click', () => this.step(Number(button.dataset.sliderStep)));
+    }
   }
 
   /** @param {number} direction -1 or 1 */
@@ -92,6 +116,9 @@ export class SliderComponent extends Component {
     this.toggleAttribute('data-scrollable', scrollable);
     if (previous) previous.disabled = !scrollable || position <= 1;
     if (next) next.disabled = !scrollable || position >= max - 1;
+    for (const button of this.#externalButtons) {
+      button.disabled = Number(button.dataset.sliderStep) < 0 ? !scrollable || position <= 1 : !scrollable || position >= max - 1;
+    }
     if (progress) {
       const visible = track.clientWidth / track.scrollWidth;
       progress.style.setProperty('--progress-size', String(Math.min(1, visible)));

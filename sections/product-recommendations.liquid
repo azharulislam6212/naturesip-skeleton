@@ -8,9 +8,7 @@
 <section class="section section-surface color-{{ s.color_scheme.id }} spacing-style" style="{%- render 'spacing-style', settings: s -%}">
   {% render 'background' %}
   <div class="layout-stack" style="--gap: var(--space-xl);">
-    <div class="section-heading layout-stack" style="--align: center; --gap: 12px;">
-      {% content_for 'blocks' %}
-    </div>
+    {% content_for 'block', type: 'section-heading', id: 'heading' %}
     <product-recommendations data-url="{{ url }}">
       {%- if recommendations.performed and recommendations.products_count > 0 -%}
         <ul
@@ -33,23 +31,6 @@
 {
   "name": "t:sections.product_recommendations.name",
   "class": "section-wrapper",
-  "blocks": [
-    {
-      "type": "heading"
-    },
-    {
-      "type": "text"
-    },
-    {
-      "type": "button"
-    },
-    {
-      "type": "group"
-    },
-    {
-      "type": "@app"
-    }
-  ],
   "settings": [
     {
       "type": "select",
@@ -227,21 +208,30 @@
       "category": "t:categories.sections.products",
       "blocks": {
         "heading": {
-          "type": "heading",
+          "type": "section-heading",
+          "static": true,
           "settings": {
-            "heading": "t:defaults.recommendations_heading",
-            "type_preset": "display_m",
-            "text_color": "gradient",
-            "stroke": true,
-            "shadow": true,
-            "alignment": "center",
-            "alignment_mobile": "center"
-          }
+            "alignment": "center"
+          },
+          "blocks": {
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "t:defaults.recommendations_heading",
+                "type_preset": "display_m",
+                "text_color": "gradient",
+                "stroke": true,
+                "shadow": true,
+                "alignment": "center",
+                "alignment_mobile": "center"
+              }
+            }
+          },
+          "block_order": [
+            "heading"
+          ]
         }
-      },
-      "block_order": [
-        "heading"
-      ]
+      }
     }
   ]
 }

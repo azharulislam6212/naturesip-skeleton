@@ -25,7 +25,7 @@
   {%- endif -%}
 
   <div class="feature-steps__inner">
-    {% content_for 'block', type: 'group', id: 'heading' %}
+    {% content_for 'block', type: 'section-heading', id: 'heading' %}
     <div class="feature-steps__list" {% render 'animation-attributes', animation: 'none', stagger: true %}>
       {% content_for 'blocks' %}
     </div>
@@ -40,9 +40,6 @@
   "blocks": [
     {
       "type": "icon-text"
-    },
-    {
-      "type": "group"
     }
   ],
   "settings": [
@@ -290,12 +287,10 @@
       },
       "blocks": {
         "heading": {
-          "type": "group",
+          "type": "section-heading",
           "static": true,
           "settings": {
-            "horizontal_alignment": "center",
-            "gap": 12,
-            "width": "fill"
+            "alignment": "center"
           },
           "blocks": {
             "heading": {

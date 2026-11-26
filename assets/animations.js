@@ -10,8 +10,7 @@
  *   data-animate-stagger         on a parent: children animate one after another
  *
  * Everything animates as it enters the viewport, including what is already on
- * screen at load or reload (after the restored scroll position and the page
- * curtain settle). CSS hides armed elements before this runs and shows them
+ * screen at load or reload (after the restored scroll position settles). CSS hides armed elements before this runs and shows them
  * anyway if it never does. Under prefers-reduced-motion nothing is hidden.
  *
  * Theme editor: a section the editor re-renders (any setting change) replays
@@ -179,31 +178,10 @@ function reveal(element) {
   playEntrance(element, preset, { delay });
 }
 
-/**
- * Resolves once the page is in its final place: after a reload's scroll
- * restore (snippets/scroll-restore.liquid) and while the page curtain
- * (assets/page-transition.js) starts leaving.
- */
+/** Resolves once a reload's scroll restore (snippets/scroll-restore.liquid) has put the page in place. */
 async function pageSettled() {
-  const root = document.documentElement;
-  if (root.classList.contains('is-restoring-scroll')) {
-    await new Promise((resolve) => document.addEventListener('theme:scroll-restored', resolve, { once: true }));
-  }
-
-  const curtain = document.querySelector('page-transition');
-  if (!(curtain instanceof HTMLElement) || curtain.dataset.state !== 'covered') return;
-  await new Promise((resolve) => {
-    const observer = new MutationObserver(() => {
-      if (curtain.dataset.state === 'covered') return;
-      observer.disconnect();
-      resolve(undefined);
-    });
-    observer.observe(curtain, { attributes: true, attributeFilter: ['data-state'] });
-    setTimeout(() => {
-      observer.disconnect();
-      resolve(undefined);
-    }, 2000);
-  });
+  if (!document.documentElement.classList.contains('is-restoring-scroll')) return;
+  await new Promise((resolve) => document.addEventListener('theme:scroll-restored', resolve, { once: true }));
 }
 
 /**

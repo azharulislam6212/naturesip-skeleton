@@ -3,7 +3,9 @@
   inside a `style` attribute, next to `spacing-style`. Both values are always
   written, so a nested block never picks up its parent's width.
 
-  Reads: width ('fit', 'fill' or 'custom'), custom_width, custom_width_mobile (%).
+  Reads: width ('fit', 'fill' or 'custom'), custom_width, custom_width_mobile (%),
+  and optionally width_mobile ('same', 'fit', 'fill' or 'custom') for a
+  different width below 750px.
 
   @param {object} settings - block.settings
   @param {string} [default] - Width when the block has no width setting: 'fit' (default) or 'fill'.
@@ -14,16 +16,27 @@
 
 {%- liquid
   assign width = settings.width | default: default | default: 'fit'
+  assign width_mobile = settings.width_mobile | default: 'same'
+  if width_mobile == 'same'
+    assign width_mobile = width
+  endif
+
   case width
     when 'fill'
       assign desktop = '100%'
-      assign mobile = '100%'
     when 'custom'
       assign desktop = settings.custom_width | default: 100 | append: '%'
+    else
+      assign desktop = 'fit-content'
+  endcase
+
+  case width_mobile
+    when 'fill'
+      assign mobile = '100%'
+    when 'custom'
       assign mobile = settings.custom_width_mobile | default: 100 | append: '%'
     else
-      assign desktop = 'auto'
-      assign mobile = 'auto'
+      assign mobile = 'fit-content'
   endcase
 -%}
 --size-width: {{ desktop }}; --size-width-mobile: {{ mobile }};

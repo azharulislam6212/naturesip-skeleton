@@ -18,32 +18,41 @@
       "settings": {},
       "blocks": {
         "heading": {
-          "type": "heading",
+          "type": "section-heading",
+          "static": true,
           "settings": {
-            "heading": "Get in touch",
-            "type_preset": "display_m",
-            "text_color": "gradient",
-            "stroke": true,
-            "shadow": true,
-            "alignment": "center",
-            "alignment_mobile": "center"
-          }
-        },
-        "text": {
-          "type": "text",
-          "settings": {
-            "text": "<p>We usually reply within one business day.</p>",
-            "type_preset": "subheading",
-            "alignment": "center",
-            "alignment_mobile": "center",
-            "max_width_preset": "large"
-          }
+            "alignment": "center"
+          },
+          "blocks": {
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "Get in touch",
+                "type_preset": "display_m",
+                "text_color": "gradient",
+                "stroke": true,
+                "shadow": true,
+                "alignment": "center",
+                "alignment_mobile": "center"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>We usually reply within one business day.</p>",
+                "type_preset": "subheading",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "max_width_preset": "large"
+              }
+            }
+          },
+          "block_order": [
+            "heading",
+            "text"
+          ]
         }
-      },
-      "block_order": [
-        "heading",
-        "text"
-      ]
+      }
     }
   },
   "order": [

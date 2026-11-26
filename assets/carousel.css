@@ -83,6 +83,11 @@
     margin-inline-start: auto;
   }
 
+  /* The section heading's arrows drive this slider instead. */
+  slider-component[data-external-controls] .slider__buttons {
+    display: none;
+  }
+
 }
 
 @layer sections {

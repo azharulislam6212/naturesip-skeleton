@@ -12,7 +12,7 @@
   {% render 'background', settings: s %}
 
   <div class="layout-stack" style="--gap: var(--space-2xl);">
-    {% content_for 'block', type: 'group', id: 'heading' %}
+    {% content_for 'block', type: 'section-heading', id: 'heading' %}
     <div class="comparison__card color-{{ s.table_color_scheme.id }}" {% render 'animation-attributes' %}>
       <table class="comparison__table">
         <caption class="visually-hidden">{{ s.caption | escape }}</caption>
@@ -45,9 +45,6 @@
   "blocks": [
     {
       "type": "_comparison-row"
-    },
-    {
-      "type": "group"
     }
   ],
   "settings": [
@@ -296,12 +293,10 @@
       "category": "t:categories.sections.storytelling",
       "blocks": {
         "heading": {
-          "type": "group",
+          "type": "section-heading",
           "static": true,
           "settings": {
-            "horizontal_alignment": "center",
-            "gap": 12,
-            "width": "fill"
+            "alignment": "center"
           },
           "blocks": {
             "heading": {

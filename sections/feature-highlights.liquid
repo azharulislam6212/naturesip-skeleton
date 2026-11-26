@@ -16,7 +16,7 @@
   {% render 'background', settings: s %}
 
   <div class="layout-stack" style="--gap: var(--space-2xl);">
-    {% content_for 'block', type: 'group', id: 'heading' %}
+    {% content_for 'block', type: 'section-heading', id: 'heading' %}
     <div class="feature-highlights__grid" {% render 'animation-attributes', animation: 'none', stagger: true %}>
       <div class="feature-highlights__image" {% render 'animation-attributes', image: true %}>
         {% render 'image', image: s.image, alt: s.image.alt, sizes: '(min-width: 990px) 33vw, 80vw', placeholder: 'product-2' %}
@@ -34,9 +34,6 @@
   "blocks": [
     {
       "type": "icon-text"
-    },
-    {
-      "type": "group"
     }
   ],
   "settings": [
@@ -254,12 +251,10 @@
       },
       "blocks": {
         "heading": {
-          "type": "group",
+          "type": "section-heading",
           "static": true,
           "settings": {
-            "horizontal_alignment": "center",
-            "gap": 12,
-            "width": "fill"
+            "alignment": "center"
           },
           "blocks": {
             "heading": {

@@ -2158,41 +2158,6 @@
       },
       {
         "type": "header",
-        "content": "t:settings_schema.headers.page_transitions"
-      },
-      {
-        "type": "select",
-        "id": "page_transition",
-        "label": "t:settings_schema.animations.page_transition",
-        "options": [
-          {
-            "value": "none",
-            "label": "t:options.page_transition.none"
-          },
-          {
-            "value": "fade",
-            "label": "t:options.page_transition.fade"
-          },
-          {
-            "value": "slide",
-            "label": "t:options.page_transition.slide"
-          },
-          {
-            "value": "reveal",
-            "label": "t:options.page_transition.reveal"
-          }
-        ],
-        "default": "fade"
-      },
-      {
-        "type": "color",
-        "id": "page_transition_color",
-        "label": "t:settings_schema.animations.page_transition_color",
-        "default": "#000000",
-        "visible_if": "{{ settings.page_transition != 'none' }}"
-      },
-      {
-        "type": "header",
         "content": "t:settings_schema.headers.smooth_scroll"
       },
       {

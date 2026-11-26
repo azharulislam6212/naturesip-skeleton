@@ -121,7 +121,7 @@
   {%- if enable_filtering != false and results.filters.size > 0 -%}
     <dialog-component class="facets__panel">
       <dialog
-        class="facets__dialog drawer drawer--start color-{{ settings.body_color_scheme.id }}"
+        class="facets__dialog drawer drawer--start color-{{ settings.color_schemes.first.id }}"
         id="Facets-{{ section_id }}"
         aria-labelledby="FacetsTitle-{{ section_id }}"
         ref="dialog"

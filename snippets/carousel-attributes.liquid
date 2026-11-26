@@ -1,0 +1,14 @@
+{% doc %}
+  Behaviour attributes for <slider-component> from the shared carousel
+  settings (see snippets/carousel-controls.liquid).
+
+  @param {object} settings - Section settings with the carousel_* settings.
+  @param {boolean} [mobile_only] - Carousel below 750px only, a grid above.
+
+  @example
+  <slider-component {% render 'carousel-attributes', settings: section.settings %}>
+{% enddoc %}
+
+{%- if settings.carousel_loop %} data-loop{% endif -%}
+{%- if settings.carousel_autoplay %} data-autoplay="{{ settings.carousel_autoplay_delay | times: 1000 }}"{% endif -%}
+{%- if mobile_only %} data-mobile-only{% endif -%}

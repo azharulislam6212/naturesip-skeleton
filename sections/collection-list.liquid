@@ -1,4 +1,4 @@
-{%- comment -%} Collection list: image cards for chosen collections, as a grid or slider. {%- endcomment -%}
+{%- comment -%} Collection list: image cards for chosen collections, as a grid or carousel. {%- endcomment -%}
 
 {%- assign s = section.settings -%}
 <section
@@ -9,20 +9,33 @@
   {% render 'background' %}
   <div class="layout-stack" style="--gap: var(--space-xl);">
     {% content_for 'block', type: 'section-heading', id: 'heading' %}
-    <slider-component class="collection-list__items collection-list__items--{{ s.layout }}">
-      <ul class="{% if s.layout == 'slider' %}slider__track{% else %}grid{% endif %}" ref="track" role="list" {% render 'animation-attributes', animation: 'none', stagger: true %}>
-        {% content_for 'blocks' %}
+    {%- liquid
+      assign carousel = false
+      assign mobile_only = false
+      if s.layout == 'carousel'
+        assign carousel = true
+      elsif s.carousel_on_mobile
+        assign carousel = true
+        assign mobile_only = true
+      endif
+    -%}
+    {%- capture blocks -%}{% content_for 'blocks' %}{%- endcapture -%}
+    {%- if carousel -%}
+      <slider-component
+        class="collection-list__items collection-list__items--carousel"
+        aria-roledescription="{{ 'accessibility.carousel' | t }}"
+        {% render 'carousel-attributes', settings: s, mobile_only: mobile_only %}
+      >
+        <ul class="slider__track" ref="track" role="list" {% render 'animation-attributes', animation: 'none', stagger: true %}>
+          {{ blocks }}
+        </ul>
+        {% render 'carousel-controls', settings: s, slides: section.blocks.size %}
+      </slider-component>
+    {%- else -%}
+      <ul class="collection-list__items collection-list__items--grid grid" role="list" {% render 'animation-attributes', animation: 'none', stagger: true %}>
+        {{ blocks }}
       </ul>
-      {%- if s.layout == 'slider' -%}
-        <div class="slider__controls">
-          <div class="slider__progress" ref="progress" aria-hidden="true"><span class="slider__progress-bar"></span></div>
-          <div class="slider__buttons">
-            <button class="icon-button" type="button" ref="previous">{% render 'icon', name: 'undo' %}<span class="visually-hidden">{{ 'accessibility.previous' | t }}</span></button>
-            <button class="icon-button" type="button" ref="next">{% render 'icon', name: 'redo' %}<span class="visually-hidden">{{ 'accessibility.next' | t }}</span></button>
-          </div>
-        </div>
-      {%- endif -%}
-    </slider-component>
+    {%- endif -%}
   </div>
 </section>
 
@@ -43,15 +56,22 @@
       "label": "t:settings.layout",
       "options": [
         {
-          "value": "grid",
-          "label": "t:options.list_layout.grid"
+          "value": "carousel",
+          "label": "t:options.list_layout.carousel"
         },
         {
-          "value": "slider",
-          "label": "t:options.list_layout.slider"
+          "value": "grid",
+          "label": "t:options.list_layout.grid"
         }
       ],
       "default": "grid"
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_on_mobile",
+      "label": "t:carousel.on_mobile",
+      "default": false,
+      "visible_if": "{{ section.settings.layout == 'grid' }}"
     },
     {
       "type": "range",
@@ -97,6 +117,218 @@
         }
       ],
       "default": "1"
+    },
+    {
+      "type": "header",
+      "content": "t:carousel.headers.carousel",
+      "visible_if": "{{ section.settings.layout == 'carousel' or section.settings.carousel_on_mobile }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_loop",
+      "label": "t:carousel.loop",
+      "default": false,
+      "visible_if": "{{ section.settings.layout == 'carousel' or section.settings.carousel_on_mobile }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_autoplay",
+      "label": "t:carousel.autoplay",
+      "default": true,
+      "visible_if": "{{ section.settings.layout == 'carousel' or section.settings.carousel_on_mobile }}"
+    },
+    {
+      "type": "range",
+      "id": "carousel_autoplay_delay",
+      "label": "t:carousel.autoplay_delay",
+      "min": 2,
+      "max": 15,
+      "step": 1,
+      "unit": "s",
+      "default": 5,
+      "visible_if": "{{ section.settings.carousel_autoplay and section.settings.layout == 'carousel' or section.settings.carousel_on_mobile }}"
+    },
+    {
+      "type": "header",
+      "content": "t:carousel.headers.navigation",
+      "visible_if": "{{ section.settings.layout == 'carousel' or section.settings.carousel_on_mobile }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_navigation",
+      "label": "t:carousel.navigation",
+      "default": true,
+      "visible_if": "{{ section.settings.layout == 'carousel' or section.settings.carousel_on_mobile }}"
+    },
+    {
+      "type": "select",
+      "id": "carousel_nav_icon",
+      "label": "t:carousel.nav_icon.label",
+      "options": [
+        {
+          "value": "curved",
+          "label": "t:carousel.nav_icon.curved"
+        },
+        {
+          "value": "arrow",
+          "label": "t:carousel.nav_icon.arrow"
+        },
+        {
+          "value": "chevron",
+          "label": "t:carousel.nav_icon.chevron"
+        },
+        {
+          "value": "arrow-large",
+          "label": "t:carousel.nav_icon.arrow_large"
+        },
+        {
+          "value": "chevron-large",
+          "label": "t:carousel.nav_icon.chevron_large"
+        },
+        {
+          "value": "none",
+          "label": "t:carousel.nav_icon.none"
+        }
+      ],
+      "default": "curved",
+      "visible_if": "{{ section.settings.carousel_navigation and section.settings.layout == 'carousel' or section.settings.carousel_on_mobile }}"
+    },
+    {
+      "type": "select",
+      "id": "carousel_nav_shape",
+      "label": "t:carousel.nav_shape.label",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:carousel.nav_shape.none"
+        },
+        {
+          "value": "circle",
+          "label": "t:carousel.nav_shape.circle"
+        },
+        {
+          "value": "square",
+          "label": "t:carousel.nav_shape.square"
+        }
+      ],
+      "default": "circle",
+      "visible_if": "{{ section.settings.carousel_navigation and section.settings.layout == 'carousel' or section.settings.carousel_on_mobile }}"
+    },
+    {
+      "type": "select",
+      "id": "carousel_nav_border_style",
+      "label": "t:carousel.nav_border_style.label",
+      "options": [
+        {
+          "value": "solid",
+          "label": "t:carousel.nav_border_style.solid"
+        },
+        {
+          "value": "dashed",
+          "label": "t:carousel.nav_border_style.dashed"
+        },
+        {
+          "value": "none",
+          "label": "t:carousel.nav_border_style.none"
+        }
+      ],
+      "default": "solid",
+      "visible_if": "{{ section.settings.carousel_navigation and section.settings.carousel_nav_shape != 'none' and section.settings.layout == 'carousel' or section.settings.carousel_on_mobile }}"
+    },
+    {
+      "type": "select",
+      "id": "carousel_controls_style",
+      "label": "t:carousel.controls_style.label",
+      "options": [
+        {
+          "value": "split",
+          "label": "t:carousel.controls_style.split"
+        },
+        {
+          "value": "ghost",
+          "label": "t:carousel.controls_style.ghost"
+        },
+        {
+          "value": "solid",
+          "label": "t:carousel.controls_style.solid"
+        }
+      ],
+      "default": "ghost",
+      "visible_if": "{{ section.settings.carousel_navigation and section.settings.layout == 'carousel' or section.settings.carousel_on_mobile }}"
+    },
+    {
+      "type": "header",
+      "content": "t:carousel.headers.pagination",
+      "visible_if": "{{ section.settings.layout == 'carousel' or section.settings.carousel_on_mobile }}"
+    },
+    {
+      "type": "select",
+      "id": "carousel_pagination",
+      "label": "t:carousel.pagination.label",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:carousel.pagination.none"
+        },
+        {
+          "value": "dots",
+          "label": "t:carousel.pagination.dots"
+        },
+        {
+          "value": "numbers",
+          "label": "t:carousel.pagination.numbers"
+        },
+        {
+          "value": "progress",
+          "label": "t:carousel.pagination.progress"
+        },
+        {
+          "value": "controls",
+          "label": "t:carousel.pagination.controls"
+        }
+      ],
+      "default": "controls",
+      "visible_if": "{{ section.settings.layout == 'carousel' or section.settings.carousel_on_mobile }}"
+    },
+    {
+      "type": "select",
+      "id": "carousel_pagination_align",
+      "label": "t:carousel.pagination_align.label",
+      "options": [
+        {
+          "value": "start",
+          "label": "t:carousel.pagination_align.start"
+        },
+        {
+          "value": "center",
+          "label": "t:carousel.pagination_align.center"
+        },
+        {
+          "value": "end",
+          "label": "t:carousel.pagination_align.end"
+        }
+      ],
+      "default": "start",
+      "visible_if": "{{ section.settings.layout == 'carousel' or section.settings.carousel_on_mobile }}"
+    },
+    {
+      "type": "header",
+      "content": "t:carousel.headers.controls",
+      "visible_if": "{{ section.settings.layout == 'carousel' or section.settings.carousel_on_mobile }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_inherit_scheme",
+      "label": "t:carousel.inherit_scheme",
+      "default": true,
+      "visible_if": "{{ section.settings.layout == 'carousel' or section.settings.carousel_on_mobile }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "carousel_color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ section.settings.carousel_inherit_scheme == false and section.settings.layout == 'carousel' or section.settings.carousel_on_mobile }}"
     },
     {
       "type": "header",

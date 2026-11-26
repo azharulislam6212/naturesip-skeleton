@@ -13,7 +13,7 @@
     {{ content_for_header }}
   </head>
 
-  <body class="color-{{ settings.body_color_scheme.id }}">
+  <body class="color-{{ settings.color_schemes.first.id }}">
     <main class="gift-card page-width" id="MainContent">
       <header class="gift-card__header">
         <p class="type-subheading">{{ shop.name | escape }}</p>

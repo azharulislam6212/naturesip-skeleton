@@ -13,12 +13,14 @@
       {
         "type": "image_picker",
         "id": "logo",
-        "label": "t:settings_schema.logo.logo"
+        "label": "t:settings_schema.logo.logo",
+        "info": "t:settings_schema.logo.logo_info"
       },
       {
         "type": "image_picker",
         "id": "favicon",
-        "label": "t:settings_schema.logo.favicon"
+        "label": "t:settings_schema.logo.favicon",
+        "info": "t:settings_schema.logo.favicon_info"
       }
     ]
   },
@@ -271,12 +273,6 @@
           "on_secondary_button": "secondary_button_label",
           "secondary_button_border": "secondary_button_border"
         }
-      },
-      {
-        "type": "color_scheme",
-        "id": "body_color_scheme",
-        "label": "t:settings_schema.colors.body_color_scheme",
-        "default": "scheme-1"
       }
     ]
   },
@@ -2132,9 +2128,13 @@
           {
             "value": "zoom-out",
             "label": "t:options.image_animation.zoom_out"
+          },
+          {
+            "value": "image-reveal",
+            "label": "t:options.image_animation.reveal"
           }
         ],
-        "default": "zoom-out"
+        "default": "image-reveal"
       },
       {
         "type": "header",

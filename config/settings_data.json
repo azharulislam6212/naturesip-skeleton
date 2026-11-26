@@ -92,6 +92,45 @@
         },
         "scheme-3": {
           "settings": {
+            "background": "#FCA87D",
+            "background_gradient": "linear-gradient(180deg, #FAC67A 0%, #FE8A80 100%)",
+            "text": "#010507",
+            "subtext": "#010507",
+            "heading": "#010507",
+            "heading_gradient": "",
+            "heading_stroke": "#010507",
+            "highlight": "#69247C",
+            "highlight_gradient": "",
+            "accent": "#69247C",
+            "accent_gradient": "linear-gradient(270deg, #640D5F 0%, #8A2E8F 100%)",
+            "on_accent": "#FFFFFF",
+            "sale": "#C2185B",
+            "primary_button": "#69247C",
+            "primary_button_gradient": "linear-gradient(270deg, #640D5F 0%, #8A2E8F 100%)",
+            "primary_button_label": "#FFFFFF",
+            "primary_button_border": "#010507",
+            "primary_button_hover": "#010507",
+            "primary_button_gradient_hover": "",
+            "primary_button_label_hover": "#FFFFFF",
+            "primary_button_border_hover": "#010507",
+            "secondary_button": "#FFFFFF",
+            "secondary_button_gradient": "",
+            "secondary_button_label": "#010507",
+            "secondary_button_border": "#010507",
+            "secondary_button_hover": "#010507",
+            "secondary_button_gradient_hover": "",
+            "secondary_button_label_hover": "#FFFFFF",
+            "secondary_button_border_hover": "#010507",
+            "card": "#FFFFFF",
+            "input_background": "#FFFFFF",
+            "input_text": "#010507",
+            "input_border": "#010507",
+            "border": "#010507",
+            "shadow": "#010507"
+          }
+        },
+        "scheme-4": {
+          "settings": {
             "background": "#FFE7EE",
             "background_gradient": "linear-gradient(180deg, #FFF1F4 0%, #FFD6E3 100%)",
             "text": "#1A1020",
@@ -129,7 +168,7 @@
             "shadow": "#1A1020"
           }
         },
-        "scheme-4": {
+        "scheme-5": {
           "settings": {
             "background": "#FFFFFF",
             "background_gradient": "",
@@ -169,7 +208,10 @@
           }
         }
       },
-      "body_color_scheme": "scheme-1"
+      "social_x_link": "https://x.com/shopify",
+      "social_facebook_link": "https://facebook.com/shopify",
+      "social_pinterest_link": "https://pinterest.com/shopify",
+      "social_instagram_link": "https://instagram.com/shopify"
     }
   }
 }

@@ -2,9 +2,9 @@
 @layer sections {
   /* ---------- Announcement bar ---------- */
   .announcement-bar {
-    font-size: 0.8125rem;
-    font-weight: var(--font-body--weight-bold);
-    letter-spacing: 0.04em;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.2;
     text-transform: uppercase;
   }
 
@@ -13,7 +13,7 @@
     grid-template-columns: 1fr;
     align-items: center;
     gap: var(--space-sm);
-    min-height: 2.5rem;
+    min-height: 3.1875rem;
   }
 
   @media (min-width: 990px) {
@@ -25,13 +25,19 @@
   .announcement-bar__side {
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 0.875rem;
+  }
+
+  .announcement-bar__side .social-links {
+    gap: 0.75rem;
   }
 
   .announcement-bar__side .social-links a {
-    width: 2rem;
-    height: 2rem;
+    width: 1.5rem;
+    height: 1.5rem;
     border: 0;
+    border-radius: 0;
+    --icon-size: 1.5rem;
   }
 
   .announcement-bar__side--end {
@@ -41,9 +47,9 @@
   .announcement-bar__contact {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-2xs);
+    gap: 0.625rem;
     text-decoration: none;
-    --icon-size: 1rem;
+    --icon-size: 1.5rem;
   }
 
   .announcement-bar__slider {
@@ -66,7 +72,7 @@
   .announcement {
     display: grid;
     place-items: center;
-    min-height: 2.5rem;
+    min-height: 3.1875rem;
     text-align: center;
   }
 

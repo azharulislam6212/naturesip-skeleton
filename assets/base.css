@@ -2308,9 +2308,10 @@
     --from-opacity: 0;
   }
 
+  /* Scales with the text: a small label moves a little, a big one more. */
   [data-animate='fade-up'] {
     --from-opacity: 0;
-    --from-transform: translateY(28px);
+    --from-transform: translateY(max(1em, 20px));
   }
 
   [data-animate='rise'] {
@@ -2366,12 +2367,29 @@
     --to-clip: inset(0 0 0 0);
   }
 
-  /* Mask reveal, no opacity: the element rises while its clip window stays put. */
+  /* Mask reveal, no opacity: the element rises while its clip window stays
+     put. The window reaches 10% past every edge, so descenders, strokes and
+     shadows are never cut: top and bottom insets move exactly with the
+     translate (window = -10%…110% of the element throughout). */
   [data-animate='reveal'] {
     --animate-name: animate-in-clip;
-    --from-transform: translateY(100%);
-    --from-clip: inset(-110% -10% 100% -10%);
-    --to-clip: inset(-10% -10% 0% -10%);
+    --from-transform: translateY(110%);
+    --from-clip: inset(-120% -10% 100% -10%);
+    --to-clip: inset(-10% -10% -10% -10%);
+  }
+
+  /* Images: a curtain opens upwards while the picture settles from a zoom. */
+  [data-animate='image-reveal'] {
+    --animate-name: animate-in-clip;
+    --animate-duration: 1.1s;
+    --from-clip: inset(100% 0 0 0);
+    --to-clip: inset(0 0 0 0);
+  }
+
+  @keyframes image-settle {
+    from {
+      transform: scale(1.25);
+    }
   }
 
   [data-animate-delay='50'] { --animate-delay: 50ms; }
@@ -2460,7 +2478,12 @@
       opacity: var(--from-opacity, 1);
     }
 
-    .animations-on [data-animate-pending]:is([data-animate='reveal'], [data-animate='clip-up']):not([data-split]) {
+    .animations-on [data-animate='image-reveal']:not([data-animate-pending]) :is(img, video, svg) {
+      animation: image-settle 1.4s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--animate-delay, 0ms) + var(--stagger-index, 0) * 120ms)
+        backwards;
+    }
+
+    .animations-on [data-animate-pending]:is([data-animate='reveal'], [data-animate='clip-up'], [data-animate='image-reveal']):not([data-split]) {
       clip-path: inset(0 0 100% 0);
     }
 

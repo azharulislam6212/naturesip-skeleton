@@ -161,7 +161,7 @@
     "marquee": {
       "type": "marquee",
       "settings": {
-        "color_scheme": "scheme-4"
+        "color_scheme": "scheme-5"
       },
       "blocks": {
         "m_1": {
@@ -471,9 +471,9 @@
     "collection": {
       "type": "featured-collection",
       "settings": {
-        "layout": "slider",
+        "layout": "carousel",
         "columns_desktop": 3,
-        "color_scheme": "scheme-3",
+        "color_scheme": "scheme-4",
         "shape_bottom": "wave"
       },
       "blocks": {
@@ -517,7 +517,7 @@
     "testimonials": {
       "type": "testimonials",
       "settings": {
-        "color_scheme": "scheme-3",
+        "color_scheme": "scheme-4",
         "shape_bottom": "wave"
       },
       "blocks": {
@@ -562,7 +562,7 @@
           "settings": {
             "quote": "<p>The perfect pick-me-up during my busy workday. Refreshing, energizing and no crash!</p>",
             "author": "Sarah M.",
-            "color_scheme": "scheme-4"
+            "color_scheme": "scheme-5"
           }
         },
         "t_2": {
@@ -570,7 +570,7 @@
           "settings": {
             "quote": "<p>Finally an energy drink that doesn't upset my stomach. The berry flavor is amazing.</p>",
             "author": "Daniel R.",
-            "color_scheme": "scheme-3"
+            "color_scheme": "scheme-4"
           }
         },
         "t_3": {
@@ -578,7 +578,7 @@
           "settings": {
             "quote": "<p>I swapped my afternoon coffee for this and never looked back.</p>",
             "author": "Priya K.",
-            "color_scheme": "scheme-4"
+            "color_scheme": "scheme-5"
           }
         }
       },

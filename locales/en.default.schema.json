@@ -208,6 +208,7 @@
       "fade": "Fade in",
       "fade_up": "Fade up",
       "flip_up": "Flip up",
+      "image_reveal": "Curtain reveal",
       "none": "None",
       "reveal": "Mask reveal",
       "rise": "Rise",
@@ -364,6 +365,7 @@
     "image_animation": {
       "fade": "Fade",
       "none": "None",
+      "reveal": "Curtain reveal",
       "zoom_out": "Zoom out"
     },
     "image_hover": {
@@ -392,7 +394,8 @@
     },
     "list_layout": {
       "grid": "Grid",
-      "slider": "Slider"
+      "slider": "Slider",
+      "carousel": "Carousel"
     },
     "max_width": {
       "custom": "Custom",
@@ -920,7 +923,6 @@
       "accent_gradient": "Accent gradient",
       "background": "Background",
       "background_gradient": "Background gradient",
-      "body_color_scheme": "Body color scheme",
       "border": "Border",
       "button_background": "Button background",
       "button_background_hover": "Button background hover",
@@ -993,7 +995,9 @@
     },
     "logo": {
       "favicon": "Favicon",
+      "favicon_info": "Square image, 32 × 32px or larger (PNG recommended)",
       "logo": "Logo",
+      "logo_info": "Recommended width 300px or more. SVG or transparent PNG works best",
       "name": "Logo"
     },
     "search": {
@@ -1025,5 +1029,60 @@
       "mobile_scale": "Mobile scale",
       "name": "Typography"
     }
+  },
+  "carousel": {
+    "headers": {
+      "carousel": "Carousel",
+      "navigation": "Navigation",
+      "pagination": "Pagination",
+      "controls": "Controls"
+    },
+    "on_mobile": "Carousel on mobile",
+    "loop": "Infinite loop",
+    "autoplay": "Autoplay",
+    "autoplay_delay": "Change slides every",
+    "navigation": "Show arrows",
+    "nav_icon": {
+      "label": "Icon",
+      "curved": "Curved",
+      "arrow": "Arrow",
+      "chevron": "Chevron",
+      "arrow_large": "Arrow (large)",
+      "chevron_large": "Chevron (large)",
+      "none": "None (text)"
+    },
+    "nav_shape": {
+      "label": "Shape",
+      "none": "None",
+      "circle": "Circle",
+      "square": "Square"
+    },
+    "nav_border_style": {
+      "label": "Border",
+      "solid": "Solid",
+      "dashed": "Dashed",
+      "none": "None"
+    },
+    "controls_style": {
+      "label": "Style",
+      "split": "Split (on the sides)",
+      "ghost": "Ghost",
+      "solid": "Solid"
+    },
+    "pagination": {
+      "label": "Pagination",
+      "none": "None",
+      "dots": "Dots",
+      "numbers": "Numbers",
+      "progress": "Progress bar",
+      "controls": "Scrollbar"
+    },
+    "pagination_align": {
+      "label": "Alignment",
+      "start": "Start",
+      "center": "Center",
+      "end": "End"
+    },
+    "inherit_scheme": "Use section color scheme"
   }
 }

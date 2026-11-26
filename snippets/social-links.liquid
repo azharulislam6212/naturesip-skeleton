@@ -6,7 +6,7 @@
 {% enddoc %}
 
 {%- liquid
-  assign networks = 'facebook,instagram,tiktok,youtube,pinterest,x' | split: ','
+  assign networks = 'x,facebook,pinterest,instagram,tiktok,youtube' | split: ','
   assign has_links = false
   for network in networks
     assign key = 'social_' | append: network | append: '_link'

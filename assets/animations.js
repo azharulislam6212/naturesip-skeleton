@@ -172,6 +172,31 @@ function release(element) {
   element.setAttribute('data-animated', '');
 }
 
+/**
+ * Resolves once the element's images have loaded (or failed, or after a
+ * moment), so an entrance never plays on an empty box. Null when ready now.
+ * @param {Element} element
+ */
+function imagesReady(element) {
+  const images = [...element.querySelectorAll('img')].filter((image) => !image.complete);
+  if (!images.length) return null;
+  const loaded = images.map(
+    (image) =>
+      new Promise((resolve) => {
+        image.addEventListener('load', resolve, { once: true });
+        image.addEventListener('error', resolve, { once: true });
+      })
+  );
+  return Promise.race([Promise.all(loaded), new Promise((resolve) => setTimeout(resolve, 1500))]);
+}
+
+/** @param {Element} element */
+function releaseWhenReady(element) {
+  const ready = imagesReady(element);
+  if (ready) ready.then(() => release(element));
+  else release(element);
+}
+
 const observer =
   'IntersectionObserver' in window
     ? new IntersectionObserver(
@@ -179,7 +204,7 @@ const observer =
           for (const entry of entries) {
             if (!entry.isIntersecting) continue;
             observer?.unobserve(entry.target);
-            release(entry.target);
+            releaseWhenReady(entry.target);
           }
         },
         // Any part of the element 10% above the viewport's bottom edge: tall
@@ -226,24 +251,38 @@ export function initAnimations(root = document) {
       continue;
     }
 
-    if (onScreen && !mode) {
-      // Already playing its CSS animation since the first paint.
-      element.setAttribute('data-animated', '');
+    if (!onScreen) {
+      element.setAttribute('data-animate-pending', '');
+      if (mode) splitText(element, mode);
+      observer.observe(element);
       continue;
     }
 
+    // On screen: split text plays now; anything else has been playing its
+    // CSS animation since the first paint, unless it still waits for an
+    // image, then it plays again once that is in.
+    const ready = mode ? null : imagesReady(element);
+    if (!mode && !ready) {
+      element.setAttribute('data-animated', '');
+      continue;
+    }
     element.setAttribute('data-animate-pending', '');
     if (mode) splitText(element, mode);
-    if (onScreen) release(element);
-    else observer.observe(element);
+    if (ready) ready.then(() => release(element));
+    else release(element);
   }
 }
 
-/** First run, once a reload's scroll restore (snippets/scroll-restore.liquid) has put the page in place. */
+/**
+ * First run, once the page is in place: after a reload's scroll restore
+ * (snippets/scroll-restore.liquid) and once the web fonts are in (briefly),
+ * so split text never animates in a fallback font and then reflows.
+ */
 export async function startAnimations() {
   if (document.documentElement.classList.contains('is-restoring-scroll')) {
     await new Promise((resolve) => document.addEventListener('theme:scroll-restored', resolve, { once: true }));
   }
+  await Promise.race([document.fonts?.ready, new Promise((resolve) => setTimeout(resolve, 1500))]);
   initAnimations(document);
 }
 

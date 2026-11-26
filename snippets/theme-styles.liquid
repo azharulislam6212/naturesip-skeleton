@@ -22,7 +22,7 @@
 -%}
 
 {%- liquid
-  assign body_scheme_id = settings.body_color_scheme.id | default: settings.color_schemes.first.id
+  assign body_scheme_id = settings.color_schemes.first.id
 -%}
 {% style %}
   {{ settings.type_heading_font | font_face: font_display: 'swap' }}

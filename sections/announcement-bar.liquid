@@ -4,13 +4,21 @@
   appear when there is more than one.
 {%- endcomment -%}
 
-{%- assign s = section.settings -%}
+{%- liquid
+  assign s = section.settings
+  # The label only makes sense next to icons, so both hide when no profile links are set.
+  if s.show_social
+    capture social_links
+      render 'social-links'
+    endcapture
+  endif
+-%}
 <div class="announcement-bar color-{{ s.color_scheme.id }}">
   <div class="announcement-bar__inner page-width">
     <div class="announcement-bar__side hide-mobile">
-      {%- if s.show_social -%}
-        {%- if s.social_label != blank -%}<span class="type-subheading">{{ s.social_label | escape }}</span>{%- endif -%}
-        {% render 'social-links' %}
+      {%- if social_links != blank -%}
+        {%- if s.social_label != blank -%}<span>{{ s.social_label | escape }}</span>{%- endif -%}
+        {{ social_links }}
       {%- endif -%}
     </div>
 
@@ -80,7 +88,8 @@
     {
       "type": "text",
       "id": "contact_text",
-      "label": "t:settings.contact_text"
+      "label": "t:settings.contact_text",
+      "default": "+12 (123) 00 960000"
     },
     {
       "type": "url",

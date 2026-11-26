@@ -16,8 +16,8 @@
     "recommendations": {
       "type": "featured-collection",
       "settings": {
-        "color_scheme": "scheme-3",
-        "layout": "slider"
+        "color_scheme": "scheme-4",
+        "layout": "carousel"
       },
       "blocks": {
         "heading": {

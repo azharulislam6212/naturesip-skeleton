@@ -1,0 +1,135 @@
+{% doc %}
+  Arrows and pagination for <slider-component> (assets/carousel.js), from the
+  shared carousel settings. Render it inside the slider, right after the track.
+
+  Split arrows sit on the slider's sides; ghost and solid arrows share the bar
+  under it with the pagination, placed by the pagination alignment.
+
+  Everything renders here in its first-slide state (dots, numbers, bars,
+  disabled previous arrow), so the layout never shifts when the script loads.
+
+  @param {object} settings - Section settings with the carousel_* settings.
+  @param {number} slides - Number of slides.
+  @param {string} [class] - Extra classes for the bar under the slider.
+
+  @example
+  {% render 'carousel-controls', settings: section.settings, slides: section.blocks.size %}
+{% enddoc %}
+
+{%- liquid
+  assign s = settings
+  assign count = slides | default: 1 | at_least: 1
+  assign show_arrows = s.carousel_navigation
+  assign pagination = s.carousel_pagination
+  assign split = false
+  if show_arrows and s.carousel_controls_style == 'split'
+    assign split = true
+  endif
+
+  assign scheme_class = ''
+  unless s.carousel_inherit_scheme
+    assign scheme_class = ' color-' | append: s.carousel_color_scheme.id
+  endunless
+
+  assign glyph = s.carousel_nav_icon | default: 'arrow'
+  case glyph
+    when 'curved'
+      assign icon_previous = 'undo'
+      assign icon_next = 'redo'
+    when 'chevron', 'chevron-large'
+      assign icon_previous = 'chevron-left'
+      assign icon_next = 'chevron-right'
+    when 'none'
+      assign icon_previous = blank
+      assign icon_next = blank
+    else
+      assign icon_previous = 'arrow-left'
+      assign icon_next = 'arrow'
+  endcase
+
+  assign size = 'regular'
+  if glyph contains 'large'
+    assign size = 'large'
+  endif
+
+  capture arrows_class
+    echo 'carousel-arrows carousel-arrows--' | append: s.carousel_controls_style
+    echo ' carousel-arrows--' | append: s.carousel_nav_shape
+    echo ' carousel-arrows--border-' | append: s.carousel_nav_border_style
+    echo ' carousel-arrows--' | append: size
+    echo ' carousel-arrows--icon-' | append: glyph
+    echo scheme_class
+  endcapture
+-%}
+
+{%- capture arrows -%}
+  {%- if show_arrows -%}
+    <div class="{{ arrows_class }}">
+      <button class="carousel-arrow" type="button" ref="previous"{% unless s.carousel_loop %} disabled{% endunless %}>
+        {%- if icon_previous != blank -%}
+          {%- render 'icon', name: icon_previous -%}
+          <span class="visually-hidden">{{ 'accessibility.previous' | t }}</span>
+        {%- else -%}
+          {{- 'accessibility.previous' | t -}}
+        {%- endif -%}
+      </button>
+      <button class="carousel-arrow" type="button" ref="next">
+        {%- if icon_next != blank -%}
+          {%- render 'icon', name: icon_next -%}
+          <span class="visually-hidden">{{ 'accessibility.next' | t }}</span>
+        {%- else -%}
+          {{- 'accessibility.next' | t -}}
+        {%- endif -%}
+      </button>
+    </div>
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- if split -%}{{ arrows }}{%- endif -%}
+
+{%- if pagination != 'none' or show_arrows and split == false -%}
+  <div
+    class="carousel-bar carousel-bar--{{ s.carousel_pagination_align }}{% if pagination == 'none' %} carousel-bar--arrows-only{% endif %}{{ scheme_class }}{% if class %} {{ class }}{% endif %}"
+    style="--slide-count: {{ count }};"
+  >
+    {%- case pagination -%}
+      {%- when 'dots' -%}
+        <div class="carousel-pagination carousel-pagination--dots" ref="pagination" data-type="dots">
+          {%- for i in (1..count) -%}
+            <button
+              class="carousel-dot"
+              type="button"
+              data-page="{{ forloop.index0 }}"
+              aria-label="{{ 'accessibility.slide_position' | t: index: i, count: count | escape }}"
+              {% if forloop.first %}
+                aria-current="true"
+              {% endif %}
+            ></button>
+          {%- endfor -%}
+        </div>
+      {%- when 'numbers' -%}
+        <div class="carousel-pagination carousel-pagination--numbers" ref="pagination" data-type="numbers" aria-hidden="true">
+          <span data-current>1</span><span class="carousel-pagination__divider">/</span><span>{{ count }}</span>
+        </div>
+      {%- when 'progress' -%}
+        <div
+          class="carousel-pagination carousel-pagination--progress"
+          ref="pagination"
+          data-type="progress"
+          style="--progress-size: {{ 1.0 | divided_by: count }};"
+          aria-hidden="true"
+        >
+          <span class="carousel-pagination__bar"></span>
+        </div>
+      {%- when 'controls' -%}
+        <div class="carousel-pagination carousel-pagination--scrollbar slider__progress" ref="pagination" data-type="scrollbar" aria-hidden="true">
+          <span class="slider__progress-bar"></span>
+        </div>
+    {%- endcase -%}
+    {%- unless split -%}{{ arrows }}{%- endunless -%}
+  </div>
+{%- endif -%}
+
+<span class="visually-hidden" ref="counter" aria-live="polite">
+  {{- 'accessibility.slide_position' | t: index: 1, count: count -}}
+</span>

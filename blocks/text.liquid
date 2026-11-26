@@ -7,11 +7,15 @@
 {% enddoc %}
 
 {%- liquid
-  # Theme default for running text is a fade up: a mask reveal clips a
-  # paragraph's lines while they rise, which reads as cut off.
+  # Theme default: a one-line subheading rises out of a mask; running text
+  # fades up, as a mask over several lines reads as cut off.
   assign animation = block.settings.animation
   if animation == 'theme'
-    assign animation = 'fade-up'
+    if block.settings.type_preset == 'subheading'
+      assign animation = 'reveal'
+    else
+      assign animation = 'fade-up'
+    endif
   endif
 -%}
 

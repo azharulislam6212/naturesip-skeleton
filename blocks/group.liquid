@@ -30,7 +30,7 @@
   endif
 
   # Max width caps any width (Fill grows to the parent up to it). Alignment
-  # places a capped or fit group in its parent; 'inherit' follows the parent.
+  # places a capped or fit group in its parent.
   assign align_self = blank
   assign align_self_mobile = blank
   case s.alignment
@@ -392,10 +392,6 @@
       "label": "t:settings.alignment",
       "options": [
         {
-          "value": "inherit",
-          "label": "t:options.text_align.inherit"
-        },
-        {
           "value": "left",
           "label": "t:options.text_align.left"
         },
@@ -408,7 +404,7 @@
           "label": "t:options.text_align.right"
         }
       ],
-      "default": "inherit"
+      "default": "left"
     },
     {
       "type": "select",
@@ -416,10 +412,6 @@
       "label": "t:settings.alignment_mobile",
       "options": [
         {
-          "value": "inherit",
-          "label": "t:options.text_align.same"
-        },
-        {
           "value": "left",
           "label": "t:options.text_align.left"
         },
@@ -432,7 +424,7 @@
           "label": "t:options.text_align.right"
         }
       ],
-      "default": "inherit"
+      "default": "left"
     },
     {
       "type": "range",

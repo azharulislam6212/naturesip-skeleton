@@ -1,6 +1,6 @@
 /*
- * Carousel: the shared <slider-component> track, arrows and progress bar,
- * plus the slideshow section built on it.
+ * Carousel: the shared <slider-component> track, arrows and pagination
+ * (snippets/carousel-controls.liquid), plus the slideshow section built on it.
  */
 @layer components {
   /* ---------- Slider ---------- */
@@ -46,15 +46,315 @@
     scroll-snap-align: start;
   }
 
-  .slider__controls {
+  /* Mouse drag (assets/carousel.js): snapping waits until the drag is over. */
+  slider-component[data-scrollable='true'] .slider__track {
+    cursor: grab;
+  }
+
+  slider-component[data-dragging] .slider__track {
+    cursor: grabbing;
+    scroll-snap-type: none;
+    scroll-behavior: auto;
+    user-select: none;
+  }
+
+  slider-component[data-dragging] .slider__slide {
+    pointer-events: none;
+  }
+
+  /* "Carousel on mobile": a grid from 750px, a carousel below. */
+  @media (min-width: 750px) {
+    slider-component[data-mobile-only] .slider__track {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(var(--columns-tablet, 2), minmax(0, 1fr));
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+      scroll-snap-type: none;
+    }
+  }
+
+  @media (min-width: 990px) {
+    slider-component[data-mobile-only] .slider__track {
+      grid-template-columns: repeat(var(--columns-desktop, 4), minmax(0, 1fr));
+    }
+  }
+
+  /* ---------- Controls (snippets/carousel-controls.liquid) ---------- */
+
+  /* Split arrows share the track's row, the bar sits in the row below. */
+  slider-component:has(> .carousel-arrows--split) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  slider-component > .slider__track,
+  .carousel-arrows--split {
+    grid-area: 1 / 1;
+  }
+
+  /* Controls render in Liquid and show from first paint; the script hides
+     them only once it finds every slide already fits. */
+  slider-component[data-scrollable='false'] :is(.carousel-arrows, .carousel-bar) {
+    display: none;
+  }
+
+  @media (min-width: 750px) {
+    slider-component[data-mobile-only] :is(.carousel-arrows, .carousel-bar) {
+      display: none;
+    }
+  }
+
+  /* Slides in view per breakpoint, for the scrollbar thumb before the script runs. */
+  slider-component {
+    --slides-in-view: 1;
+  }
+
+  @media (min-width: 750px) {
+    slider-component {
+      --slides-in-view: var(--columns-tablet, 2);
+    }
+  }
+
+  @media (min-width: 990px) {
+    slider-component {
+      --slides-in-view: var(--columns-desktop, 4);
+    }
+  }
+
+  /* The section heading's arrows drive this slider instead. */
+  slider-component[data-external-controls] :is(.carousel-arrows, .carousel-bar--arrows-only) {
+    display: none;
+  }
+
+  .carousel-bar {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
     margin-block-start: var(--space-md);
   }
 
-  slider-component:not([data-scrollable]) .slider__controls {
-    display: none;
+  /* A scheme of their own sets the colours only, never a painted box. */
+  :is(.carousel-bar, .carousel-arrows)[class*='color-'] {
+    background: none;
+  }
+
+  /* Start: pagination first, arrows at the far end. */
+  .carousel-bar--start .carousel-arrows {
+    margin-inline-start: auto;
+  }
+
+  /* End: arrows first, pagination at the far end. */
+  .carousel-bar--end {
+    justify-content: flex-end;
+  }
+
+  .carousel-bar--end .carousel-arrows {
+    order: -1;
+    margin-inline-end: auto;
+  }
+
+  /* Center: the arrows flank the pagination. */
+  .carousel-bar--center {
+    justify-content: center;
+  }
+
+  .carousel-bar--center:not(.carousel-bar--arrows-only) .carousel-arrows {
+    display: contents;
+  }
+
+  .carousel-bar--center [ref='previous'] {
+    order: -1;
+  }
+
+  /* Arrows alone follow the alignment themselves. */
+  .carousel-bar--arrows-only .carousel-arrows {
+    margin: 0;
+  }
+
+  /* ---------- Arrows ---------- */
+  .carousel-arrows {
+    display: flex;
+    gap: var(--space-2xs);
+  }
+
+  .carousel-arrows--split {
+    z-index: 1;
+    align-self: center;
+    justify-content: space-between;
+    padding-inline: var(--space-xs);
+    pointer-events: none;
+  }
+
+  .carousel-arrow {
+    --arrow-size: 2.75rem;
+    --icon-size: 1.25rem;
+    display: inline-grid;
+    place-items: center;
+    min-width: var(--arrow-size);
+    height: var(--arrow-size);
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background: none;
+    color: var(--color-foreground);
+    font: inherit;
+    cursor: pointer;
+    pointer-events: auto;
+    transition:
+      background-color var(--duration-fast),
+      border-color var(--duration-fast),
+      color var(--duration-fast),
+      opacity var(--duration-fast);
+  }
+
+  .carousel-arrows--large .carousel-arrow {
+    --arrow-size: 3.5rem;
+    --icon-size: 1.75rem;
+  }
+
+  .carousel-arrows--square .carousel-arrow {
+    border-radius: 0;
+  }
+
+  .carousel-arrows--border-dashed .carousel-arrow {
+    border-style: dashed;
+    border-color: currentColor;
+  }
+
+  .carousel-arrows--border-none .carousel-arrow,
+  .carousel-arrows--none .carousel-arrow {
+    border-color: transparent;
+  }
+
+  /* Text buttons when the glyph is "None". */
+  .carousel-arrow:not(:has(svg)) {
+    padding-inline: var(--space-sm);
+    border-radius: 999px;
+  }
+
+  .carousel-arrows--split .carousel-arrow {
+    background-color: var(--color-background);
+  }
+
+  .carousel-arrows--solid .carousel-arrow {
+    border-color: var(--color-foreground);
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+  }
+
+  /* Shape "none": a bare glyph, no surface at all. */
+  .carousel-arrows--none .carousel-arrow {
+    min-width: auto;
+    background: none;
+    color: var(--color-foreground);
+  }
+
+  .carousel-arrow:hover:not([disabled]) {
+    border-color: var(--color-foreground);
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+  }
+
+  .carousel-arrows--solid .carousel-arrow:hover:not([disabled]) {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  .carousel-arrows--none .carousel-arrow:hover:not([disabled]) {
+    border-color: transparent;
+    background: none;
+    color: var(--color-foreground);
+    opacity: 0.6;
+  }
+
+  /* Curved arrows spin one full turn on hover. */
+  :is(.carousel-arrows--icon-curved .carousel-arrow, .section-heading__arrows--curved .icon-button):hover:not([disabled]) svg {
+    animation: carousel-arrow-spin 0.6s var(--ease-out);
+  }
+
+  :is(.carousel-arrows--icon-curved, .section-heading__arrows--curved) [ref='next']:hover:not([disabled]) svg,
+  .section-heading__arrows--curved [data-slider-step='1']:hover:not([disabled]) svg {
+    --spin: 360deg;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel-arrow svg,
+    .section-heading__arrows .icon-button svg {
+      animation: none !important;
+    }
+  }
+
+  .carousel-arrow[disabled] {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  /* Split arrows step out of the way at the ends, like Swiper's. */
+  .carousel-arrows--split .carousel-arrow[disabled] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* ---------- Pagination ---------- */
+  .carousel-pagination--dots {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+
+  .carousel-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background-color: currentColor;
+    opacity: 0.3;
+    cursor: pointer;
+    transition: width var(--duration-fast), opacity var(--duration-fast);
+  }
+
+  .carousel-dot[aria-current] {
+    width: 1.5rem;
+    opacity: 1;
+  }
+
+  .carousel-pagination--numbers {
+    display: flex;
+    gap: 0.25em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .carousel-pagination__divider {
+    opacity: 0.5;
+  }
+
+  /* Progress: fills as the slides go by. */
+  .carousel-pagination--progress {
+    position: relative;
+    flex: 1;
+    height: 0.25rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background-color: rgb(from var(--color-foreground) r g b / 0.15);
+  }
+
+  .carousel-pagination__bar {
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-foreground);
+    background-image: var(--gradient-accent);
+    transform-origin: left center;
+    transform: scaleX(var(--progress-size, 0));
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  /* Scrollbar (pagination "Controls"): a draggable thumb sized to the view. */
+  .carousel-pagination--scrollbar {
+    cursor: pointer;
+    touch-action: none;
   }
 
   .slider__progress {
@@ -74,25 +374,25 @@
     border-radius: inherit;
     background-image: var(--gradient-accent);
     transform-origin: left center;
-    transform: translateX(calc(var(--progress-offset, 0) * 100%)) scaleX(var(--progress-size, 0.25));
+    transform: translateX(calc(var(--progress-offset, 0) * 100%))
+      scaleX(var(--progress-size, min(1, calc(var(--slides-in-view) / var(--slide-count, 4)))));
+  }
+}
+
+@keyframes carousel-arrow-spin {
+  from {
+    rotate: 0deg;
   }
 
-  .slider__buttons {
-    display: flex;
-    gap: var(--space-2xs);
-    margin-inline-start: auto;
+  to {
+    rotate: var(--spin, -360deg);
   }
-
-  /* The section heading's arrows drive this slider instead. */
-  slider-component[data-external-controls] .slider__buttons {
-    display: none;
-  }
-
 }
 
 @layer sections {
   /* ---------- Slideshow ---------- */
   .slideshow__slider {
+    --slides-in-view: 1;
     position: relative;
   }
 
@@ -146,11 +446,12 @@
     max-width: 44rem;
   }
 
+  /* The bar floats over the bottom of the slides. */
   .slideshow__controls {
     position: absolute;
     inset-block-end: var(--space-lg);
     inset-inline: 0;
+    z-index: 1;
     margin-block-start: 0;
   }
-
 }

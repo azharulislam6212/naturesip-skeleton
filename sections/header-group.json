@@ -16,13 +16,16 @@
       "settings": {
         "color_scheme": "scheme-3",
         "show_social": true,
-        "contact_text": ""
+        "social_label": "Follow us:",
+        "contact_text": "+12 (123) 00 960000",
+        "contact_link": "tel:+1212300960000",
+        "contact_icon": "phone"
       },
       "blocks": {
         "one": {
           "type": "_announcement",
           "settings": {
-            "text": "Free shipping on all orders"
+            "text": "Free shipping on all order USA wide"
           }
         }
       },

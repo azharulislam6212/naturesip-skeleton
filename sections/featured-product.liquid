@@ -1,23 +1,37 @@
-{%- comment -%} Featured product: the product page layout for any chosen product, with app blocks. {%- endcomment -%}
+{%- comment -%}
+  Featured product: the product page layout for any chosen product. Same
+  structure as sections/main-product — static `_product-media` and
+  `_product-details` blocks, with section blocks full width under them.
+  The URL never changes here when a variant is picked (data-update-url).
+{%- endcomment -%}
 
-{%- assign s = section.settings -%}
+{%- liquid
+  assign s = section.settings
+-%}
+{%- capture section_blocks -%}{% content_for 'blocks' %}{%- endcapture -%}
+
 <section
   class="section section-surface product-section color-{{ s.color_scheme.id }} spacing-style"
-  style="{%- render 'spacing-style', settings: s -%}"
+  style="
+    {%- render 'spacing-style', settings: s -%}
+    --product-gap: {{ s.gap | divided_by: 16.0 }}rem;
+    --product-gap-mobile: {{ s.gap_mobile | divided_by: 16.0 }}rem;
+  "
   data-product-section
   data-section-id="{{ section.id }}"
   data-update-url="false"
   {% render 'shape-attributes', settings: s %}
 >
   {% render 'background', settings: s %}
-  <div class="product product--media-{{ s.media_width }}{% if s.reverse %} product--reverse{% endif %}">
-    <div class="product__media">
-      {% content_for 'block', type: '_product-media-gallery', id: 'media-gallery' %}
-    </div>
-    <div class="product__info">
-      {% content_for 'blocks' %}
-    </div>
+
+  <div class="product product--{{ s.layout_size }} product--media-{{ s.media_position }}">
+    {% content_for 'block', type: '_product-media', id: 'media' %}
+    {% content_for 'block', type: '_product-details', id: 'details' %}
   </div>
+
+  {%- if section_blocks != blank -%}
+    <div class="product-section__blocks">{{ section_blocks }}</div>
+  {%- endif -%}
 </section>
 
 {% schema %}
@@ -25,36 +39,6 @@
   "name": "t:sections.featured_product.name",
   "class": "section-wrapper",
   "blocks": [
-    {
-      "type": "_product-title"
-    },
-    {
-      "type": "_product-price"
-    },
-    {
-      "type": "_product-variant-picker"
-    },
-    {
-      "type": "_product-buy-buttons"
-    },
-    {
-      "type": "_product-description"
-    },
-    {
-      "type": "_product-inventory"
-    },
-    {
-      "type": "_product-sku"
-    },
-    {
-      "type": "_product-vendor"
-    },
-    {
-      "type": "_product-rating"
-    },
-    {
-      "type": "share"
-    },
     {
       "type": "heading"
     },
@@ -65,6 +49,12 @@
       "type": "button"
     },
     {
+      "type": "image"
+    },
+    {
+      "type": "video"
+    },
+    {
       "type": "icon-text"
     },
     {
@@ -72,15 +62,6 @@
     },
     {
       "type": "group"
-    },
-    {
-      "type": "divider"
-    },
-    {
-      "type": "spacer"
-    },
-    {
-      "type": "image"
     },
     {
       "type": "custom-liquid"
@@ -101,8 +82,9 @@
     },
     {
       "type": "select",
-      "id": "media_width",
-      "label": "t:settings.media_width",
+      "id": "layout_size",
+      "label": "t:settings.layout_size",
+      "info": "t:settings.layout_size_info",
       "options": [
         {
           "value": "small",
@@ -120,10 +102,40 @@
       "default": "medium"
     },
     {
-      "type": "checkbox",
-      "id": "reverse",
-      "label": "t:settings.reverse",
-      "default": false
+      "type": "select",
+      "id": "media_position",
+      "label": "t:settings.media_position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:options.side.left"
+        },
+        {
+          "value": "right",
+          "label": "t:options.side.right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.column_gap",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "label": "t:settings.column_gap_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 32
     },
     {
       "type": "header",
@@ -377,41 +389,122 @@
       "name": "t:sections.featured_product.name",
       "category": "t:categories.sections.products",
       "blocks": {
-        "media-gallery": {
-          "type": "_product-media-gallery",
-          "static": true
+        "media": {
+          "type": "_product-media",
+          "static": true,
+          "settings": {},
+          "blocks": {
+            "feature_1": {
+              "type": "icon-text",
+              "settings": {
+                "icon": "leaf",
+                "title": "100% natural",
+                "title_size": "subheading",
+                "layout": "vertical",
+                "alignment": "center",
+                "frame": "none"
+              }
+            },
+            "feature_2": {
+              "type": "icon-text",
+              "settings": {
+                "icon": "bolt",
+                "title": "Clean energy",
+                "title_size": "subheading",
+                "layout": "vertical",
+                "alignment": "center",
+                "frame": "none"
+              }
+            },
+            "feature_3": {
+              "type": "icon-text",
+              "settings": {
+                "icon": "drop",
+                "title": "No added sugar",
+                "title_size": "subheading",
+                "layout": "vertical",
+                "alignment": "center",
+                "frame": "none"
+              }
+            },
+            "feature_4": {
+              "type": "icon-text",
+              "settings": {
+                "icon": "sparkle",
+                "title": "Refreshing",
+                "title_size": "subheading",
+                "layout": "vertical",
+                "alignment": "center",
+                "frame": "none"
+              }
+            }
+          },
+          "block_order": [
+            "feature_1",
+            "feature_2",
+            "feature_3",
+            "feature_4"
+          ]
         },
-        "rating": {
-          "type": "_product-rating"
-        },
-        "title": {
-          "type": "_product-title"
-        },
-        "price": {
-          "type": "_product-price"
-        },
-        "description": {
-          "type": "_product-description"
-        },
-        "variant_picker": {
-          "type": "_product-variant-picker"
-        },
-        "inventory": {
-          "type": "_product-inventory"
-        },
-        "buy_buttons": {
-          "type": "_product-buy-buttons"
+        "details": {
+          "type": "_product-details",
+          "static": true,
+          "settings": {},
+          "blocks": {
+            "title": {
+              "type": "_product-title",
+              "settings": {
+                "type_preset": "h3"
+              }
+            },
+            "rating": {
+              "type": "_product-rating",
+              "settings": {
+                "show_count": true
+              }
+            },
+            "price": {
+              "type": "_product-price",
+              "settings": {
+                "size": 36,
+                "show_tax_note": false
+              }
+            },
+            "description": {
+              "type": "_product-description",
+              "settings": {}
+            },
+            "variant_picker": {
+              "type": "_product-variant-picker",
+              "settings": {
+                "picker_style": "image",
+                "show_swatches": true
+              }
+            },
+            "buy_buttons": {
+              "type": "_product-buy-buttons",
+              "settings": {
+                "show_dynamic_checkout": false,
+                "one_time_badge": "Most popular",
+                "subscription_badge": "Recommended"
+              }
+            },
+            "payment_icons": {
+              "type": "_product-payment-icons",
+              "settings": {}
+            }
+          },
+          "block_order": [
+            "title",
+            "rating",
+            "price",
+            "description",
+            "variant_picker",
+            "buy_buttons",
+            "payment_icons"
+          ]
         }
-      },
-      "block_order": [
-        "rating",
-        "title",
-        "price",
-        "description",
-        "variant_picker",
-        "inventory",
-        "buy_buttons"
-      ]
+      }
     }
   ]
 }

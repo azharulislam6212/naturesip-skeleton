@@ -350,6 +350,9 @@
     "selling_plans": {
       "legend": "Purchase options",
       "one_time": "One-time purchase"
+    },
+    "payment_icons": {
+      "heading": "Accepted payment methods"
     }
   },
   "search": {

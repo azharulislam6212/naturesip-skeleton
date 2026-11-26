@@ -1,25 +1,37 @@
 {%- comment -%}
-  Product page: media gallery (static block) beside product information
-  blocks. Supports app blocks. Variant changes re-render only the parts
-  marked with data-variant-update.
+  Product page. Two static blocks make the layout: `_product-media` (gallery)
+  and `_product-details` (title, price, options, buy buttons…). Blocks added
+  to the section itself render full width under them.
+  Variant changes re-render only the parts marked with data-variant-update
+  (assets/variant-picker.js). Same structure as sections/featured-product.
 {%- endcomment -%}
 
-{%- assign s = section.settings -%}
+{%- liquid
+  assign s = section.settings
+-%}
+{%- capture section_blocks -%}{% content_for 'blocks' %}{%- endcapture -%}
+
 <section
   class="section section-surface product-section color-{{ s.color_scheme.id }} spacing-style"
-  style="{%- render 'spacing-style', settings: s -%}"
+  style="
+    {%- render 'spacing-style', settings: s -%}
+    --product-gap: {{ s.gap | divided_by: 16.0 }}rem;
+    --product-gap-mobile: {{ s.gap_mobile | divided_by: 16.0 }}rem;
+  "
   data-product-section
   data-section-id="{{ section.id }}"
+  {% render 'shape-attributes', settings: s %}
 >
-  {% render 'background' %}
-  <div class="product product--media-{{ s.media_width }}{% if s.reverse %} product--reverse{% endif %}">
-    <div class="product__media">
-      {% content_for 'block', type: '_product-media-gallery', id: 'media-gallery' %}
-    </div>
-    <div class="product__info{% if s.sticky_info %} product__info--sticky{% endif %}">
-      {% content_for 'blocks' %}
-    </div>
+  {% render 'background', settings: s %}
+
+  <div class="product product--{{ s.layout_size }} product--media-{{ s.media_position }}">
+    {% content_for 'block', type: '_product-media', id: 'media' %}
+    {% content_for 'block', type: '_product-details', id: 'details' %}
   </div>
+
+  {%- if section_blocks != blank -%}
+    <div class="product-section__blocks">{{ section_blocks }}</div>
+  {%- endif -%}
 
   <script type="application/ld+json">
     {{ product | structured_data }}
@@ -32,36 +44,6 @@
   "class": "section-wrapper",
   "blocks": [
     {
-      "type": "_product-title"
-    },
-    {
-      "type": "_product-price"
-    },
-    {
-      "type": "_product-variant-picker"
-    },
-    {
-      "type": "_product-buy-buttons"
-    },
-    {
-      "type": "_product-description"
-    },
-    {
-      "type": "_product-inventory"
-    },
-    {
-      "type": "_product-sku"
-    },
-    {
-      "type": "_product-vendor"
-    },
-    {
-      "type": "_product-rating"
-    },
-    {
-      "type": "share"
-    },
-    {
       "type": "heading"
     },
     {
@@ -69,6 +51,12 @@
     },
     {
       "type": "button"
+    },
+    {
+      "type": "image"
+    },
+    {
+      "type": "video"
     },
     {
       "type": "icon-text"
@@ -80,15 +68,6 @@
       "type": "group"
     },
     {
-      "type": "divider"
-    },
-    {
-      "type": "spacer"
-    },
-    {
-      "type": "image"
-    },
-    {
       "type": "custom-liquid"
     },
     {
@@ -97,19 +76,14 @@
   ],
   "settings": [
     {
-      "type": "checkbox",
-      "id": "primary",
-      "label": "t:settings.primary_product",
-      "default": true
-    },
-    {
       "type": "header",
       "content": "t:headers.layout"
     },
     {
       "type": "select",
-      "id": "media_width",
-      "label": "t:settings.media_width",
+      "id": "layout_size",
+      "label": "t:settings.layout_size",
+      "info": "t:settings.layout_size_info",
       "options": [
         {
           "value": "small",
@@ -127,16 +101,40 @@
       "default": "medium"
     },
     {
-      "type": "checkbox",
-      "id": "reverse",
-      "label": "t:settings.reverse",
-      "default": false
+      "type": "select",
+      "id": "media_position",
+      "label": "t:settings.media_position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:options.side.left"
+        },
+        {
+          "value": "right",
+          "label": "t:options.side.right"
+        }
+      ],
+      "default": "left"
     },
     {
-      "type": "checkbox",
-      "id": "sticky_info",
-      "label": "t:settings.sticky_info",
-      "default": true
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.column_gap",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "label": "t:settings.column_gap_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 32
     },
     {
       "type": "header",
@@ -147,6 +145,131 @@
       "id": "color_scheme",
       "label": "t:settings.color_scheme",
       "default": "scheme-1"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "t:settings.background_image"
+    },
+    {
+      "type": "range",
+      "id": "background_image_opacity",
+      "label": "t:settings.background_image_opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ section.settings.background_image != blank }}"
+    },
+    {
+      "type": "select",
+      "id": "shape_top",
+      "label": "t:settings.shape_top",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.shape.none"
+        },
+        {
+          "value": "wave",
+          "label": "t:options.shape.wave"
+        },
+        {
+          "value": "waves",
+          "label": "t:options.shape.waves"
+        },
+        {
+          "value": "curve",
+          "label": "t:options.shape.curve"
+        },
+        {
+          "value": "arch",
+          "label": "t:options.shape.arch"
+        },
+        {
+          "value": "slant",
+          "label": "t:options.shape.slant"
+        },
+        {
+          "value": "triangle",
+          "label": "t:options.shape.triangle"
+        },
+        {
+          "value": "zigzag",
+          "label": "t:options.shape.zigzag"
+        },
+        {
+          "value": "scallop",
+          "label": "t:options.shape.scallop"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "shape_bottom",
+      "label": "t:settings.shape_bottom",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.shape.none"
+        },
+        {
+          "value": "wave",
+          "label": "t:options.shape.wave"
+        },
+        {
+          "value": "waves",
+          "label": "t:options.shape.waves"
+        },
+        {
+          "value": "curve",
+          "label": "t:options.shape.curve"
+        },
+        {
+          "value": "arch",
+          "label": "t:options.shape.arch"
+        },
+        {
+          "value": "slant",
+          "label": "t:options.shape.slant"
+        },
+        {
+          "value": "triangle",
+          "label": "t:options.shape.triangle"
+        },
+        {
+          "value": "zigzag",
+          "label": "t:options.shape.zigzag"
+        },
+        {
+          "value": "scallop",
+          "label": "t:options.shape.scallop"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "shape_size",
+      "label": "t:settings.shape_size",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:options.shape_size.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:options.shape_size.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:options.shape_size.large"
+        }
+      ],
+      "default": "medium",
+      "visible_if": "{{ section.settings.shape_top != 'none' or section.settings.shape_bottom != 'none' }}"
     },
     {
       "type": "header",
@@ -259,6 +382,11 @@
       "default": 48,
       "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
     }
-  ]
+  ],
+  "enabled_on": {
+    "templates": [
+      "product"
+    ]
+  }
 }
 {% endschema %}

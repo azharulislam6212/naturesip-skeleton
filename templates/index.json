@@ -591,60 +591,123 @@
     "featured": {
       "type": "featured-product",
       "blocks": {
-        "media-gallery": {
-          "type": "_product-media-gallery",
+        "media": {
+          "type": "_product-media",
           "static": true,
-          "settings": {}
+          "settings": {},
+          "blocks": {
+            "feature_1": {
+              "type": "icon-text",
+              "settings": {
+                "icon": "leaf",
+                "title": "100% natural",
+                "title_size": "subheading",
+                "layout": "vertical",
+                "alignment": "center",
+                "frame": "none"
+              }
+            },
+            "feature_2": {
+              "type": "icon-text",
+              "settings": {
+                "icon": "bolt",
+                "title": "Clean energy",
+                "title_size": "subheading",
+                "layout": "vertical",
+                "alignment": "center",
+                "frame": "none"
+              }
+            },
+            "feature_3": {
+              "type": "icon-text",
+              "settings": {
+                "icon": "drop",
+                "title": "No added sugar",
+                "title_size": "subheading",
+                "layout": "vertical",
+                "alignment": "center",
+                "frame": "none"
+              }
+            },
+            "feature_4": {
+              "type": "icon-text",
+              "settings": {
+                "icon": "sparkle",
+                "title": "Refreshing",
+                "title_size": "subheading",
+                "layout": "vertical",
+                "alignment": "center",
+                "frame": "none"
+              }
+            }
+          },
+          "block_order": [
+            "feature_1",
+            "feature_2",
+            "feature_3",
+            "feature_4"
+          ]
         },
-        "rating": {
-          "type": "_product-rating",
-          "settings": {
-            "show_count": true
-          }
-        },
-        "title": {
-          "type": "_product-title",
-          "settings": {
-            "type_preset": "h3"
-          }
-        },
-        "price": {
-          "type": "_product-price",
-          "settings": {
-            "size": 28
-          }
-        },
-        "description": {
-          "type": "_product-description",
-          "settings": {}
-        },
-        "variant_picker": {
-          "type": "_product-variant-picker",
-          "settings": {
-            "picker_style": "buttons",
-            "show_swatches": true
-          }
-        },
-        "inventory": {
-          "type": "_product-inventory",
-          "settings": {
-            "low_stock_threshold": 10
-          }
-        },
-        "buy_buttons": {
-          "type": "_product-buy-buttons",
-          "settings": {}
+        "details": {
+          "type": "_product-details",
+          "static": true,
+          "settings": {},
+          "blocks": {
+            "title": {
+              "type": "_product-title",
+              "settings": {
+                "type_preset": "h3"
+              }
+            },
+            "rating": {
+              "type": "_product-rating",
+              "settings": {
+                "show_count": true
+              }
+            },
+            "price": {
+              "type": "_product-price",
+              "settings": {
+                "size": 36,
+                "show_tax_note": false
+              }
+            },
+            "description": {
+              "type": "_product-description",
+              "settings": {}
+            },
+            "variant_picker": {
+              "type": "_product-variant-picker",
+              "settings": {
+                "picker_style": "image",
+                "show_swatches": true
+              }
+            },
+            "buy_buttons": {
+              "type": "_product-buy-buttons",
+              "settings": {
+                "show_dynamic_checkout": false,
+                "one_time_badge": "Most popular",
+                "subscription_badge": "Recommended"
+              }
+            },
+            "payment_icons": {
+              "type": "_product-payment-icons",
+              "settings": {}
+            }
+          },
+          "block_order": [
+            "title",
+            "rating",
+            "price",
+            "description",
+            "variant_picker",
+            "buy_buttons",
+            "payment_icons"
+          ]
         }
       },
-      "block_order": [
-        "rating",
-        "title",
-        "price",
-        "description",
-        "variant_picker",
-        "inventory",
-        "buy_buttons"
-      ],
+      "block_order": [],
       "settings": {
         "color_scheme": "scheme-1"
       }

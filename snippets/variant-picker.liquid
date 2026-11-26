@@ -1,11 +1,11 @@
 {% doc %}
   Variant option picker. Each option renders as pills, colour swatches (when
-  the value has a swatch in the admin) or a dropdown. Enhanced by
+  the value has a swatch in the admin), variant image tiles or a dropdown. Enhanced by
   <variant-picker>, which re-renders the section for the chosen option values.
 
   @param {object} product - Product object.
   @param {string} section_id - Owning section id (keeps radio names unique).
-  @param {string} [style] - 'buttons' (default) or 'dropdown'.
+  @param {string} [style] - 'buttons' (default), 'image' (variant image tiles, pills when a value has no image) or 'dropdown'.
   @param {boolean} [show_swatches] - Show swatches for values that have them. Default: true.
 
   @example
@@ -72,6 +72,10 @@
               if value.available
                 assign value_unavailable = false
               endif
+              assign value_image = nil
+              if style == 'image' and use_swatch == false
+                assign value_image = value.variant.featured_image
+              endif
             -%}
             <label class="option">
               <input
@@ -92,6 +96,18 @@
                   <span class="visually-hidden">
                     {{- value | escape -}}
                     {%- unless value.available %}, {{ 'products.product.unavailable' | t }}{% endunless -%}
+                  </span>
+                </span>
+              {%- elsif value_image != blank -%}
+                <span class="option__pill option__pill--image">
+                  <span class="option__media">
+                    {{- value_image | image_url: width: 192 | image_tag: loading: 'lazy', alt: '', class: 'option__image', sizes: '96px', widths: '96, 192' -}}
+                  </span>
+                  <span class="option__label">
+                    {{- value | escape -}}
+                    {%- unless value.available -%}
+                      <span class="visually-hidden">, {{ 'products.product.unavailable' | t }}</span>
+                    {%- endunless -%}
                   </span>
                 </span>
               {%- else -%}

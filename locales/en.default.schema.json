@@ -63,9 +63,6 @@
     "product_inventory": {
       "name": "Product inventory"
     },
-    "product_media_gallery": {
-      "name": "Product media gallery"
-    },
     "product_price": {
       "name": "Product price"
     },
@@ -143,6 +140,15 @@
     },
     "mega_promo": {
       "name": "Promotion"
+    },
+    "product_details": {
+      "name": "Product details"
+    },
+    "product_media": {
+      "name": "Product media"
+    },
+    "product_payment_icons": {
+      "name": "Payment icons"
     }
   },
   "categories": {
@@ -221,7 +227,13 @@
     "localization": "Localization",
     "padding": "Padding",
     "typography": "Typography",
-    "transparent_header": "Transparent header"
+    "transparent_header": "Transparent header",
+    "button": "Button",
+    "features": "Feature cards",
+    "gallery": "Gallery",
+    "media": "Media",
+    "purchase_options": "Purchase options",
+    "thumbnails": "Thumbnails"
   },
   "options": {
     "alignment": {
@@ -327,11 +339,6 @@
       "none": "None",
       "sketch": "Sketch",
       "square": "Square"
-    },
-    "gallery_layout": {
-      "grid": "Grid",
-      "slider": "Slider",
-      "stacked": "Stacked"
     },
     "header_layout": {
       "logo_center": "Logo center, menu left",
@@ -447,7 +454,8 @@
     },
     "picker_style": {
       "buttons": "Buttons",
-      "dropdown": "Dropdown"
+      "dropdown": "Dropdown",
+      "image": "Variant images"
     },
     "quick_action": {
       "add": "Add to cart",
@@ -461,7 +469,8 @@
       "portrait": "Portrait",
       "square": "Square",
       "wide": "Wide (16:9)",
-      "theme": "Theme default"
+      "theme": "Theme default",
+      "tall": "Tall (3:4)"
     },
     "sale_badge": {
       "percent": "Percentage saved",
@@ -565,6 +574,32 @@
       "grow": "Underline from start",
       "center": "Underline from center",
       "slide": "Underline slide",
+      "none": "None"
+    },
+    "border": {
+      "none": "None",
+      "solid": "Solid"
+    },
+    "gallery_type": {
+      "carousel": "Carousel",
+      "grid": "Grid"
+    },
+    "mobile_pagination": {
+      "counter": "Counter",
+      "none": "None",
+      "thumbnails": "Thumbnails"
+    },
+    "side": {
+      "left": "Left",
+      "right": "Right"
+    },
+    "thumbs_position": {
+      "bottom": "Below",
+      "none": "Hidden"
+    },
+    "zoom": {
+      "click": "Lightbox on click",
+      "hover": "Magnify on hover",
       "none": "None"
     }
   },
@@ -833,7 +868,6 @@
     "marquee_speed": "Loop duration",
     "max_width": "Max width",
     "max_width_custom": "Custom max width",
-    "media_width": "Media width",
     "menu": "Menu",
     "menu_open_on": "Menu open on",
     "min_height": "Min height",
@@ -849,7 +883,6 @@
     "pagination_type": "Pagination",
     "picker_style": "Picker style",
     "post_limit": "Post limit",
-    "primary_product": "Primary product",
     "priority": "Priority",
     "product": "Product",
     "product_limit": "Product limit",
@@ -857,7 +890,6 @@
     "quote": "Quote",
     "rating": "Rating",
     "recommendation_type": "Recommendation type",
-    "reverse": "Reverse",
     "reverse_direction": "Reverse direction",
     "role": "Role",
     "row_gap": "Row gap",
@@ -891,7 +923,6 @@
     "show_stock_count": "Show stock count",
     "show_swatches": "Show swatches",
     "show_tax_note": "Show tax note",
-    "show_thumbnails": "Show thumbnails",
     "size": "Size",
     "slide_height": "Height on desktop",
     "slide_height_mobile": "Height on mobile",
@@ -954,7 +985,30 @@
     "menu_animation": "Menu animation",
     "menu_link_hover": "Link hover",
     "panel_background": "Panel background",
-    "panel_background_info": "Dropdowns and mega menus. Clear it to use the dropdown color scheme."
+    "panel_background_info": "Dropdowns and mega menus. Clear it to use the dropdown color scheme.",
+    "column_gap": "Column gap",
+    "column_gap_mobile": "Gap on mobile",
+    "custom_color_scheme": "Use a different color scheme",
+    "features_info": "Add Icon with text blocks to this block to show feature cards over the main image.",
+    "features_mobile": "Show feature cards on mobile",
+    "features_position": "Feature cards position",
+    "gallery_type": "Layout",
+    "grid_first_full": "Show the first image full width",
+    "layout_size": "Media size",
+    "layout_size_info": "Width of the media column next to the product details on desktop.",
+    "media_position": "Media position",
+    "mobile_pagination": "Mobile navigation",
+    "one_time_badge": "One-time purchase badge",
+    "payment_heading_info": "Leave empty to use “Accepted payment methods” in the store language.",
+    "purchase_badge_info": "Shown in the corner of the option, for example “Most popular”. Leave empty to hide.",
+    "show_arrows": "Show arrows",
+    "show_heading": "Show heading",
+    "show_rules": "Show dotted lines",
+    "sticky_gallery": "Stick to the top while scrolling (desktop)",
+    "subscription_badge": "Subscription badge",
+    "thumb_radius": "Thumbnail corner radius",
+    "thumb_size": "Thumbnail size",
+    "thumbs_position": "Thumbnails position"
   },
   "settings_schema": {
     "animations": {

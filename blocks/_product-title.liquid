@@ -8,7 +8,9 @@
 {%- liquid
   assign product = closest.product
   assign tag = 'h2'
-  if request.page_type == 'product' and section.settings.primary
+  # The product page's own product is the page title; a featured product
+  # (picked in its section settings) is not.
+  if request.page_type == 'product' and section.settings.product == blank
     assign tag = 'h1'
   endif
 -%}

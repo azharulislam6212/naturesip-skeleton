@@ -12,97 +12,156 @@
     "main": {
       "type": "main-product",
       "blocks": {
-        "media-gallery": {
-          "type": "_product-media-gallery",
+        "media": {
+          "type": "_product-media",
           "static": true,
-          "settings": {
-            "layout": "slider",
-            "show_thumbnails": true,
-            "zoom": true
-          }
-        },
-        "rating": {
-          "type": "_product-rating",
-          "settings": {
-            "show_count": true
-          }
-        },
-        "title": {
-          "type": "_product-title",
-          "settings": {
-            "type_preset": "h3"
-          }
-        },
-        "price": {
-          "type": "_product-price",
-          "settings": {
-            "size": 28
-          }
-        },
-        "description": {
-          "type": "_product-description",
-          "settings": {}
-        },
-        "variant_picker": {
-          "type": "_product-variant-picker",
-          "settings": {
-            "picker_style": "buttons",
-            "show_swatches": true
-          }
-        },
-        "inventory": {
-          "type": "_product-inventory",
-          "settings": {
-            "low_stock_threshold": 10
-          }
-        },
-        "buy_buttons": {
-          "type": "_product-buy-buttons",
-          "settings": {}
-        },
-        "share": {
-          "type": "share",
-          "settings": {}
-        },
-        "highlights": {
-          "type": "accordion",
           "settings": {},
           "blocks": {
-            "row_1": {
-              "type": "_accordion-row",
+            "feature_1": {
+              "type": "icon-text",
               "settings": {
-                "heading": "Ingredients",
                 "icon": "leaf",
-                "content": "<p>Use this row for ingredients, materials or specifications.</p>",
-                "open": true
+                "title": "100% natural",
+                "title_size": "subheading",
+                "layout": "vertical",
+                "alignment": "center",
+                "frame": "none"
               }
             },
-            "row_2": {
-              "type": "_accordion-row",
+            "feature_2": {
+              "type": "icon-text",
               "settings": {
-                "heading": "Shipping & returns",
-                "icon": "truck",
-                "content": "<p>Share your delivery times and return policy.</p>"
+                "icon": "bolt",
+                "title": "Clean energy",
+                "title_size": "subheading",
+                "layout": "vertical",
+                "alignment": "center",
+                "frame": "none"
+              }
+            },
+            "feature_3": {
+              "type": "icon-text",
+              "settings": {
+                "icon": "drop",
+                "title": "No added sugar",
+                "title_size": "subheading",
+                "layout": "vertical",
+                "alignment": "center",
+                "frame": "none"
+              }
+            },
+            "feature_4": {
+              "type": "icon-text",
+              "settings": {
+                "icon": "sparkle",
+                "title": "Refreshing",
+                "title_size": "subheading",
+                "layout": "vertical",
+                "alignment": "center",
+                "frame": "none"
               }
             }
           },
           "block_order": [
-            "row_1",
-            "row_2"
+            "feature_1",
+            "feature_2",
+            "feature_3",
+            "feature_4"
+          ]
+        },
+        "details": {
+          "type": "_product-details",
+          "static": true,
+          "settings": {},
+          "blocks": {
+            "title": {
+              "type": "_product-title",
+              "settings": {
+                "type_preset": "h3"
+              }
+            },
+            "rating": {
+              "type": "_product-rating",
+              "settings": {
+                "show_count": true
+              }
+            },
+            "price": {
+              "type": "_product-price",
+              "settings": {
+                "size": 36,
+                "show_tax_note": false
+              }
+            },
+            "description": {
+              "type": "_product-description",
+              "settings": {}
+            },
+            "variant_picker": {
+              "type": "_product-variant-picker",
+              "settings": {
+                "picker_style": "image",
+                "show_swatches": true
+              }
+            },
+            "buy_buttons": {
+              "type": "_product-buy-buttons",
+              "settings": {
+                "show_dynamic_checkout": false,
+                "one_time_badge": "Most popular",
+                "subscription_badge": "Recommended"
+              }
+            },
+            "payment_icons": {
+              "type": "_product-payment-icons",
+              "settings": {}
+            },
+            "highlights": {
+              "type": "accordion",
+              "settings": {},
+              "blocks": {
+                "row_1": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "Ingredients",
+                    "icon": "leaf",
+                    "content": "<p>Use this row for ingredients, materials or specifications.</p>",
+                    "open": true
+                  }
+                },
+                "row_2": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "Shipping & returns",
+                    "icon": "truck",
+                    "content": "<p>Share your delivery times and return policy.</p>"
+                  }
+                }
+              },
+              "block_order": [
+                "row_1",
+                "row_2"
+              ]
+            },
+            "share": {
+              "type": "share",
+              "settings": {}
+            }
+          },
+          "block_order": [
+            "title",
+            "rating",
+            "price",
+            "description",
+            "variant_picker",
+            "buy_buttons",
+            "payment_icons",
+            "highlights",
+            "share"
           ]
         }
       },
-      "block_order": [
-        "rating",
-        "title",
-        "price",
-        "description",
-        "variant_picker",
-        "inventory",
-        "buy_buttons",
-        "highlights",
-        "share"
-      ],
+      "block_order": [],
       "settings": {}
     },
     "recommendations": {

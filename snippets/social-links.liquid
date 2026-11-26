@@ -6,7 +6,7 @@
 {% enddoc %}
 
 {%- liquid
-  assign networks = 'x,facebook,pinterest,instagram,tiktok,youtube' | split: ','
+  assign networks = 'x,facebook,pinterest,instagram,tiktok,threads,youtube,vimeo,snapchat,linkedin,tumblr,dribbble' | split: ','
   assign has_links = false
   for network in networks
     assign key = 'social_' | append: network | append: '_link'
@@ -21,14 +21,8 @@
     {%- for network in networks -%}
       {%- assign key = 'social_' | append: network | append: '_link' -%}
       {%- if settings[key] != blank -%}
-        {%- case network -%}
-          {%- when 'facebook' -%}{%- assign network_label = 'general.social.facebook' | t -%}
-          {%- when 'instagram' -%}{%- assign network_label = 'general.social.instagram' | t -%}
-          {%- when 'tiktok' -%}{%- assign network_label = 'general.social.tiktok' | t -%}
-          {%- when 'youtube' -%}{%- assign network_label = 'general.social.youtube' | t -%}
-          {%- when 'pinterest' -%}{%- assign network_label = 'general.social.pinterest' | t -%}
-          {%- else -%}{%- assign network_label = 'general.social.x' | t -%}
-        {%- endcase -%}
+        {%- assign label_key = 'general.social.' | append: network -%}
+        {%- assign network_label = label_key | t -%}
         <li>
           <a href="{{ settings[key] }}" target="_blank" rel="noopener">
             {%- render 'icon', name: network -%}

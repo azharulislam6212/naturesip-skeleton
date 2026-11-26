@@ -1,12 +1,12 @@
 {% doc %}
   Collection card: image with the collection title, used by the collection
-  list section and the all-collections page. Title position and product
-  count come from Theme settings > Collection cards.
+  list section and the all-collections page. Look and content come from
+  Theme settings > Collection cards; a section can still set its own ratio.
 
   @param {object} [collection] - The collection. Blank shows placeholder content.
   @param {object} [image] - Image override; defaults to the collection image.
   @param {string} [title] - Title override; defaults to the collection title.
-  @param {number} [ratio] - Image aspect ratio (width / height). Default 1.
+  @param {string} [ratio] - Section ratio; blank or 'theme' uses the theme setting.
   @param {string} [sizes] - Image sizes attribute.
 
   @example
@@ -20,20 +20,32 @@
     assign card_title = 'onboarding.collection_title' | t
   endif
   assign card_url = collection.url | default: routes.collections_url
-  assign overlay = false
-  if settings.collection_card_title_position == 'overlay'
-    assign overlay = true
+
+  assign ratio_key = ratio
+  if ratio == blank or ratio == 'theme'
+    assign ratio_key = settings.collection_card_image_ratio
   endif
 -%}
+{%- capture card_ratio -%}{% render 'image-ratio', key: ratio_key, image: card_image %}{%- endcapture -%}
 
-<a class="collection-card{% if overlay %} collection-card--overlay{% endif %}" href="{{ card_url }}">
-  <span class="collection-card__media media media--hover" data-hover="{{ settings.image_hover }}" style="--ratio: {{ ratio | default: 1 }};">
+<a
+  class="collection-card collection-card--{{ settings.collection_card_text_align }}{% if settings.collection_card_title_position == 'overlay' %} collection-card--overlay{% endif %}"
+  href="{{ card_url }}"
+  style="--card-radius: {{ settings.collection_card_radius }}px; --card-focus: {{ settings.collection_card_image_align }}; --card-background: {{ settings.collection_card_background }}; --card-border: {{ settings.collection_card_border }}; --card-label: {{ settings.collection_card_label_color }};"
+>
+  <span class="collection-card__media media media--hover" data-hover="{{ settings.image_hover }}" style="--ratio: {{ card_ratio }};">
     {% render 'image', image: card_image, alt: '', sizes: sizes, placeholder: 'collection-apparel-1' %}
   </span>
   <span class="collection-card__info">
-    <span class="collection-card__title type-heading type-h5">{{ card_title | escape }}{% render 'icon', name: 'arrow' %}</span>
-    {%- if settings.collection_card_show_count and collection != blank -%}
+    <span class="collection-card__title type-heading type-h5">{{ card_title | escape }}</span>
+    {%- if settings.collection_card_show_count and collection.products_count != blank -%}
       <span class="collection-card__count">{{ 'collections.product_count' | t: count: collection.products_count }}</span>
+    {%- endif -%}
+    {%- if settings.collection_card_show_description and collection.description != blank -%}
+      <span class="collection-card__description">{{ collection.description | strip_html | truncatewords: 14 }}</span>
+    {%- endif -%}
+    {%- if settings.collection_card_show_link -%}
+      <span class="collection-card__link">{{ 'collections.shop_now' | t }}{% render 'icon', name: 'arrow' %}</span>
     {%- endif -%}
   </span>
 </a>

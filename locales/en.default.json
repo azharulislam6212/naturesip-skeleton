@@ -35,12 +35,22 @@
     "continue_shopping": "Continue shopping",
     "duties_and_taxes_included_shipping_at_checkout_html": "Duties and taxes included. <a href=\"{{ link }}\">Shipping</a> calculated at checkout.",
     "empty": "Your cart is empty",
+    "empty_suggestions": "You might like",
     "error": "Something went wrong. Please try again.",
+    "free_shipping_remaining_html": "Spend <strong>{{ amount }}</strong> more for free shipping",
+    "free_shipping_unlocked": "You've unlocked free shipping!",
+    "gift_wrap": "Add gift wrap",
+    "gift_wrap_price": "Add gift wrap for {{ price }}",
     "item_removed": "Item removed from your cart",
     "login_prompt_html": "Have an account? <a href=\"{{ link }}\">Log in</a> to check out faster.",
     "note": "Add a note to your order",
     "note_saved": "Order note saved",
     "remove_item": "Remove {{ title }}",
+    "shipping_estimate": "Estimate shipping",
+    "shipping_estimate_submit": "Calculate",
+    "shipping_rates_none": "We don't ship to this address.",
+    "shipping_rates_one": "There is one shipping rate for your address:",
+    "shipping_rates_other": "There are {{ count }} shipping rates for your address:",
     "subtotal": "Subtotal",
     "summary": "Order summary",
     "taxes_and_shipping_at_checkout_html": "Taxes and <a href=\"{{ link }}\">shipping</a> calculated at checkout.",
@@ -53,7 +63,8 @@
     "product_count": {
       "one": "{{ count }} product",
       "other": "{{ count }} products"
-    }
+    },
+    "shop_now": "Shop now"
   },
   "contact": {
     "email": "Email",
@@ -168,12 +179,18 @@
       "showing": "Showing {{ shown }} of {{ total }} products"
     },
     "social": {
+      "x": "X",
       "facebook": "Facebook",
+      "pinterest": "Pinterest",
       "instagram": "Instagram",
       "tiktok": "TikTok",
+      "threads": "Threads",
       "youtube": "YouTube",
-      "pinterest": "Pinterest",
-      "x": "X"
+      "vimeo": "Vimeo",
+      "snapchat": "Snapchat",
+      "linkedin": "LinkedIn",
+      "tumblr": "Tumblr",
+      "dribbble": "Dribbble"
     },
     "share": {
       "facebook": "Share on Facebook",
@@ -182,7 +199,8 @@
       "whatsapp": "Share on WhatsApp",
       "email": "Share by email",
       "copy_link": "Copy link",
-      "link_copied": "Link copied"
+      "link_copied": "Link copied",
+      "telegram": "Share on Telegram"
     }
   },
   "gift_cards": {
@@ -296,11 +314,20 @@
     "product": {
       "add_to_cart": "Add to cart",
       "add_to_cart_short": "Add to bag",
+      "badge_best_seller": "Best seller",
+      "badge_hot": "Hot",
+      "badge_new": "New",
+      "badge_preorder": "Pre-order",
       "choose_options": "Choose options",
       "more_values": "+{{ count }}",
       "on_sale": "Sale",
+      "option_count": {
+        "one": "{{ count }} {{ option }}",
+        "other": "{{ count }} {{ option }}s"
+      },
       "quick_view": "Quick view",
       "quick_view_for": "Quick view: {{ product }}",
+      "save_amount": "Save {{ amount }}",
       "save_percent": "Save {{ percent }}%",
       "sku": "SKU: {{ sku }}",
       "sold_out": "Sold out",

@@ -1,0 +1,34 @@
+{% doc %}
+  Prints "true" when an option shows as swatches (Theme settings > Swatches),
+  nothing otherwise. Read it with capture:
+
+  - Off when swatches are disabled.
+  - On when the option's name is in the "Swatch options" list (any case),
+  - or when its values carry Shopify swatches (a colour or image set in the
+    admin), whatever the option is called.
+
+  @param {object} option - product_option (from product.options_with_values).
+
+  @example
+  {%- capture is_swatch -%}{% render 'swatch-option', option: option %}{%- endcapture -%}
+{% enddoc %}
+
+{%- liquid
+  assign is_swatch = false
+  if settings.swatches_type != 'disabled'
+    if option.values.first.swatch
+      assign is_swatch = true
+    else
+      assign option_name = option.name | strip | downcase
+      assign names = settings.swatch_option_name | downcase | split: ','
+      for name in names
+        assign name = name | strip
+        if name != blank and name == option_name
+          assign is_swatch = true
+          break
+        endif
+      endfor
+    endif
+  endif
+-%}
+{%- if is_swatch -%}true{%- endif -%}

@@ -56,22 +56,7 @@
       {% render 'image', placeholder: 'product-apparel-1' %}
     {%- endif -%}
 
-    <div class="product-card__badges product-card__badges--{{ settings.badge_position }}">
-      {%- if product.available == false -%}
-        {%- if settings.show_sold_out_badge -%}
-          <span class="badge badge--sold-out">{{ 'products.product.sold_out' | t }}</span>
-        {%- endif -%}
-      {%- elsif settings.show_sale_badge and product.compare_at_price > product.price -%}
-        <span class="badge badge--sale">
-          {%- if settings.card_sale_badge == 'percent' -%}
-            {%- assign saving = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
-            {{ 'products.product.save_percent' | t: percent: saving }}
-          {%- else -%}
-            {{ 'products.product.on_sale' | t }}
-          {%- endif -%}
-        </span>
-      {%- endif -%}
-    </div>
+    {%- if product != blank -%}{% render 'product-badges', product: product %}{%- endif -%}
   </div>
 
   <div class="product-card__body">
@@ -93,27 +78,35 @@
 
     {%- if settings.card_show_swatches -%}
       {%- for option in product.options_with_values -%}
-        {%- if option.values.first.swatch -%}
-          <ul class="product-card__swatches" role="list" aria-label="{{ option.name | escape }}">
-            {%- for value in option.values limit: 6 -%}
-              {%- liquid
-                assign value_unavailable = true
-                if value.available
-                  assign value_unavailable = false
-                endif
-              -%}
-              <li>
-                <a href="{{ value.variant.url | default: product.url }}" title="{{ value.name | escape }}">
-                  {% render 'swatch', value: value, unavailable: value_unavailable %}
-                  <span class="visually-hidden">{{ value.name | escape }}</span>
-                </a>
-              </li>
-            {%- endfor -%}
-            {%- if option.values.size > 6 -%}
-              {%- assign more_count = option.values.size | minus: 6 -%}
-              <li>{{ 'products.product.more_values' | t: count: more_count }}</li>
-            {%- endif -%}
-          </ul>
+        {%- capture is_swatch -%}{% render 'swatch-option', option: option %}{%- endcapture -%}
+        {%- if is_swatch == 'true' -%}
+          {%- if settings.product_card_swatch_style == 'text' -%}
+            <p class="product-card__swatch-count">
+              {{- 'products.product.option_count' | t: count: option.values.size, option: option.name -}}
+            </p>
+          {%- else -%}
+            {%- assign limit = settings.swatch_limit -%}
+            <ul class="product-card__swatches" role="list" aria-label="{{ option.name | escape }}">
+              {%- for value in option.values limit: limit -%}
+                {%- liquid
+                  assign value_unavailable = true
+                  if value.available
+                    assign value_unavailable = false
+                  endif
+                -%}
+                <li>
+                  <a href="{{ value.variant.url | default: product.url }}">
+                    {% render 'swatch', value: value, unavailable: value_unavailable %}
+                    <span class="visually-hidden">{{ value.name | escape }}</span>
+                  </a>
+                </li>
+              {%- endfor -%}
+              {%- if option.values.size > limit -%}
+                {%- assign more_count = option.values.size | minus: limit -%}
+                <li><a class="product-card__swatch-more" href="{{ product.url }}">{{ 'products.product.more_values' | t: count: more_count }}</a></li>
+              {%- endif -%}
+            </ul>
+          {%- endif -%}
           {%- break -%}
         {%- endif -%}
       {%- endfor -%}

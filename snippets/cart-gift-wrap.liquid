@@ -1,0 +1,37 @@
+{% doc %}
+  Gift wrap checkbox (Theme settings > Cart > Gift wrap): checking it adds the
+  chosen wrapping product to the cart, unchecking removes it (assets/cart.js
+  <cart-gift-wrap>). Checked when the wrapping is already in the cart.
+
+  @param {string} context - 'page' or 'drawer', for unique ids.
+
+  @example
+  {% render 'cart-gift-wrap', context: 'drawer' %}
+{% enddoc %}
+
+{%- assign wrap = settings.cart_gift_wrap_product -%}
+{%- if settings.cart_gift_wrap and wrap.available -%}
+  {%- liquid
+    assign wrap_variant = wrap.selected_or_first_available_variant
+    assign wrap_line = nil
+    for item in cart.items
+      if item.variant_id == wrap_variant.id
+        assign wrap_line = item
+        break
+      endif
+    endfor
+    if wrap_variant.price > 0
+      assign wrap_price = wrap_variant.price | money
+      assign wrap_label = 'cart.gift_wrap_price' | t: price: wrap_price
+    else
+      assign wrap_label = 'cart.gift_wrap' | t
+    endif
+  -%}
+  <cart-gift-wrap class="cart-gift-wrap" data-variant-id="{{ wrap_variant.id }}" data-line-key="{{ wrap_line.key }}">
+    <label class="checkbox" for="CartGiftWrap-{{ context }}">
+      <input id="CartGiftWrap-{{ context }}" type="checkbox" ref="input" {% if wrap_line %}checked{% endif %}>
+      {%- render 'icon', name: 'gift' -%}
+      <span>{{ wrap_label }}</span>
+    </label>
+  </cart-gift-wrap>
+{%- endif -%}

@@ -1,6 +1,6 @@
 {% doc %}
   Social share links for a page. Which networks show comes from
-  Theme settings > Social sharing. Outputs nothing when every option is off.
+  Theme settings > Social media > Sharing. Outputs nothing when every option is off.
 
   @param {string} url - Absolute URL to share.
   @param {string} title - Title shared with the link.
@@ -13,7 +13,7 @@
 
 {%- liquid
   assign any = false
-  if settings.share_facebook or settings.share_x or settings.share_pinterest or settings.share_whatsapp or settings.share_email or settings.share_copy_link
+  if settings.share_facebook or settings.share_x or settings.share_pinterest or settings.share_telegram or settings.share_whatsapp or settings.share_email or settings.share_copy_link
     assign any = true
   endif
   assign share_url = url | url_encode
@@ -47,10 +47,17 @@
           </a>
         </li>
       {%- endif -%}
+      {%- if settings.share_telegram -%}
+        <li>
+          <a class="icon-button" href="https://t.me/share/url?url={{ share_url }}&text={{ share_title }}" target="_blank" rel="noopener">
+            {% render 'icon', name: 'telegram' %}<span class="visually-hidden">{{ 'general.share.telegram' | t }}</span>
+          </a>
+        </li>
+      {%- endif -%}
       {%- if settings.share_whatsapp -%}
         <li>
           <a class="icon-button" href="https://wa.me/?text={{ share_title }}%20{{ share_url }}" target="_blank" rel="noopener">
-            {% render 'icon', name: 'chat' %}<span class="visually-hidden">{{ 'general.share.whatsapp' | t }}</span>
+            {% render 'icon', name: 'whatsapp' %}<span class="visually-hidden">{{ 'general.share.whatsapp' | t }}</span>
           </a>
         </li>
       {%- endif -%}

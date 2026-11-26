@@ -1,8 +1,15 @@
 {% doc %}
-  A colour/pattern swatch for a product option value, using Shopify's native
-  swatch data (colour or image) configured in the admin.
+  A swatch for an option value (Theme settings > Swatches). Its fill, first
+  match wins:
 
-  @param {object} value - product_option_value with a `swatch`.
+  1. "Variant image" fill: the image of the value's variant.
+  2. "Theme color list": the value's line in the list (a colour, an image
+     URL or a file from Content > Files).
+  3. Shopify's swatch for the value (colour or image set in the admin).
+  4. The value's name as a CSS colour (Black, Navy, Light Blue…); anything
+     else shows a neutral swatch.
+
+  @param {object} value - product_option_value.
   @param {boolean} [unavailable] - Cross the swatch out.
 
   @example
@@ -10,18 +17,54 @@
 {% enddoc %}
 
 {%- liquid
-  assign swatch_style = ''
-  if value.swatch.image
-    assign swatch_url = value.swatch.image | image_url: width: 80
-    assign swatch_style = '--swatch-background: url(' | append: swatch_url | append: ');'
-  elsif value.swatch.color
-    assign swatch_style = '--swatch-background: ' | append: value.swatch.color | append: ';'
+  assign fill = blank
+  assign value_name = value.name | default: value
+
+  if settings.swatch_style == 'image' and value.variant.featured_image
+    assign image_url = value.variant.featured_image | image_url: width: 80
+    assign fill = 'url(' | append: image_url | append: ')'
+  endif
+
+  if fill == blank and settings.swatches_type == 'theme' and settings.swatch_color_list != blank
+    assign key = value_name | strip | downcase
+    assign rows = settings.swatch_color_list | newline_to_br | split: '<br />'
+    for row in rows
+      assign pair = row | split: ':'
+      if pair.size < 2
+        continue
+      endif
+      assign row_key = pair.first | strip | downcase
+      if row_key == key
+        assign entry = row | remove_first: pair.first | remove_first: ':' | strip
+        if entry contains '//'
+          assign fill = 'url(' | append: entry | append: ')'
+        elsif entry contains '.'
+          assign file = entry | file_url
+          assign fill = 'url(' | append: file | append: ')'
+        else
+          assign fill = entry
+        endif
+        break
+      endif
+    endfor
+  endif
+
+  if fill == blank and value.swatch.image
+    assign image_url = value.swatch.image | image_url: width: 80
+    assign fill = 'url(' | append: image_url | append: ')'
+  elsif fill == blank and value.swatch.color
+    assign fill = value.swatch.color
+  endif
+
+  if fill == blank
+    assign fill = value_name | handleize | remove: '-'
   endif
 -%}
 <span
   class="swatch{% if unavailable %} swatch--unavailable{% endif %}"
-  {% if swatch_style != blank %}
-    style="{{ swatch_style }}"
+  style="--swatch-background: {{ fill }};"
+  {% if settings.swatch_show_tooltip %}
+    data-tooltip="{{ value_name | escape }}"
   {% endif %}
   aria-hidden="true"
 ></span>

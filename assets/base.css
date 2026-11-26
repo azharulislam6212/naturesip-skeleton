@@ -396,13 +396,31 @@
 
 /* ========================================================== layout */
 @layer layout {
+  /* Layout settings: side padding and grid spacing go full size from 750px. */
+  @media (min-width: 750px) {
+    :root {
+      --page-margin: var(--page-margin-desktop);
+      --grid-gap: var(--grid-gap-desktop);
+      --grid-row-gap: var(--grid-row-gap-desktop);
+    }
+  }
+
+  /* Layout setting "Space between sections". */
+  #MainContent > .shopify-section + .shopify-section {
+    margin-block-start: var(--section-gap, 0);
+  }
+
   /* Every section is a 3-column grid: margin | content | margin. */
   .shopify-section {
     --content-width: min(var(--page-width), calc(100% - var(--page-margin) * 2));
     --content-grid: minmax(var(--page-margin), 1fr) var(--content-width) minmax(var(--page-margin), 1fr);
   }
 
+  /* A section's own width setting (--section-width, snippets/spacing-style)
+     replaces the page width inside it. */
   .section {
+    --content-width: min(var(--section-width, var(--page-width)), calc(100% - var(--page-margin) * 2));
+    --content-grid: minmax(var(--page-margin), 1fr) var(--content-width) minmax(var(--page-margin), 1fr);
     position: relative;
     display: grid;
     grid-template-columns: var(--content-grid);
@@ -425,7 +443,7 @@
   .grid {
     display: grid;
     grid-template-columns: repeat(var(--columns-mobile, 2), minmax(0, 1fr));
-    gap: var(--grid-gap);
+    gap: var(--grid-row-gap, var(--grid-gap)) var(--grid-gap);
   }
 
   @media (min-width: 750px) {
@@ -1198,6 +1216,7 @@
   .badge {
     display: inline-flex;
     align-items: center;
+    gap: 0.25rem;
     min-height: 1.75rem;
     padding: 0.125rem 0.625rem;
     border-radius: var(--badge-radius, 999px);
@@ -1218,6 +1237,16 @@
   .badge--sold-out {
     --badge-background: var(--sold-out-badge-background, var(--color-foreground));
     --badge-text: var(--sold-out-badge-text, var(--color-background));
+  }
+
+  .badge--new { --badge-background: var(--new-badge-background); --badge-text: var(--new-badge-text); }
+  .badge--hot { --badge-background: var(--hot-badge-background); --badge-text: var(--hot-badge-text); }
+  .badge--best-seller { --badge-background: var(--best-seller-badge-background); --badge-text: var(--best-seller-badge-text); }
+  .badge--preorder { --badge-background: var(--preorder-badge-background); --badge-text: var(--preorder-badge-text); }
+  .badge--custom { --badge-background: var(--custom-badge-background); --badge-text: var(--custom-badge-text); }
+
+  .badge .icon {
+    --icon-size: 0.875rem;
   }
 
   .price {
@@ -1276,6 +1305,8 @@
   }
 
   /* ---------- Swatches & option pills ---------- */
+  /* Swatch (snippets/swatch.liquid). The fill sits on its own layer: a
+     value that isn't a colour leaves it empty and the neutral base shows. */
   .swatch {
     --swatch-ring: var(--color-foreground);
     position: relative;
@@ -1283,17 +1314,72 @@
     width: var(--swatch-size);
     height: var(--swatch-size);
     border-radius: var(--swatch-radius);
-    background: var(--swatch-background, color-mix(in srgb, var(--color-foreground) 12%, transparent));
-    background-size: cover;
+    background-color: color-mix(in srgb, var(--color-foreground) 12%, transparent);
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-foreground) 18%, transparent);
   }
 
-  .swatch--unavailable::after {
+  .swatch::before {
     content: '';
     position: absolute;
-    inset: 45% -10%;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--swatch-background);
+    background-position: center;
+    background-size: cover;
+    box-shadow: inherit;
+  }
+
+  /* Value name on hover (Theme settings > Swatches). */
+  .swatch[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    inset-block-end: calc(100% + 0.5rem);
+    inset-inline-start: 50%;
+    z-index: 3;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
     background-color: var(--color-foreground);
-    rotate: -45deg;
+    color: var(--color-background);
+    font-size: 0.75rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    opacity: 0;
+    translate: -50% 0.25rem;
+    pointer-events: none;
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      translate var(--duration-fast) var(--ease-out);
+  }
+
+  :is(a, label, .option__pill):is(:hover, :focus-visible) > .swatch[data-tooltip]::after,
+  .swatch[data-tooltip]:hover::after {
+    opacity: 1;
+    translate: -50% 0;
+  }
+
+  /* Unavailable: a diagonal strike. */
+  .swatch--unavailable {
+    background-image: linear-gradient(
+      -45deg,
+      transparent calc(50% - 0.75px),
+      var(--color-foreground) calc(50% - 0.75px),
+      var(--color-foreground) calc(50% + 0.75px),
+      transparent calc(50% + 0.75px)
+    );
+  }
+
+  .swatch--unavailable::before {
+    background:
+      linear-gradient(
+        -45deg,
+        transparent calc(50% - 0.75px),
+        var(--color-foreground) calc(50% - 0.75px),
+        var(--color-foreground) calc(50% + 0.75px),
+        transparent calc(50% + 0.75px)
+      ),
+      var(--swatch-background);
+    background-size: 100% 100%, cover;
+    opacity: 0.6;
   }
 
   .option-list {
@@ -1615,7 +1701,7 @@
     -webkit-appearance: none;
   }
 
-  /* ---------- Collection card ---------- */
+  /* ---------- Collection card (Theme settings > Collection cards) ---------- */
   .collection-card {
     position: relative;
     display: grid;
@@ -1623,45 +1709,85 @@
     text-decoration: none;
   }
 
+  .collection-card__media {
+    border: 1px solid var(--card-border, transparent);
+    border-radius: var(--card-radius, var(--radius-media));
+    background-color: var(--card-background, transparent);
+    --media-radius: var(--card-radius, var(--radius-media));
+  }
+
+  .collection-card__media :is(img, svg) {
+    object-position: center var(--card-focus, center);
+  }
+
   .collection-card__info {
     display: grid;
+    justify-items: start;
     gap: var(--space-3xs);
   }
 
-  .collection-card__title {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2xs);
+  .collection-card--center .collection-card__info {
+    justify-items: center;
+    text-align: center;
   }
 
-  .collection-card__title .icon {
-    transition: translate var(--duration-fast) var(--ease-out);
-  }
-
-  .collection-card:hover .collection-card__title .icon {
-    translate: 4px 0;
+  .collection-card--end .collection-card__info {
+    justify-items: end;
+    text-align: end;
   }
 
   .collection-card__count {
+    padding: 0.125rem 0.625rem;
+    border-radius: 999px;
+    background-color: color-mix(in srgb, var(--card-label, var(--color-accent)) 12%, transparent);
+    color: var(--card-label, var(--color-accent));
+    font-size: 0.8125rem;
+    font-weight: var(--font-body--weight-bold);
+  }
+
+  .collection-card__description {
     color: var(--color-subtext);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
+  }
+
+  .collection-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    margin-block-start: var(--space-3xs);
+    font-weight: var(--font-body--weight-bold);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    --icon-size: 1rem;
+  }
+
+  .collection-card__link .icon {
+    transition: translate var(--duration-fast) var(--ease-out);
+  }
+
+  .collection-card:hover .collection-card__link .icon {
+    translate: 4px 0;
   }
 
   .collection-card--overlay .collection-card__info {
     position: absolute;
-    inset-inline: 0;
-    inset-block-end: 0;
+    inset-inline: 1px;
+    inset-block-end: 1px;
     z-index: 1;
     padding: var(--space-sm);
-    border-end-start-radius: var(--radius-media);
-    border-end-end-radius: var(--radius-media);
+    border-end-start-radius: var(--card-radius, var(--radius-media));
+    border-end-end-radius: var(--card-radius, var(--radius-media));
     background-image: linear-gradient(to top, rgb(0 0 0 / 0.6), transparent);
     color: #fff;
     pointer-events: none;
   }
 
-  .collection-card--overlay :is(.collection-card__title, .collection-card__count) {
+  .collection-card--overlay :is(.collection-card__title, .collection-card__description) {
     color: inherit;
+  }
+
+  .collection-card--overlay .collection-card__count {
+    background-color: rgb(255 255 255 / 0.9);
   }
 
   /* ---------- Share buttons ---------- */
@@ -2716,10 +2842,19 @@
   }
 
   /* ---------- Blog & article ---------- */
+  /* Article card (Theme settings > Blog cards). */
   .article-card {
     position: relative;
     display: grid;
     gap: var(--space-2xs);
+    text-align: var(--card-align, start);
+  }
+
+  .article-card__media {
+    border: 1px solid var(--card-border, transparent);
+    border-radius: var(--card-radius, var(--radius-media));
+    background-color: var(--card-background, transparent);
+    --media-radius: var(--card-radius, var(--radius-media));
   }
 
   .article__header {
@@ -4065,8 +4200,133 @@
     font-size: 0.8125rem;
   }
 
-  .cart-summary__note {
+  :is(.cart-summary__note, .cart-estimator) {
     border-block-start: 1px solid var(--color-border);
+  }
+
+  /* Free shipping progress (snippets/cart-free-shipping.liquid). */
+  .cart-free-shipping {
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .cart-free-shipping__text {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    margin: 0;
+    font-size: 0.875rem;
+    --icon-size: 1.125rem;
+  }
+
+  .cart-free-shipping__bar {
+    position: relative;
+    height: 0.375rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background-color: color-mix(in srgb, var(--color-foreground) 12%, transparent);
+  }
+
+  .cart-free-shipping__bar::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: var(--progress, 0%);
+    border-radius: inherit;
+    background-image: var(--gradient-accent);
+    background-color: var(--color-accent);
+    transition: width var(--duration-slow) var(--ease-out);
+  }
+
+  .cart-free-shipping--unlocked .cart-free-shipping__text {
+    color: var(--color-accent);
+    font-weight: var(--font-body--weight-bold);
+  }
+
+  /* Gift wrap (snippets/cart-gift-wrap.liquid). */
+  .cart-gift-wrap .checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    cursor: pointer;
+    --icon-size: 1.125rem;
+  }
+
+  :is(cart-gift-wrap, shipping-estimator)[aria-busy='true'] {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  /* Shipping calculator (snippets/cart-shipping-estimator.liquid). */
+  .cart-estimator__form,
+  .cart-estimator__fields {
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .cart-estimator__results:not(:empty) {
+    display: grid;
+    gap: var(--space-2xs);
+    margin-block-start: var(--space-sm);
+    font-size: 0.875rem;
+  }
+
+  .cart-estimator__results p {
+    margin: 0;
+  }
+
+  .cart-estimator__rates {
+    display: grid;
+    gap: var(--space-3xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cart-estimator__rates li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-sm);
+  }
+
+  .cart-estimator__error {
+    color: var(--color-sale);
+  }
+
+  /* Empty cart with suggestions (snippets/cart-empty.liquid). */
+  .cart-empty {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .cart-empty--drawer .empty-state {
+    padding-block: var(--space-xl) 0;
+  }
+
+  .cart-empty__suggestions {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .cart-empty__heading {
+    margin: 0;
+    text-align: center;
+  }
+
+  .cart-empty__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--grid-row-gap, var(--grid-gap)) var(--grid-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 750px) {
+    .cart-empty--page .cart-empty__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
   }
 
   .cart-drawer__count {

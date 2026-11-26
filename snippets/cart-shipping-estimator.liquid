@@ -1,0 +1,46 @@
+{% doc %}
+  Shipping rate calculator (Theme settings > Cart > Shipping rate calculator):
+  country, region and postcode, then the rates for that address from the
+  Cart API (assets/cart.js <shipping-estimator>). Regions follow the chosen
+  country (<address-form>).
+
+  @param {string} context - 'page' or 'drawer', for unique ids.
+
+  @example
+  {% render 'cart-shipping-estimator', context: 'drawer' %}
+{% enddoc %}
+
+{%- if settings.cart_shipping_estimator -%}
+  {%- assign default_country = localization.country.name | default: shop.address.country -%}
+  <details class="accordion cart-estimator">
+    <summary class="accordion__summary">
+      {{ 'cart.shipping_estimate' | t }}
+      <span class="accordion__icon">{% render 'icon', name: 'plus' %}</span>
+    </summary>
+    <div class="accordion__content">
+      <shipping-estimator>
+        <form class="cart-estimator__form" ref="form" novalidate>
+          <address-form class="cart-estimator__fields">
+            <div class="field">
+              <label class="field__label" for="EstimateCountry-{{ context }}">{{ 'customer.addresses.country' | t }}</label>
+              <select class="select" id="EstimateCountry-{{ context }}" name="country" autocomplete="country" data-address-country data-default="{{ default_country | escape }}">
+                {{ country_option_tags }}
+              </select>
+            </div>
+            <div class="field" ref="provinceWrapper" hidden>
+              <label class="field__label" for="EstimateProvince-{{ context }}">{{ 'customer.addresses.province' | t }}</label>
+              <select class="select" id="EstimateProvince-{{ context }}" name="province" autocomplete="address-level1" data-address-province></select>
+            </div>
+            <div class="field">
+              <label class="field__label" for="EstimateZip-{{ context }}">{{ 'customer.addresses.zip' | t }}</label>
+              <input class="input" id="EstimateZip-{{ context }}" type="text" name="zip" autocomplete="postal-code" autocapitalize="characters">
+            </div>
+          </address-form>
+          {%- assign submit_label = 'cart.shipping_estimate_submit' | t -%}
+          {% render 'button', label: submit_label, type: 'submit', variant: 'secondary', size: 'small', full_width: true %}
+        </form>
+        <div class="cart-estimator__results" ref="results" role="status" aria-live="polite"></div>
+      </shipping-estimator>
+    </div>
+  </details>
+{%- endif -%}

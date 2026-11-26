@@ -14,6 +14,9 @@
                 {{ product.featured_media.preview_image | image_url: width: 120 | image_tag: alt: '', loading: 'lazy', class: 'predictive-search__image' }}
               {%- endif -%}
               <span>
+                {%- if settings.predictive_search_show_vendor and product.vendor != blank -%}
+                  <span class="predictive-search__vendor type-subheading">{{ product.vendor | escape }}</span>
+                {%- endif -%}
                 <span class="predictive-search__title">{{ product.title | escape }}</span>
                 {% render 'price', product: product, show_from: true %}
               </span>

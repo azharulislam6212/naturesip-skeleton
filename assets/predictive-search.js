@@ -9,9 +9,43 @@ import { DialogComponent } from '@theme/dialog';
 import { fetchSection } from '@theme/section-renderer';
 import { debounce, t, announce } from '@theme/utilities';
 
+/** Pause between rotating placeholder texts. */
+const PLACEHOLDER_DELAY = 3000;
+
 class SearchModal extends DialogComponent {
+  #placeholderTimer = 0;
+
   afterOpen() {
-    this.dialog.querySelector('input[type="search"]')?.focus();
+    const input = /** @type {HTMLInputElement | null} */ (this.dialog.querySelector('input[type="search"]'));
+    input?.focus();
+    if (input) this.#rotatePlaceholders(input);
+  }
+
+  async close() {
+    clearInterval(this.#placeholderTimer);
+    await super.close();
+  }
+
+  unmount() {
+    clearInterval(this.#placeholderTimer);
+    super.unmount();
+  }
+
+  /**
+   * Theme settings > Search > Placeholder texts: the empty field cycles
+   * through them while the search is open.
+   * @param {HTMLInputElement} input
+   */
+  #rotatePlaceholders(input) {
+    const texts = (input.dataset.placeholders ?? '').split(',').map((text) => text.trim()).filter(Boolean);
+    if (texts.length < 2) return;
+    let index = 0;
+    clearInterval(this.#placeholderTimer);
+    this.#placeholderTimer = window.setInterval(() => {
+      if (input.value) return;
+      index = (index + 1) % texts.length;
+      input.placeholder = texts[index];
+    }, PLACEHOLDER_DELAY);
   }
 }
 
@@ -46,8 +80,11 @@ class PredictiveSearch extends Component {
     this.#request = new AbortController();
     const url = new URL(window.Theme.routes.predictiveSearch, window.location.origin);
     url.searchParams.set('q', query);
-    url.searchParams.set('resources[limit]', String(window.Theme.settings.predictiveSearchLimit ?? 4));
+    const settings = window.Theme.settings;
+    url.searchParams.set('resources[limit]', String(settings.predictiveSearchLimit ?? 6));
     url.searchParams.set('resources[limit_scope]', 'each');
+    url.searchParams.set('resources[type]', settings.predictiveSearchTypes ?? 'product,collection,page,article');
+    if (settings.predictiveSearchFields) url.searchParams.set('resources[options][fields]', settings.predictiveSearchFields);
 
     this.setAttribute('aria-busy', 'true');
     try {
@@ -71,6 +108,8 @@ class PredictiveSearch extends Component {
   #setExpanded(expanded) {
     this.refs.input.setAttribute('aria-expanded', String(expanded));
     this.toggleAttribute('data-open', expanded);
+    // Suggestions show before typing and step aside for results.
+    this.toggleAttribute('data-has-query', Boolean(this.refs.input.value.trim()));
   }
 
   /** @param {KeyboardEvent} event */

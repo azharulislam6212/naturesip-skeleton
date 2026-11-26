@@ -6,7 +6,10 @@
   ignore the `inherits: false` @property rules in base.css.
 
   Setting ids: padding_top, padding_bottom, padding_left, padding_right,
-  plus the same with a `_mobile` suffix.
+  plus the same with a `_mobile` suffix. A section's `section_width` (and
+  `section_custom_width`) also writes --section-width, which base.css uses
+  in place of the theme's page width for that section ('inherit' writes
+  nothing).
 
   @param {object} settings - block.settings or section.settings
 
@@ -24,3 +27,10 @@
     --padding-{{ side }}{{ device | replace: '_', '-' }}: {{ settings[key] | default: 0 }}px;
   {%- endfor -%}
 {%- endfor -%}
+{%- case settings.section_width -%}
+  {%- when 'full' -%}--section-width: 100vw;
+  {%- when 'wide' -%}--section-width: 100rem;
+  {%- when 'standard' -%}--section-width: 82.5rem;
+  {%- when 'narrow' -%}--section-width: 67.5rem;
+  {%- when 'custom' -%}--section-width: {{ settings.section_custom_width | divided_by: 16.0 }}rem;
+{%- endcase -%}

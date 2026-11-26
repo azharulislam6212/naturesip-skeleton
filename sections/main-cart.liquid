@@ -13,13 +13,8 @@
         {% render 'cart-summary', context: 'page', show_note: settings.cart_note, show_dynamic_checkout: s.show_dynamic_checkout %}
       </aside>
     {%- else -%}
-      <div class="empty-state cart-page__empty">
-        <p class="type-h4">{{ 'cart.empty' | t }}</p>
-        {%- assign continue_label = 'cart.continue_shopping' | t -%}
-        {% render 'button', label: continue_label, url: routes.all_products_collection_url, icon: 'arrow' %}
-        {%- if shop.customer_accounts_enabled and customer == nil -%}
-          <p>{{ 'cart.login_prompt_html' | t: link: routes.account_login_url }}</p>
-        {%- endif -%}
+      <div class="cart-page__empty">
+        {% render 'cart-empty', context: 'page' %}
       </div>
     {%- endif -%}
   </div>
@@ -81,6 +76,53 @@
       "id": "color_scheme",
       "label": "t:settings.color_scheme",
       "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.section_width.header"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:sections.all.section_width.label",
+      "default": "inherit",
+      "options": [
+        {
+          "value": "inherit",
+          "label": "t:sections.all.section_width.options__1.label"
+        },
+        {
+          "value": "full",
+          "label": "t:sections.all.section_width.options__2.label"
+        },
+        {
+          "value": "wide",
+          "label": "t:sections.all.section_width.options__3.label"
+        },
+        {
+          "value": "standard",
+          "label": "t:sections.all.section_width.options__4.label"
+        },
+        {
+          "value": "narrow",
+          "label": "t:sections.all.section_width.options__5.label"
+        },
+        {
+          "value": "custom",
+          "label": "t:sections.all.section_width.options__6.label"
+        }
+      ]
+    },
+    {
+      "visible_if": "{{ section.settings.section_width == 'custom' }}",
+      "type": "range",
+      "id": "section_custom_width",
+      "label": "t:sections.all.section_width.custom.label",
+      "min": 600,
+      "max": 2000,
+      "step": 20,
+      "unit": "px",
+      "default": 1280
     },
     {
       "type": "header",

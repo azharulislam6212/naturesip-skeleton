@@ -107,12 +107,34 @@
       --heading-stroke-width: {{ settings.heading_stroke_width }}px;
       --heading-shadow-offset: {{ settings.heading_shadow_offset }}px;
 
-      --page-width: {{ settings.page_width | divided_by: 16.0 }}rem;
-      --page-margin: {{ settings.page_margin | divided_by: 16.0 }}rem;
+      {%- liquid
+        case settings.layout_width
+          when 'full'
+            assign page_width = '100vw'
+          when 'wide'
+            assign page_width = '100rem'
+          when 'narrow'
+            assign page_width = '67.5rem'
+          when 'custom'
+            assign page_width = settings.container_custom_width | divided_by: 16.0 | append: 'rem'
+          else
+            assign page_width = '82.5rem'
+        endcase
+      -%}
+      --page-width: {{ page_width }};
+      --page-margin-mobile: {{ settings.container_gutter | divided_by: 16.0 }}rem;
+      --page-margin-desktop: {{ settings.container_gutter_desktop | divided_by: 16.0 }}rem;
+      --page-margin: var(--page-margin-mobile);
+      --section-gap: {{ settings.spacing_sections | divided_by: 16.0 }}rem;
       --radius-card: {{ settings.radius_card }}px;
       --radius-media: {{ settings.radius_media }}px;
       --radius-input: {{ settings.radius_input }}px;
-      --grid-gap: {{ settings.grid_gap | divided_by: 16.0 }}rem;
+      --grid-gap-desktop: {{ settings.grid_horizontal_space | divided_by: 16.0 }}rem;
+      --grid-row-gap-desktop: {{ settings.grid_vertical_space | divided_by: 16.0 }}rem;
+      --grid-scale-mobile: {{ settings.grid_space_scale_mobile | divided_by: 100.0 }};
+      /* Mobile first: the desktop spacing scaled down, full size from 750px (base.css). */
+      --grid-gap: calc(var(--grid-gap-desktop) * var(--grid-scale-mobile));
+      --grid-row-gap: calc(var(--grid-row-gap-desktop) * var(--grid-scale-mobile));
 
       --space-3xs: 0.25rem;
       --space-2xs: 0.5rem;
@@ -148,14 +170,21 @@
       --card-title-case: {{ settings.card_title_case }};
       --card-shadow-offset: {{ settings.card_shadow_offset }}px;
 
-      --badge-radius: {% case settings.badge_shape %}{% when 'square' %}0px{% when 'rounded' %}0.375rem{% else %}999px{% endcase %};
-      {%- if settings.sale_badge_background != blank %}--sale-badge-background: {{ settings.sale_badge_background }};{% endif -%}
-      {%- if settings.sale_badge_text != blank %}--sale-badge-text: {{ settings.sale_badge_text }};{% endif -%}
-      {%- if settings.sold_out_badge_background != blank %}--sold-out-badge-background: {{ settings.sold_out_badge_background }};{% endif -%}
-      {%- if settings.sold_out_badge_text != blank %}--sold-out-badge-text: {{ settings.sold_out_badge_text }};{% endif %}
+      --badge-radius: {{ settings.badge_radius }}px;
+      {%- comment -%} Badge colours: --{type}-badge-background / --{type}-badge-text (snippets/product-badges). {%- endcomment -%}
+      {%- assign badge_types = 'sale,sold_out,new,hot,best_seller,preorder,custom' | split: ',' -%}
+      {%- for type in badge_types -%}
+        {%- liquid
+          assign key_background = type | append: '_badge_background'
+          assign key_text = type | append: '_badge_text'
+          assign token = type | replace: '_', '-'
+        -%}
+        {%- if settings[key_background] != blank %}--{{ token }}-badge-background: {{ settings[key_background] }};{% endif -%}
+        {%- if settings[key_text] != blank %}--{{ token }}-badge-text: {{ settings[key_text] }};{% endif -%}
+      {%- endfor %}
 
       --swatch-size: {{ settings.swatch_size | divided_by: 16.0 }}rem;
-      --swatch-radius: {% if settings.swatch_shape == 'circle' %}50%{% else %}{{ settings.radius_input }}px{% endif %};
+      --swatch-radius: {% case settings.swatch_shape %}{% when 'square' %}0px{% when 'round' %}0.375rem{% else %}50%{% endcase %};
 
       --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
       --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);

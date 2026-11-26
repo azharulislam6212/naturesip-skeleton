@@ -1,0 +1,38 @@
+{% doc %}
+  Empty cart: a message, a way back to shopping and, when chosen in Theme
+  settings > Cart > Empty cart, a few products from a collection.
+
+  @param {string} context - 'page' or 'drawer'.
+  @param {string} [continue_url] - Where "Continue shopping" goes. Default: all products.
+
+  @example
+  {% render 'cart-empty', context: 'drawer' %}
+{% enddoc %}
+
+{%- liquid
+  assign continue_label = 'cart.continue_shopping' | t
+  assign continue_url = continue_url | default: routes.all_products_collection_url
+  assign suggestions = settings.cart_empty_collection.products
+-%}
+
+<div class="cart-empty cart-empty--{{ context }}">
+  <div class="empty-state">
+    {%- if context == 'drawer' -%}{%- render 'icon', name: 'bag' -%}{%- endif -%}
+    <p class="{% if context == 'drawer' %}type-h5{% else %}type-h4{% endif %}">{{ 'cart.empty' | t }}</p>
+    {% render 'button', label: continue_label, url: continue_url, icon: 'arrow' %}
+    {%- if context == 'page' and shop.customer_accounts_enabled and customer == nil -%}
+      <p>{{ 'cart.login_prompt_html' | t: link: routes.account_login_url }}</p>
+    {%- endif -%}
+  </div>
+
+  {%- if suggestions.size > 0 -%}
+    <div class="cart-empty__suggestions">
+      <p class="cart-empty__heading type-subheading">{{ 'cart.empty_suggestions' | t }}</p>
+      <ul class="cart-empty__grid" role="list">
+        {%- for product in suggestions limit: settings.cart_empty_limit -%}
+          <li>{% render 'product-card', product: product, section_id: context, sizes: '(min-width: 990px) 20vw, 50vw' %}</li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- endif -%}
+</div>

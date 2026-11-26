@@ -65,6 +65,10 @@
     justify-content: flex-end;
   }
 
+  .product-card__badges--bottom-start {
+    inset-block: auto var(--space-xs);
+  }
+
   .product-card__body {
     display: flex;
     flex: 1;
@@ -118,6 +122,19 @@
     padding: 0;
     list-style: none;
     font-size: 0.75rem;
+  }
+
+  .product-card__swatches a {
+    display: inline-flex;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .product-card__swatch-more,
+  .product-card__swatch-count {
+    margin: 0;
+    color: var(--color-subtext);
+    font-size: 0.8125rem;
   }
 
   .product-card__actions {

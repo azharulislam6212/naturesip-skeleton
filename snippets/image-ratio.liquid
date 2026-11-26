@@ -1,0 +1,23 @@
+{% doc %}
+  Prints the aspect ratio (width / height) for an image ratio setting:
+  portrait, 5-4, 4-3, 2-3, 1-1, 3-2, 16-9 or natural (the image's own).
+  A plain number passes through, so section settings like '0.8' still work.
+
+  @param {string} key - The setting value.
+  @param {object} [image] - Image for 'natural'.
+
+  @example
+  {%- capture ratio -%}{% render 'image-ratio', key: settings.blog_card_image_ratio, image: article.image %}{%- endcapture -%}
+{% enddoc %}
+
+{%- case key -%}
+  {%- when 'portrait' -%}0.8
+  {%- when '5-4' -%}1.25
+  {%- when '4-3' -%}1.3333
+  {%- when '2-3' -%}0.6667
+  {%- when '3-2' -%}1.5
+  {%- when '16-9' -%}1.7778
+  {%- when 'natural' -%}{{ image.aspect_ratio | default: 1 }}
+  {%- when '1-1', blank -%}1
+  {%- else -%}{{ key }}
+{%- endcase -%}

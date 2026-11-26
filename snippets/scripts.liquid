@@ -49,6 +49,16 @@
   }
 </script>
 
+{%- liquid
+  # Fields predictive search matches (Theme settings > Search).
+  assign search_fields = 'title,product_type,vendor,variants.title'
+  if settings.predictive_search_include_skus
+    assign search_fields = search_fields | append: ',variants.sku'
+  endif
+  if settings.predictive_search_include_tags
+    assign search_fields = search_fields | append: ',tag'
+  endif
+-%}
 <script>
   document.documentElement.classList.replace('no-js', 'js');
   window.Theme = {
@@ -70,7 +80,9 @@
       smoothScroll: {{ settings.smooth_scroll | json }},
       smoothScrollLerp: {{ settings.smooth_scroll_intensity | divided_by: 100.0 | json }},
       predictiveSearch: {{ settings.predictive_search | json }},
-      predictiveSearchLimit: 4
+      predictiveSearchLimit: {{ settings.predictive_search_limit | default: 6 }},
+      predictiveSearchTypes: {% if settings.predictive_search_show_types %}"product,collection,page,article"{% else %}"product"{% endif %},
+      predictiveSearchFields: {{ search_fields | json }}
     },
     strings: {
       close: {{ 'accessibility.close' | t | json }},
@@ -85,6 +97,9 @@
       itemRemoved: {{ 'cart.item_removed' | t | json }},
       noteSaved: {{ 'cart.note_saved' | t | json }},
       cartError: {{ 'cart.error' | t | json }},
+      shippingRatesOne: {{ 'cart.shipping_rates_one' | t | json }},
+      shippingRatesOther: {{ 'cart.shipping_rates_other' | t: count: '[count]' | json }},
+      shippingRatesNone: {{ 'cart.shipping_rates_none' | t | json }},
       unavailable: {{ 'products.product.unavailable' | t | json }},
       variantSelected: {{ 'products.product.variant_selected' | t: variant: '[variant]' | json }},
       searchResults: {{ 'search.results_count' | t: count: '[count]' | json }},

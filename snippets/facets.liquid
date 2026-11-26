@@ -146,6 +146,20 @@
             {%- endif -%}
 
             {%- for filter in results.filters -%}
+              {%- liquid
+                # Internal tags ("__badge:…" and any other "__" tag) never show
+                # as filter values; a filter with nothing else is left out.
+                assign shown_values = 0
+                for value in filter.values
+                  assign value_prefix = value.label | slice: 0, 2
+                  if value_prefix != '__'
+                    assign shown_values = shown_values | plus: 1
+                  endif
+                endfor
+                if filter.type == 'list' and shown_values == 0
+                  continue
+                endif
+              -%}
               <details class="accordion" {% if forloop.index <= 2 or filter.active_values.size > 0 %}open{% endif %}>
                 <summary class="accordion__summary">
                   {{ filter.label | escape }}
@@ -264,6 +278,7 @@
                     {%- when 'boolean' -%}
                       <ul class="facets__values" role="list">
                         {%- for value in filter.values -%}
+                          {%- assign value_prefix = value.label | slice: 0, 2 -%}{%- if value_prefix == '__' -%}{%- continue -%}{%- endif -%}
                           <li>
                             <label class="checkbox">
                               <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}" {% if value.active %}checked{% endif %} {% if value.count == 0 and value.active == false %}disabled{% endif %}>
@@ -285,6 +300,7 @@
                       {%- if is_colour_filter -%}
                         <ul class="facets__swatches" role="list">
                           {%- for value in filter.values -%}
+                            {%- assign value_prefix = value.label | slice: 0, 2 -%}{%- if value_prefix == '__' -%}{%- continue -%}{%- endif -%}
                             <li>
                               <label class="facets__swatch">
                                 <input
@@ -328,6 +344,7 @@
                       {%- else -%}
                       <ul class="facets__values" role="list">
                         {%- for value in filter.values -%}
+                          {%- assign value_prefix = value.label | slice: 0, 2 -%}{%- if value_prefix == '__' -%}{%- continue -%}{%- endif -%}
                           <li>
                             <label class="checkbox">
                               <input

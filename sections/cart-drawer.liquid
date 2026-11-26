@@ -32,12 +32,8 @@
             {% render 'cart-summary', context: 'drawer', show_note: settings.cart_note, show_dynamic_checkout: section.settings.show_dynamic_checkout %}
           </div>
         {%- else -%}
-          <div class="drawer__body empty-state">
-            {%- render 'icon', name: 'bag' -%}
-            <p class="type-h5">{{ 'cart.empty' | t }}</p>
-            {%- assign continue_label = 'cart.continue_shopping' | t -%}
-            {%- assign continue_url = section.settings.empty_link | default: routes.all_products_collection_url -%}
-            {% render 'button', label: continue_label, url: continue_url, icon: 'arrow' %}
+          <div class="drawer__body">
+            {% render 'cart-empty', context: 'drawer', continue_url: section.settings.empty_link %}
           </div>
         {%- endif -%}
       </div>

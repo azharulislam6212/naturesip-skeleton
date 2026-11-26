@@ -256,7 +256,19 @@
 
   {%- if s.show_search -%}
     <search-modal>
-      <dialog class="search-modal modal color-{{ s.drawer_color_scheme.id }}" id="SearchModal" ref="dialog" aria-label="{{ 'header.search' | t }}" data-lenis-prevent>
+      {%- liquid
+        if settings.search_style == 'drawer'
+          assign search_class = 'search-modal--drawer drawer'
+        else
+          assign search_class = 'modal'
+        endif
+        assign placeholder = 'search.placeholder' | t
+        assign placeholders = settings.search_placeholders | split: ','
+        if placeholders.size > 0
+          assign placeholder = placeholders.first | strip
+        endif
+      -%}
+      <dialog class="search-modal {{ search_class }} color-{{ s.drawer_color_scheme.id }}" id="SearchModal" ref="dialog" aria-label="{{ 'header.search' | t }}" data-lenis-prevent>
         <div class="search-modal__inner page-width">
           <predictive-search class="predictive-search">
             <form class="search-form" action="{{ routes.search_url }}" method="get" role="search">
@@ -267,7 +279,10 @@
                 id="SearchModalInput"
                 type="search"
                 name="q"
-                placeholder="{{ 'search.placeholder' | t }}"
+                placeholder="{{ placeholder | escape }}"
+                {% if placeholders.size > 1 %}
+                  data-placeholders="{{ settings.search_placeholders | escape }}"
+                {% endif %}
                 autocomplete="off"
                 role="combobox"
                 aria-expanded="false"
@@ -281,6 +296,7 @@
               </button>
             </form>
             <div class="predictive-search__results" id="PredictiveSearchResults" ref="results"></div>
+            {% render 'search-suggestions' %}
           </predictive-search>
           <button class="icon-button header__icon search-modal__close" type="button" ref="close">
             {%- render 'icon', name: 'close' -%}

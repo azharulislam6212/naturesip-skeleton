@@ -1,0 +1,59 @@
+{% doc %}
+  What the search shows before anything is typed (Theme settings > Search):
+  popular search terms as links, then a few chosen products. Hidden once a
+  query brings results (assets/predictive-search.js sets data-has-query).
+
+  @example
+  {% render 'search-suggestions' %}
+{% enddoc %}
+
+{%- assign terms = settings.search_popular_terms | split: ',' -%}
+{%- if terms.size > 0 or settings.search_products.size > 0 -%}
+  <div class="search-suggestions">
+    {%- if terms.size > 0 -%}
+      <div class="search-suggestions__group">
+        {%- if settings.search_popular_heading != blank -%}
+          <p class="search-suggestions__heading type-subheading">{{ settings.search_popular_heading | escape }}</p>
+        {%- endif -%}
+        <ul class="search-suggestions__terms" role="list">
+          {%- for term in terms -%}
+            {%- assign term = term | strip -%}
+            {%- if term != blank -%}
+              <li>
+                <a class="search-suggestions__term" href="{{ routes.search_url }}?q={{ term | url_param_escape }}&amp;options%5Bprefix%5D=last">
+                  {%- render 'icon', name: 'search' -%}
+                  {{- term | escape -}}
+                </a>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+
+    {%- if settings.search_products.size > 0 -%}
+      <div class="search-suggestions__group">
+        {%- if settings.search_products_heading != blank -%}
+          <p class="search-suggestions__heading type-subheading">{{ settings.search_products_heading | escape }}</p>
+        {%- endif -%}
+        <ul class="search-suggestions__products" role="list">
+          {%- for product in settings.search_products -%}
+            <li>
+              <a class="search-suggestions__product" href="{{ product.url }}">
+                <span class="search-suggestions__media">
+                  {%- if product.featured_media -%}
+                    {{ product.featured_media.preview_image | image_url: width: 240 | image_tag: alt: '', loading: 'lazy' }}
+                  {%- else -%}
+                    {{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                  {%- endif -%}
+                </span>
+                <span class="search-suggestions__title">{{ product.title | escape }}</span>
+                {% render 'price', product: product, show_from: true %}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+  </div>
+{%- endif -%}

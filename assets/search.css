@@ -20,6 +20,131 @@
     inset-inline-end: 0;
   }
 
+  /* Theme settings > Search > "Drawer from the side": the search slides in
+     from the end, full height, results scrolling inside. */
+  .search-modal--drawer {
+    width: min(32rem, 100vw);
+    border-radius: 0;
+  }
+
+  .search-modal--drawer .search-modal__inner {
+    display: grid;
+    align-content: start;
+    width: auto;
+    height: 100%;
+    padding: var(--space-lg) var(--space-md);
+    padding-inline-end: calc(var(--space-md) + 3.5rem);
+    overflow-y: auto;
+  }
+
+  .search-modal--drawer .search-modal__close {
+    inset-inline-end: var(--space-md);
+  }
+
+  .search-modal--drawer .predictive-search__list {
+    max-height: none;
+  }
+
+  /* Popular searches and products, before anything is typed. */
+  .search-suggestions {
+    display: grid;
+    gap: var(--space-lg);
+    margin-block-start: var(--space-md);
+  }
+
+  predictive-search[data-has-query] .search-suggestions {
+    display: none;
+  }
+
+  .search-suggestions__group {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .search-suggestions__heading {
+    margin: 0;
+  }
+
+  .search-suggestions__terms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .search-suggestions__term {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-foreground);
+    text-decoration: none;
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out);
+    --icon-size: 1rem;
+  }
+
+  .search-suggestions__term:is(:hover, :focus-visible) {
+    border-color: var(--color-accent);
+    background-color: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+
+  .search-suggestions__products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: var(--space-md);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .search-modal--drawer .search-suggestions__products {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .search-suggestions__product {
+    display: grid;
+    gap: var(--space-2xs);
+    color: var(--color-foreground);
+    text-decoration: none;
+  }
+
+  .search-suggestions__media {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 1;
+    border-radius: var(--radius-card);
+    background-color: color-mix(in srgb, var(--color-foreground) 5%, transparent);
+  }
+
+  .search-suggestions__media :is(img, svg) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: scale var(--duration-slow) var(--ease-out);
+  }
+
+  .search-suggestions__product:hover .search-suggestions__media :is(img, svg) {
+    scale: 1.05;
+  }
+
+  .search-suggestions__title {
+    font-weight: var(--font-body--weight-bold);
+    line-height: 1.3;
+  }
+
+  .predictive-search__vendor {
+    display: block;
+    font-size: 0.75rem;
+  }
+
   .search-form {
     position: relative;
     display: flex;

@@ -18,10 +18,11 @@
       {%- liquid
         assign option_id = section_id | append: '-' | append: option.position
         assign use_swatch = false
-        if show_swatches != false and option.values.first.swatch
-          assign use_swatch = true
-        endif
       -%}
+      {%- if show_swatches != false -%}
+        {%- capture is_swatch -%}{% render 'swatch-option', option: option %}{%- endcapture -%}
+        {%- if is_swatch == 'true' -%}{%- assign use_swatch = true -%}{%- endif -%}
+      {%- endif -%}
 
       {%- if style == 'dropdown' and use_swatch == false -%}
         {%- liquid
@@ -86,7 +87,7 @@
                 {% endunless %}
               >
               {%- if use_swatch -%}
-                <span class="option__pill option__pill--swatch" title="{{ value | escape }}">
+                <span class="option__pill option__pill--swatch"{% unless settings.swatch_show_tooltip %} title="{{ value | escape }}"{% endunless %}>
                   {% render 'swatch', value: value, unavailable: value_unavailable %}
                   <span class="visually-hidden">
                     {{- value | escape -}}

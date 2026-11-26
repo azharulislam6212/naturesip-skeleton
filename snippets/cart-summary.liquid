@@ -1,5 +1,7 @@
 {% doc %}
-  Cart totals, discounts, optional note and checkout buttons.
+  Cart totals, discounts and checkout buttons, plus the extras from Theme
+  settings > Cart: free shipping progress, gift wrap, shipping calculator and
+  order note.
 
   @param {string} context - 'page' or 'drawer'.
   @param {boolean} [show_note] - Show the order note field.
@@ -10,6 +12,10 @@
 {% enddoc %}
 
 <div class="cart-summary">
+  {% render 'cart-free-shipping' %}
+  {% render 'cart-gift-wrap', context: context %}
+  {% render 'cart-shipping-estimator', context: context %}
+
   {%- if show_note -%}
     <details class="accordion cart-summary__note">
       <summary class="accordion__summary">
@@ -18,7 +24,9 @@
       </summary>
       <div class="accordion__content">
         <label class="visually-hidden" for="CartNote-{{ context }}">{{ 'cart.note' | t }}</label>
-        <textarea class="textarea" id="CartNote-{{ context }}" name="note" form="CartForm-{{ context }}">{{ cart.note }}</textarea>
+        <cart-note>
+          <textarea class="textarea" id="CartNote-{{ context }}" name="note" form="CartForm-{{ context }}">{{ cart.note }}</textarea>
+        </cart-note>
       </div>
     </details>
   {%- endif -%}

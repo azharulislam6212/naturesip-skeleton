@@ -1,0 +1,141 @@
+{% doc %}
+  A product's badges, in this order, up to Theme settings > Badges > limit:
+  sold out or sale (automatic), then pre-order, new, hot, best seller and
+  custom from "__badge:" product tags (__badge:new, __badge:best seller,
+  __badge:Any text). "New" can also come from the publish date or chosen
+  collections. Tags starting with "__" never show as filters.
+
+  @param {object} product - The product.
+
+  @example
+  {% render 'product-badges', product: product %}
+{% enddoc %}
+
+{%- liquid
+  # Badge tags start with "__badge:" (the "__" keeps them out of storefront
+  # filters): __badge:new, __badge:hot, __badge:best seller, __badge:pre-order;
+  # anything else after the colon is a custom badge with that text.
+  assign tagged = ','
+  assign custom_labels = ''
+  for tag in product.tags
+    assign prefix = tag | slice: 0, 8 | downcase
+    if prefix != '__badge:'
+      continue
+    endif
+    assign label = tag | slice: 8, 200 | strip
+    if label == blank
+      continue
+    endif
+    assign key = label | handleize
+    case key
+      when 'new'
+        assign tagged = tagged | append: 'new,'
+      when 'hot'
+        assign tagged = tagged | append: 'hot,'
+      when 'best-seller', 'bestseller'
+        assign tagged = tagged | append: 'best_seller,'
+      when 'pre-order', 'preorder'
+        assign tagged = tagged | append: 'preorder,'
+      else
+        assign custom_labels = custom_labels | append: label | append: '|'
+    endcase
+  endfor
+
+  assign badges = ''
+
+  if product.available == false
+    if settings.show_sold_out_badge
+      assign badges = badges | append: 'sold_out,'
+    endif
+  elsif settings.show_sale_badge and product.compare_at_price > product.price
+    assign badges = badges | append: 'sale,'
+  endif
+
+  if settings.show_preorder_badge and tagged contains ',preorder,'
+    assign badges = badges | append: 'preorder,'
+  endif
+
+  if settings.show_new_badge
+    assign is_new = false
+    if settings.new_badge_by_tag and tagged contains ',new,'
+      assign is_new = true
+    endif
+    if settings.new_badge_by_days and product.published_at
+      assign published = product.published_at | date: '%s' | plus: 0
+      assign now = 'now' | date: '%s' | plus: 0
+      assign days = now | minus: published | divided_by: 86400
+      if days <= settings.new_badge_days
+        assign is_new = true
+      endif
+    endif
+    for collection in settings.new_badge_collections
+      if product.collections contains collection
+        assign is_new = true
+        break
+      endif
+    endfor
+    if is_new
+      assign badges = badges | append: 'new,'
+    endif
+  endif
+
+  if settings.show_hot_badge and tagged contains ',hot,'
+    assign badges = badges | append: 'hot,'
+  endif
+
+  if settings.show_best_seller_badge and tagged contains ',best_seller,'
+    assign badges = badges | append: 'best_seller,'
+  endif
+
+  if settings.show_custom_badge and custom_labels != blank
+    assign custom_count = custom_labels | split: '|' | size
+    for i in (1..custom_count)
+      assign badges = badges | append: 'custom,'
+    endfor
+  endif
+
+  assign badges = badges | split: ','
+  assign custom_labels = custom_labels | split: '|'
+  assign custom_index = 0
+-%}
+
+{%- if badges.size > 0 -%}
+  <div class="product-card__badges product-card__badges--{{ settings.badge_position }}">
+    {%- for type in badges limit: settings.badge_limit -%}
+      {%- liquid
+        assign icon_key = type | append: '_badge_icon'
+        assign icon = settings[icon_key]
+        case type
+          when 'sold_out'
+            assign label = 'products.product.sold_out' | t
+          when 'sale'
+            case settings.sale_badge_type
+              when 'percent'
+                assign saving = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price
+                assign label = 'products.product.save_percent' | t: percent: saving
+              when 'amount'
+                assign saving = product.compare_at_price | minus: product.price | money_without_trailing_zeros
+                assign label = 'products.product.save_amount' | t: amount: saving
+              else
+                assign label = 'products.product.on_sale' | t
+            endcase
+          when 'preorder'
+            assign label = 'products.product.badge_preorder' | t
+          when 'new'
+            assign label = 'products.product.badge_new' | t
+          when 'hot'
+            assign label = 'products.product.badge_hot' | t
+          when 'best_seller'
+            assign label = 'products.product.badge_best_seller' | t
+          when 'custom'
+            assign label = custom_labels[custom_index] | escape
+            assign custom_index = custom_index | plus: 1
+        endcase
+      -%}
+      <span class="badge badge--{{ type | replace: '_', '-' }}">
+        {%- if icon != blank and icon != 'none' -%}{% render 'icon', name: icon %}{%- endif -%}
+        {{- label -}}
+      </span>
+    {%- endfor -%}
+  </div>
+{%- endif -%}

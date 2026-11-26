@@ -460,7 +460,8 @@
       "natural": "Natural",
       "portrait": "Portrait",
       "square": "Square",
-      "wide": "Wide (16:9)"
+      "wide": "Wide (16:9)",
+      "theme": "Theme default"
     },
     "sale_badge": {
       "percent": "Percentage saved",
@@ -701,6 +702,33 @@
     },
     "testimonials": {
       "name": "Testimonials"
+    },
+    "all": {
+      "section_width": {
+        "header": "Section width",
+        "label": "Width",
+        "options__1": {
+          "label": "Theme default"
+        },
+        "options__2": {
+          "label": "Full"
+        },
+        "options__3": {
+          "label": "Wide (1600px)"
+        },
+        "options__4": {
+          "label": "Standard (1320px)"
+        },
+        "options__5": {
+          "label": "Narrow (1080px)"
+        },
+        "options__6": {
+          "label": "Custom"
+        },
+        "custom": {
+          "label": "Custom width"
+        }
+      }
     }
   },
   "settings": {
@@ -940,25 +968,54 @@
       "text": "Text"
     },
     "badges": {
-      "background": "Background",
       "name": "Badges",
       "position": "Position",
-      "shape": "Shape",
+      "positions": {
+        "top_start": "Top left",
+        "top_end": "Top right",
+        "bottom_start": "Bottom left"
+      },
+      "limit": "Badges per card",
+      "radius": "Corner radius",
+      "icon": "Icon",
+      "show": "Show",
+      "background": "Background",
+      "text": "Text",
+      "sale": "Sale",
+      "sale_type": "Sale badge shows",
+      "sale_types": {
+        "standard": "Sale",
+        "amount": "Amount saved",
+        "percent": "Percent saved"
+      },
+      "sold_out": "Sold out",
       "show_sale": "Show sale badge",
       "show_sold_out": "Show sold out badge",
-      "text": "Text"
+      "new": "New",
+      "new_by_tag": "Products tagged __badge:new",
+      "new_by_days": "Recently published products",
+      "new_days": "Published within",
+      "new_collections": "Products in these collections",
+      "hot": "Hot (__badge:hot)",
+      "best_seller": "Best seller (__badge:best seller)",
+      "preorder": "Pre-order (__badge:pre-order)",
+      "custom": "Custom (__badge:Any text)"
     },
     "blog_cards": {
       "excerpt_length": "Excerpt length (words)",
       "image_ratio": "Image ratio",
       "name": "Blog cards",
-      "show_author": "Show author"
+      "show_author": "Show author",
+      "excerpt_words": "Excerpt length",
+      "excerpt_words_info": "Words shown when the section shows the excerpt."
     },
     "buttons": {
       "hover_effect": "Hover effect",
       "name": "Buttons",
       "padding_inline": "Padding inline",
-      "skew": "Skew"
+      "skew": "Skew",
+      "inputs": "Inputs",
+      "radius_input": "Input radius"
     },
     "cards": {
       "name": "Product card",
@@ -969,17 +1026,40 @@
       "show_swatches": "Show swatches",
       "show_vendor": "Show vendor",
       "swatch_shape": "Swatch shape",
-      "swatch_size": "Swatch size"
+      "swatch_size": "Swatch size",
+      "shape": "Corners",
+      "radius_card": "Card radius",
+      "radius_media": "Image radius",
+      "radius_media_info": "Images in cards, sections and the product gallery.",
+      "show_swatches_info": "How swatches look is set in Theme settings > Swatches."
     },
     "cart": {
       "name": "Cart",
-      "note": "Note",
-      "type": "Cart type"
+      "type": "Cart type",
+      "free_shipping": "Free shipping bar",
+      "free_shipping_show": "Show free shipping progress",
+      "free_shipping_threshold": "Free shipping from",
+      "free_shipping_threshold_info": "Order total in your store's currency, matching your free shipping rate.",
+      "extras": "Cart extras",
+      "note": "Order note",
+      "shipping_estimator": "Shipping rate calculator",
+      "gift_wrap": "Gift wrap",
+      "gift_wrap_product": "Gift wrap product",
+      "gift_wrap_product_info": "A product for the wrapping (free or paid). Customers add it with one checkbox.",
+      "empty": "Empty cart",
+      "empty_collection": "Products to suggest",
+      "empty_collection_info": "Shown when the cart is empty.",
+      "empty_limit": "Products shown"
     },
     "collection_cards": {
       "name": "Collection cards",
       "show_count": "Show product count",
-      "title_position": "Title position"
+      "title_position": "Title position",
+      "image_align": "Image focus",
+      "image_align_info": "Which part of the image stays in view when it is cropped.",
+      "show_description": "Show description",
+      "show_link": "Show \"Shop now\" link",
+      "label_color": "Product count color"
     },
     "colors": {
       "accent": "Accent",
@@ -1047,14 +1127,62 @@
       "swatches": "Swatches"
     },
     "layout": {
-      "grid_gap": "Grid gap",
       "name": "Layout",
-      "page_margin": "Page margin",
-      "page_width": "Page width",
       "radius_card": "Radius card",
       "radius_input": "Radius input",
       "radius_media": "Radius media",
-      "scroll_to_top": "Scroll to top button"
+      "scroll_to_top": "Scroll to top button",
+      "headers": {
+        "container": "Container",
+        "spacing": "Spacing"
+      },
+      "settings": {
+        "layout_width": {
+          "label": "Page width",
+          "info": "Maximum width of the page content.",
+          "options__1": {
+            "label": "Full"
+          },
+          "options__2": {
+            "label": "Wide (1600px)"
+          },
+          "options__3": {
+            "label": "Standard (1320px)"
+          },
+          "options__4": {
+            "label": "Narrow (1080px)"
+          },
+          "options__5": {
+            "label": "Custom"
+          }
+        },
+        "container_custom_width": {
+          "label": "Custom width",
+          "info": "Used when the page width is Custom."
+        },
+        "container_gutter": {
+          "label": "Side padding on mobile",
+          "info": "Space between the content and the screen edges below 750px."
+        },
+        "container_gutter_desktop": {
+          "label": "Side padding on desktop",
+          "info": "Space between the content and the screen edges from 750px."
+        },
+        "spacing_sections": {
+          "label": "Space between sections",
+          "info": "Added between the sections of every page."
+        },
+        "grid_horizontal_space": {
+          "label": "Grid horizontal space"
+        },
+        "grid_vertical_space": {
+          "label": "Grid vertical space"
+        },
+        "grid_space_scale_mobile": {
+          "label": "Grid space on mobile",
+          "info": "Grid spacing on mobile, as a share of desktop."
+        }
+      }
     },
     "logo": {
       "favicon": "Favicon",
@@ -1065,25 +1193,50 @@
     },
     "search": {
       "name": "Search",
-      "predictive": "Predictive"
-    },
-    "sharing": {
-      "copy_link": "Copy link",
-      "email": "Email",
-      "facebook": "Facebook",
-      "name": "Social sharing",
-      "pinterest": "Pinterest",
-      "whatsapp": "WhatsApp",
-      "x": "X"
+      "style": "Search opens as",
+      "styles": {
+        "modal": "Panel from the top",
+        "drawer": "Drawer from the side"
+      },
+      "placeholders": "Placeholder texts",
+      "placeholders_info": "Separate with commas; the search field rotates through them.",
+      "predictive": "Predictive search",
+      "predictive_search": "Show results while typing",
+      "limit": "Results per type",
+      "limit_info": "Products, collections, pages and articles each.",
+      "show_types": "Include collections, pages and articles",
+      "show_vendor": "Show product vendor",
+      "include_skus": "Match SKUs",
+      "include_tags": "Match product tags",
+      "popular": "Popular searches",
+      "heading": "Heading",
+      "popular_terms": "Search terms",
+      "popular_terms_info": "Separate with commas. Shown before typing.",
+      "recommended": "Products before typing",
+      "products": "Products"
     },
     "social": {
+      "name": "Social media",
+      "sharing": "Sharing",
+      "x": "X (Twitter)",
       "facebook": "Facebook",
-      "instagram": "Instagram",
-      "name": "Social",
       "pinterest": "Pinterest",
-      "tiktok": "Tiktok",
-      "x": "X",
-      "youtube": "Youtube"
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "threads": "Threads",
+      "youtube": "YouTube",
+      "vimeo": "Vimeo",
+      "snapchat": "Snapchat",
+      "linkedin": "LinkedIn",
+      "tumblr": "Tumblr",
+      "dribbble": "Dribbble",
+      "share_facebook": "Facebook",
+      "share_pinterest": "Pinterest",
+      "share_x": "X (Twitter)",
+      "share_telegram": "Telegram",
+      "share_whatsapp": "WhatsApp",
+      "share_email": "Email",
+      "share_copy_link": "Copy link"
     },
     "typography": {
       "accent_font": "Accent font",
@@ -1099,6 +1252,92 @@
       "menu_icons_info": "Value: an image from Content > Files (orange.png), an image URL, or a theme icon name.",
       "menu_badges": "Menu badges",
       "menu_badges_info": "Value: badge text, e.g. -10% OFF."
+    },
+    "global": {
+      "image_ratio": "Image ratio",
+      "radius": "Corner radius",
+      "text_align": "Text alignment",
+      "content": "Content",
+      "style": "Style",
+      "image_background": "Image background",
+      "border": "Border color",
+      "ratio": {
+        "portrait": "Portrait (4:5)",
+        "5_4": "5:4",
+        "4_3": "4:3",
+        "2_3": "2:3",
+        "1_1": "Square (1:1)",
+        "3_2": "3:2",
+        "16_9": "16:9",
+        "natural": "Natural (image's own)"
+      },
+      "align": {
+        "start": "Left",
+        "center": "Center",
+        "end": "Right"
+      },
+      "vertical": {
+        "top": "Top",
+        "center": "Center",
+        "bottom": "Bottom"
+      },
+      "icon": {
+        "none": "None",
+        "star": "Star",
+        "heart": "Heart",
+        "sparkle": "Sparkle",
+        "bolt": "Bolt",
+        "leaf": "Leaf",
+        "drop": "Drop",
+        "sun": "Sun",
+        "gift": "Gift",
+        "truck": "Truck",
+        "calendar": "Calendar",
+        "shield": "Shield",
+        "check": "Check",
+        "lock": "Lock",
+        "return": "Return",
+        "plane": "Plane",
+        "chat": "Chat",
+        "mail": "Mail",
+        "pin": "Pin",
+        "globe": "Globe",
+        "eye": "Eye",
+        "bag": "Bag"
+      }
+    },
+    "swatches": {
+      "name": "Swatches",
+      "option_name": "Swatch options",
+      "type": "Swatch colors",
+      "types": {
+        "theme": "Theme color list",
+        "native": "Shopify swatches",
+        "disabled": "Off (buttons instead)"
+      },
+      "style": "Swatch fill",
+      "styles": {
+        "color": "Color",
+        "image": "Variant image"
+      },
+      "color_list": "Color list",
+      "color_list_info": "One per line: Value: color or image. E.g. Navy: #1f2a44, Leopard: leopard.png (from Content > Files).",
+      "look": "Look",
+      "shape": "Shape",
+      "shapes": {
+        "circle": "Circle",
+        "round": "Rounded",
+        "square": "Square"
+      },
+      "size": "Size",
+      "tooltip": "Show the value name on hover",
+      "cards": "Product cards",
+      "card_style": "On cards show",
+      "card_styles": {
+        "swatches": "Swatches",
+        "text": "Count (e.g. 4 colors)"
+      },
+      "limit": "Swatches before \"+ more\""
     }
   },
   "carousel": {

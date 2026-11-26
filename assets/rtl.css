@@ -42,7 +42,7 @@
   }
 
   /* Collection card arrow nudges toward the reading direction. */
-  [dir='rtl'] .collection-card:hover .collection-card__title .icon {
+  [dir='rtl'] .collection-card:hover .collection-card__link .icon {
     translate: -4px 0;
   }
 

@@ -1,0 +1,60 @@
+{% doc %}
+  Looks a menu item up in the theme's navigation config (Theme settings >
+  Navigation), one "Menu name: value" pair per line, matched by name without
+  regard to case, and prints what it finds:
+
+  - icon: an image from Content > Files ("Strawberry: strawberry.png"), an
+    image URL, or a theme icon name ("Orange: leaf").
+  - badge: a small label ("Green Harmony: -10% OFF").
+
+  @param {string} title - Menu item title.
+  @param {string} source - 'icon' or 'badge'.
+
+  @example
+  {% render 'menu-config', title: link.title, source: 'icon' %}
+{% enddoc %}
+
+{%- liquid
+  if source == 'badge'
+    assign config = settings.menu_badges
+  else
+    assign config = settings.menu_icons
+  endif
+
+  assign value = blank
+  if config != blank
+    assign key = title | strip | downcase
+    assign rows = config | newline_to_br | split: '<br />'
+    for row in rows
+      assign pair = row | split: ':'
+      if pair.size < 2
+        continue
+      endif
+      assign name = pair.first | strip | downcase
+      if name == key
+        assign value = row | remove_first: pair.first | remove_first: ':' | strip
+        break
+      endif
+    endfor
+  endif
+-%}
+
+{%- if value != blank -%}
+  {%- if source == 'badge' -%}
+    <span class="menu-badge">{{ value | escape }}</span>
+  {%- else -%}
+    {%- liquid
+      assign icon_url = blank
+      if value contains '//'
+        assign icon_url = value
+      elsif value contains '.'
+        assign icon_url = value | file_url
+      endif
+    -%}
+    {%- if icon_url != blank -%}
+      <img class="menu-icon" src="{{ icon_url }}" alt="" width="24" height="24" loading="lazy">
+    {%- else -%}
+      <span class="menu-icon">{% render 'icon', name: value %}</span>
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}

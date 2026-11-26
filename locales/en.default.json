@@ -213,6 +213,7 @@
     },
     "log_in": "Log in",
     "menu": "Menu",
+    "more": "More",
     "search": "Search",
     "view_all": "All {{ title }}"
   },

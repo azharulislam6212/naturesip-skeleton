@@ -25,6 +25,29 @@
     ]
   },
   {
+    "name": "t:settings_schema.navigation.name",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.navigation.info"
+      },
+      {
+        "type": "textarea",
+        "id": "menu_icons",
+        "label": "t:settings_schema.navigation.menu_icons",
+        "info": "t:settings_schema.navigation.menu_icons_info",
+        "placeholder": "Orange: orange.png\nStrawberry: strawberry.png"
+      },
+      {
+        "type": "textarea",
+        "id": "menu_badges",
+        "label": "t:settings_schema.navigation.menu_badges",
+        "info": "t:settings_schema.navigation.menu_badges_info",
+        "placeholder": "Green Harmony, A Clean, Calming Citrus Blend: -10% OFF"
+      }
+    ]
+  },
+  {
     "name": "t:settings_schema.colors.name",
     "settings": [
       {

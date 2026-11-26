@@ -5,6 +5,7 @@
   @param {string} id - Unique id prefix.
   @param {boolean} [show_country] - Show the country selector.
   @param {boolean} [show_language] - Show the language selector.
+  @param {boolean} [inline] - Selectors side by side with their labels for screen readers only (header).
 
   @example
   {% render 'localization-form', id: 'Footer', show_country: true, show_language: true %}
@@ -22,7 +23,7 @@
 -%}
 
 {%- if country_enabled or language_enabled -%}
-  <localization-form class="localization">
+  <localization-form class="localization{% if inline %} localization--inline{% endif %}">
     {%- form 'localization', id: id -%}
       <input type="hidden" name="return_to" value="{{ request.path }}">
       {%- if country_enabled -%}
@@ -50,6 +51,7 @@
             id: country_select_id,
             name: 'country_code',
             label: country_label,
+            label_hidden: inline,
             options: country_tags,
             selected_label: country_selected,
             searchable: true,
@@ -75,6 +77,7 @@
             id: language_select_id,
             name: 'language_code',
             label: language_label,
+            label_hidden: inline,
             options: language_tags,
             selected_label: language_selected
           %}

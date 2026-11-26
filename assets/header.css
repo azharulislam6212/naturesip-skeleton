@@ -96,24 +96,45 @@
   }
 
   /* ---------- Header ---------- */
+
+  /* Sticky on the section wrapper, so it sticks for the whole page. */
+  .header-section:has(> .header-wrapper:is([data-sticky='always'], [data-sticky='scroll-up'])) {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+
+  /* Transparent: takes no room, so the first section runs up under it. */
+  .header-section:has(> .header-wrapper[data-transparent]) {
+    height: 0;
+  }
+
   .header-wrapper {
     position: relative;
     z-index: 20;
     display: block;
     background-color: var(--color-background);
     background-image: var(--gradient-background);
-    transition: translate var(--duration-base) var(--ease-out), box-shadow var(--duration-base);
+    transition:
+      translate var(--duration-base) var(--ease-out),
+      background-color var(--duration-base),
+      box-shadow var(--duration-base);
+  }
+
+  .header-wrapper[data-transparent]:not([data-scrolled]) {
+    background: none;
   }
 
   .header-wrapper--border {
     border-block-end: 1px solid var(--color-border);
   }
 
-  .header-wrapper[data-sticky='always'],
-  .header-wrapper[data-sticky='scroll-up'] {
-    position: sticky;
-    top: 0;
-    /* Own layer: showing / hiding and its shadow never repaint the hero below. */
+  .header-wrapper[data-transparent]:not([data-scrolled]).header-wrapper--border {
+    border-color: transparent;
+  }
+
+  /* Own layer: showing / hiding and its shadow never repaint the hero below. */
+  .header-wrapper:is([data-sticky='always'], [data-sticky='scroll-up']) {
     will-change: translate;
   }
 
@@ -125,31 +146,100 @@
     translate: 0 -100%;
   }
 
+  /* Transparent logo while the header is transparent. */
+  .header__logo-image--transparent,
+  .header-wrapper[data-transparent]:not([data-scrolled]) .header__logo:has(.header__logo-image--transparent) .header__logo-image {
+    display: none;
+  }
+
+  .header-wrapper[data-transparent]:not([data-scrolled]) .header__logo .header__logo-image--transparent {
+    display: block;
+  }
+
+  /* ---------- Layouts ---------- */
   .header {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 1fr auto 1fr;
     grid-template-areas: 'drawer logo icons';
     align-items: center;
-    gap: var(--space-sm);
+    column-gap: var(--space-md);
+    row-gap: var(--header-padding);
     padding-block: var(--header-padding);
   }
 
   @media (min-width: 990px) {
+    /* The menu takes what it needs up to the room left; "More" covers the rest. */
+    .header--logo-left-menu-center {
+      grid-template-columns: minmax(max-content, 1fr) minmax(0, max-content) minmax(max-content, 1fr);
+      grid-template-areas: 'logo menu icons';
+    }
+
     .header--logo-left {
-      grid-template-columns: auto 1fr auto;
+      grid-template-columns: auto minmax(0, 1fr) auto;
       grid-template-areas: 'logo menu icons';
     }
 
     .header--logo-center {
-      grid-template-columns: 1fr auto 1fr;
+      grid-template-columns: minmax(0, 1fr) auto minmax(max-content, 1fr);
       grid-template-areas: 'menu logo icons';
+    }
+
+    .header--logo-right {
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      grid-template-areas: 'menu icons logo';
+    }
+
+    .header--logo-top {
+      grid-template-columns: 1fr auto 1fr;
+      grid-template-areas:
+        'search logo icons'
+        'menu menu menu';
+    }
+
+    /* Search sits at the start of the top row; its twin in the icons hides. */
+    .header__search--start {
+      grid-area: search;
+      justify-self: start;
+    }
+
+    .header--logo-top:has(.header__search--start) .header__icons .header__search {
+      display: none;
+    }
+
+    .header--logo-top.header--divider .header__menu {
+      padding-block-start: var(--header-padding);
+      border-block-start: 1px solid var(--color-border);
+    }
+
+    :is(.header--logo-left-menu-center, .header--logo-top) .header__menu-list {
+      justify-content: center;
+    }
+
+    /* Drawer menu: the toggle before the logo, no menu in the bar. */
+    .header--drawer {
+      grid-template-columns: auto 1fr auto;
+      grid-template-areas: 'drawer logo icons';
+    }
+
+    .header--drawer:is(.header--logo-center, .header--logo-top) {
+      grid-template-columns: 1fr auto 1fr;
+    }
+
+    .header--drawer .header__drawer {
+      justify-self: start;
+    }
+
+    .header--logo-right .header__heading {
+      justify-self: end;
     }
   }
 
   .header__drawer { grid-area: drawer; }
   .header__heading { grid-area: logo; margin: 0; font-size: 1.5rem; line-height: 1; }
-  .header__menu { grid-area: menu; }
-  .header__icons { grid-area: icons; display: flex; align-items: center; justify-content: flex-end; gap: var(--space-2xs); }
+  /* Stretched to its track: the list then knows how much room it has. */
+  .header__menu { grid-area: menu; justify-self: stretch; min-width: 0; }
+  .header__icons { grid-area: icons; display: flex; flex: none; align-items: center; justify-content: flex-end; gap: var(--space-xs); }
+  .header__icons > * { flex: none; }
 
   @media (max-width: 989px) {
     .header__heading {
@@ -179,53 +269,126 @@
     font-weight: var(--font-accent--weight);
   }
 
+  /* ---------- Pills and icon buttons ----------
+     A 1px gradient outline (the scheme's accent gradient) drawn by a masked
+     ::before, so it works over any background, transparent included. */
+  :is(.header__menu-link, .header__icon)::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: var(--gradient-accent);
+    mask:
+      linear-gradient(#000 0 0) content-box exclude,
+      linear-gradient(#000 0 0);
+    pointer-events: none;
+  }
+
   .header__icon {
     position: relative;
-    border-color: color-mix(in srgb, var(--color-foreground) 45%, transparent);
+    width: 3rem;
+    height: 3rem;
+    border: 0;
+    border-radius: 1rem;
+    background: none;
+    color: var(--color-foreground);
     text-decoration: none;
+    --icon-size: 1.5rem;
+  }
+
+  /* Everything stacks in one cell, so extra children (the cart count's
+     wrapper, hidden labels) never push the icon off centre. */
+  .header__icon > * {
+    grid-area: 1 / 1;
+  }
+
+  .header__icon:hover,
+  .header__cart {
+    background-color: transparent;
+    background-image: var(--gradient-accent);
+    color: var(--color-on-accent);
+  }
+
+  @media (max-width: 749px) {
+    .header__icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.75rem;
+      --icon-size: 1.25rem;
+    }
   }
 
   .cart-count {
     position: absolute;
-    inset-block-start: -0.25rem;
-    inset-inline-end: -0.25rem;
+    inset-block-start: 0.375rem;
+    inset-inline-end: 0.25rem;
     display: grid;
     place-items: center;
     min-width: 1.25rem;
     height: 1.25rem;
     padding-inline: 0.25rem;
     border-radius: 999px;
-    background-image: var(--gradient-accent);
-    background-color: var(--color-accent);
-    color: var(--color-on-accent);
-    font-size: 0.6875rem;
+    /* Always light on the gradient button, whatever the scheme. */
+    background-color: #fff;
+    color: #010507;
+    font-size: 0.625rem;
     font-weight: var(--font-body--weight-bold);
+    line-height: 1;
   }
 
-  /* Desktop menu: pill links like the design, dropdowns from <details>. */
+  @media (max-width: 749px) {
+    .cart-count {
+      inset-block-start: -0.25rem;
+      inset-inline-end: -0.25rem;
+    }
+  }
+
+  /* ---------- Desktop menu (snippets/header-menu.liquid) ---------- */
   .header__menu-list {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-2xs);
+    flex-wrap: nowrap;
+    gap: var(--space-xs);
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
   .header__menu-item {
+    flex: none;
+  }
+
+  /* Inline country/language selectors, sized like the icon buttons. */
+  .header__localization .select {
+    min-height: 3rem;
+    padding-block: 0;
+    border-color: color-mix(in srgb, var(--color-foreground) 30%, transparent);
+    border-radius: 1rem;
+    background-color: transparent;
+    color: var(--color-foreground);
+    white-space: nowrap;
+  }
+
+  .header__menu-item[hidden] {
+    display: none;
+  }
+
+  /* Dropdowns hang from their item; mega menus span the whole header. */
+  .header__menu-item:not(.header__menu-item--mega) {
     position: relative;
   }
 
   .header__menu-link {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: var(--space-3xs);
-    min-height: 2.5rem;
-    padding: 0 var(--space-sm);
-    border: 1px solid color-mix(in srgb, var(--color-foreground) 40%, transparent);
-    border-radius: 999px;
-    color: inherit;
+    gap: var(--space-2xs);
+    height: 3rem;
+    padding: 0 0.875rem;
+    border: 0;
+    border-radius: 0.875rem;
+    background: none;
+    color: var(--color-accent);
     font-family: var(--type-navigation-family);
     font-style: var(--type-navigation-style);
     font-size: var(--type-navigation-size);
@@ -233,74 +396,370 @@
     letter-spacing: var(--type-navigation-letter-spacing);
     text-transform: var(--type-navigation-case);
     text-decoration: none;
+    white-space: nowrap;
     cursor: pointer;
-    list-style: none;
-    transition: background-color var(--duration-fast), color var(--duration-fast);
-    --icon-size: 1rem;
+    transition: color var(--duration-fast);
+    --icon-size: 1.5rem;
   }
 
-  .header__menu-link::-webkit-details-marker {
-    display: none;
+  /* Gradient label, like the outline. */
+  .header__menu-label {
+    background-image: var(--gradient-accent);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .header__menu-link .icon {
+    transition: rotate var(--duration-base) var(--ease-out);
   }
 
   .header__menu-link:hover,
   .header__menu-link.is-active,
-  .header__dropdown[open] > .header__menu-link {
-    border-color: transparent;
-    background-image: var(--gradient-highlight);
+  .header__menu-item[data-open] > .header__menu-link {
+    background-image: var(--gradient-accent);
     color: var(--color-on-accent);
   }
 
-  .header__dropdown[open] > .header__menu-link .icon {
+  :is(.header__menu-link:hover, .header__menu-link.is-active, .header__menu-item[data-open] > .header__menu-link) .header__menu-label {
+    background: none;
+    color: inherit;
+  }
+
+  .header__menu-item[data-open] > .header__menu-link .icon {
     rotate: 180deg;
   }
 
-  .header__submenu {
-    position: absolute;
-    inset-block-start: calc(100% + var(--space-2xs));
-    inset-inline-start: 0;
-    z-index: 5;
-    min-width: 14rem;
-    padding: var(--space-sm);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-card);
-    box-shadow: 0 24px 48px -24px var(--color-shadow);
-    animation: modal-in var(--duration-base) var(--ease-out);
+  /* ---------- Panels: fade in and out ----------
+     Header setting "Menu animation": fade, fade up (rises into place) or
+     fade down (drops into place). */
+  :is(.header__dropdown, .mega-menu, .dropdown--flyout) {
+    visibility: hidden;
+    opacity: 0;
+    translate: 0 var(--menu-shift, 0);
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      translate var(--duration-base) var(--ease-out),
+      visibility 0s linear var(--duration-base);
   }
 
-  .header__submenu-list {
+  header-menu[data-animation='fade-up'] {
+    --menu-shift: 0.75rem;
+  }
+
+  header-menu[data-animation='fade-down'] {
+    --menu-shift: -0.75rem;
+  }
+
+  .header__menu-item[data-open] > :is(.header__dropdown, .mega-menu),
+  header-menu:not([data-ready]) .header__menu-item:is(:hover, :focus-within) > :is(.header__dropdown, .mega-menu),
+  .dropdown__item--parent:is(:hover, :focus-within) > .dropdown--flyout {
+    visibility: visible;
+    opacity: 1;
+    translate: 0;
+    transition-delay: 0s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :is(.header__dropdown, .mega-menu, .dropdown--flyout) {
+      transition: none;
+    }
+  }
+
+  /* ---------- Dropdown ---------- */
+  .header__dropdown {
+    position: absolute;
+    /* Hangs from the bottom of the header, its notch pointing at the item. */
+    inset-block-start: calc(100% + var(--header-padding) + 1.125rem);
+    inset-inline-start: -0.5rem;
+    z-index: 5;
+  }
+
+  /* The scheme class only sets colours here; the list paints the surface. */
+  .header__dropdown {
+    background: none;
+  }
+
+  .header__dropdown--end {
+    inset-inline: auto -0.5rem;
+  }
+
+  /* Keeps hover alive across the gap between the item and the panel. */
+  .header__dropdown::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 100%;
+    height: calc(var(--header-padding) + 1.125rem);
+  }
+
+  .dropdown {
+    position: relative;
     display: grid;
-    gap: var(--space-3xs);
+    gap: 0;
+    min-width: 13.75rem;
+    margin: 0;
+    padding: var(--space-2xs);
+    border-radius: 0.5rem;
+    background-color: var(--color-background);
+    box-shadow: 0 24px 48px -24px rgb(from var(--color-shadow) r g b / 0.35);
+    list-style: none;
+  }
+
+  /* Notch: on top of a dropdown, on the start side of a flyout. */
+  .dropdown::before {
+    content: '';
+    position: absolute;
+    inset-block-end: 100%;
+    inset-inline-start: 2.75rem;
+    border: 0.625rem solid transparent;
+    border-block-end-color: var(--color-background);
+    border-block-start: 0;
+  }
+
+  .header__dropdown--end > .dropdown::before {
+    inset-inline: auto 2.75rem;
+  }
+
+  .dropdown__item {
+    position: relative;
+  }
+
+  .dropdown__item[hidden] {
+    display: none;
+  }
+
+  .dropdown__link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    min-height: 2.875rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    color: var(--color-foreground);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color var(--duration-fast), color var(--duration-fast);
+  }
+
+  .dropdown__label {
+    flex: 1;
+  }
+
+  .dropdown__link:hover,
+  .dropdown__link:focus-visible,
+  .dropdown__item--parent:is(:hover, :focus-within) > .dropdown__link,
+  .dropdown__link[aria-current='page'] {
+    background-color: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+
+  :is(.dropdown__link:hover, .dropdown__link:focus-visible, .dropdown__item--parent:is(:hover, :focus-within) > .dropdown__link, .dropdown__link[aria-current='page']) .dropdown__label {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .dropdown__arrow {
+    margin-inline-start: auto;
+    --icon-size: 1rem;
+  }
+
+  .menu-icon {
+    display: inline-grid;
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    object-fit: contain;
+    --icon-size: 1.5rem;
+  }
+
+  .menu-badge {
+    flex: none;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    background-image: var(--gradient-heading);
+    color: var(--color-foreground);
+    font-size: 0.875rem;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  /* Flyout: beside its row, notch on the start side. */
+  .dropdown--flyout {
+    position: absolute;
+    inset-block-start: calc(var(--space-2xs) * -1);
+    inset-inline-start: calc(100% + 1.75rem);
+  }
+
+  .dropdown--flyout::before {
+    inset-block: 1.4rem auto;
+    inset-inline: auto 100%;
+    border: 0.625rem solid transparent;
+    border-inline-end-color: var(--color-background);
+    border-inline-start: 0;
+  }
+
+  .dropdown--flyout::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 100%;
+    width: 1.75rem;
+  }
+
+  /* ---------- Mega menu ---------- */
+  .mega-menu {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline: 0;
+    z-index: 5;
+    border-radius: 0 0 1rem 1rem;
+    box-shadow: 0 24px 48px -24px rgb(from var(--color-shadow) r g b / 0.35);
+  }
+
+  .mega-menu__inner {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: var(--space-xl);
+    padding-block: 3.75rem;
+  }
+
+  /* Links or collections take --mega-columns tracks, each promotion one. */
+  :is(.mega-menu__groups, .mega-menu__collections) {
+    grid-column: span var(--mega-columns, 3);
+  }
+
+  /* Groups flow into balanced columns with a rule before each. */
+  .mega-menu__groups {
+    columns: var(--mega-columns, 3);
+    column-gap: 0;
+    column-rule: 1px solid var(--color-border);
+    border-inline-start: 1px solid var(--color-border);
+  }
+
+  .mega-menu__group {
+    display: grid;
+    gap: var(--space-sm);
+    padding-inline: 1.5rem;
+    padding-block-end: 2.5rem;
+    break-inside: avoid;
+  }
+
+  .mega-menu__title {
+    margin: 0;
+    color: var(--color-heading);
+    font-family: var(--font-heading--family);
+    font-weight: var(--font-heading--weight);
+    font-size: 1.5rem;
+    line-height: 1.2;
+    text-decoration: none;
+  }
+
+  .mega-menu__links {
+    display: grid;
+    gap: var(--space-xs);
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .header__submenu-list--mega {
-    grid-template-columns: repeat(3, minmax(10rem, 1fr));
-    gap: var(--space-md);
+  .mega-menu__link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--color-foreground);
+    line-height: 1.5;
+    text-decoration: none;
   }
 
-  .header__submenu-children {
+  :is(.mega-menu__link, .mega-menu__title):is(:hover, [aria-current='page']) {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .mega-menu__promo {
     display: grid;
-    margin: var(--space-2xs) 0 0;
+    align-content: start;
+    gap: var(--space-sm);
+  }
+
+  .mega-menu__promo-media {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 340 / 220;
+    border-radius: 1rem;
+  }
+
+  .mega-menu__promo-media :is(img, svg) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: scale var(--duration-slow) var(--ease-out);
+  }
+
+  .mega-menu__promo-media:hover :is(img, svg) {
+    scale: 1.04;
+  }
+
+  .mega-menu__promo-text {
+    margin: 0;
+  }
+
+  .mega-menu__promo-text a {
+    margin-inline-start: var(--space-2xs);
+    color: inherit;
+    text-underline-offset: 0.2em;
+  }
+
+  /* Collections layout: image cards. */
+  .mega-menu__collections {
+    display: grid;
+    grid-template-columns: repeat(var(--mega-columns, 3), minmax(0, 1fr));
+    gap: var(--space-lg);
+    margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .header__submenu-link {
-    display: block;
-    padding: var(--space-3xs) var(--space-2xs);
-    border-radius: var(--radius-input);
+  .mega-collection {
+    display: grid;
+    gap: var(--space-sm);
+    color: var(--color-heading);
+    text-align: center;
     text-decoration: none;
   }
 
-  .header__submenu-link:hover {
-    background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  .mega-collection__media {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 416 / 400;
+    border-radius: 1rem;
   }
 
-  .header__submenu-title {
-    font-weight: var(--font-body--weight-bold);
+  .mega-collection__media :is(img, svg) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: scale var(--duration-slow) var(--ease-out);
+  }
+
+  .mega-collection:hover .mega-collection__media :is(img, svg) {
+    scale: 1.04;
+  }
+
+  .mega-collection__title {
+    font-family: var(--font-heading--family);
+    font-weight: var(--font-heading--weight);
+    font-size: 1.375rem;
+    line-height: 1.3;
+  }
+
+  .mega-collection:hover .mega-collection__title {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
 
   /* Mobile drawer navigation */

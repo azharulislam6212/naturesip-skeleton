@@ -17,7 +17,7 @@ import { isDesignMode, onIdle } from '@theme/utilities';
 /** @type {Record<string, { module: string, load: 'eager' | 'visible' | 'interaction' }>} */
 const REGISTRY = {
   'header-component': { module: '@theme/header', load: 'eager' },
-  'header-menu': { module: '@theme/header', load: 'interaction' },
+  'header-menu': { module: '@theme/header', load: 'eager' },
   'header-drawer': { module: '@theme/header', load: 'interaction' },
   'search-modal': { module: '@theme/predictive-search', load: 'interaction' },
   'predictive-search': { module: '@theme/predictive-search', load: 'interaction' },

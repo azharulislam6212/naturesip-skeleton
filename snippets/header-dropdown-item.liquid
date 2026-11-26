@@ -1,0 +1,46 @@
+{% doc %}
+  One row of a header dropdown: icon (from the navigation config), title and,
+  when the link has children, a flyout that opens beside it.
+
+  @param {object} link - Menu link.
+  @param {string} [attributes] - Extra attributes for the <li>.
+
+  @example
+  {% render 'header-dropdown-item', link: child %}
+{% enddoc %}
+
+<li class="dropdown__item{% if link.links.size > 0 %} dropdown__item--parent{% endif %}" {{ attributes }}>
+  <a
+    class="dropdown__link"
+    href="{{ link.url }}"
+    {% if link.current %}
+      aria-current="page"
+    {% endif %}
+  >
+    {%- render 'menu-config', title: link.title, source: 'icon' -%}
+    <span class="dropdown__label">{{ link.title | escape }}</span>
+    {%- render 'menu-config', title: link.title, source: 'badge' -%}
+    {%- if link.links.size > 0 -%}
+      {%- render 'icon', name: 'chevrons-right', class: 'dropdown__arrow' -%}
+    {%- endif -%}
+  </a>
+  {%- if link.links.size > 0 -%}
+    <ul class="dropdown dropdown--flyout" role="list">
+      {%- for child in link.links -%}
+        <li class="dropdown__item">
+          <a
+            class="dropdown__link"
+            href="{{ child.url }}"
+            {% if child.current %}
+              aria-current="page"
+            {% endif %}
+          >
+            {%- render 'menu-config', title: child.title, source: 'icon' -%}
+            <span class="dropdown__label">{{ child.title | escape }}</span>
+            {%- render 'menu-config', title: child.title, source: 'badge' -%}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</li>

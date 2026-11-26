@@ -115,6 +115,16 @@
     },
     "video": {
       "name": "Video"
+    },
+    "mega_menu": {
+      "name": "Mega menu",
+      "menu_item": "Menu item",
+      "menu_item_info": "Title of the main menu item that opens this mega menu, as it is in Content > Menus.",
+      "layout_links": "Links",
+      "layout_collections": "Collections",
+      "promo_1": "Promotion 1",
+      "promo_2": "Promotion 2",
+      "show_promo": "Show promotion"
     }
   },
   "categories": {
@@ -192,7 +202,8 @@
     "layout": "Layout",
     "localization": "Localization",
     "padding": "Padding",
-    "typography": "Typography"
+    "typography": "Typography",
+    "transparent_header": "Transparent header"
   },
   "options": {
     "alignment": {
@@ -305,8 +316,11 @@
       "stacked": "Stacked"
     },
     "header_layout": {
-      "logo_center": "Logo center",
-      "logo_left": "Logo left"
+      "logo_center": "Logo center, menu left",
+      "logo_left": "Logo left, menu left",
+      "logo_left_menu_center": "Logo left, menu center",
+      "logo_right": "Logo right, menu left",
+      "logo_top": "Logo top, menu below"
     },
     "heading_action": {
       "arrows": "Slider arrows",
@@ -518,6 +532,15 @@
       "fill": "Fill",
       "fit": "Fit content",
       "same": "Same as desktop"
+    },
+    "menu_type": {
+      "menu": "Menu",
+      "drawer": "Drawer"
+    },
+    "menu_animation": {
+      "fade": "Fade",
+      "fade_up": "Fade up",
+      "fade_down": "Fade down"
     }
   },
   "sections": {
@@ -863,7 +886,20 @@
     "width": "Width",
     "width_mobile": "Mobile width",
     "wrap": "Wrap",
-    "zoom": "Zoom"
+    "zoom": "Zoom",
+    "header_menu_divider": "Divider between logo and menu",
+    "transparent_header_info": "The header sits over the first section and turns solid once the page scrolls.",
+    "transparent_home": "Home page",
+    "transparent_collection": "Collection pages",
+    "transparent_product": "Product pages",
+    "transparent_list_collections": "Collection list page",
+    "transparent_other": "Other pages",
+    "transparent_color_scheme": "Transparent color scheme",
+    "transparent_logo": "Transparent logo",
+    "link_label": "Link label",
+    "menu_type": "Menu type",
+    "transparent_header": "Enable transparent header",
+    "menu_animation": "Menu animation"
   },
   "settings_schema": {
     "animations": {
@@ -1028,6 +1064,14 @@
       "heading_font": "Heading font",
       "mobile_scale": "Mobile scale",
       "name": "Typography"
+    },
+    "navigation": {
+      "name": "Navigation",
+      "info": "Icons and badges for menu items, matched by menu item name. One per line: Menu name: value.",
+      "menu_icons": "Menu icons",
+      "menu_icons_info": "Value: an image from Content > Files (orange.png), an image URL, or a theme icon name.",
+      "menu_badges": "Menu badges",
+      "menu_badges_info": "Value: badge text, e.g. -10% OFF."
     }
   },
   "carousel": {

@@ -1,6 +1,8 @@
 {%- comment -%}
-  Header: logo, main menu (dropdowns on desktop, drawer on mobile), search,
-  account, cart and optional country/language selectors.
+  Header: logo, main menu (dropdowns, mega menus and "More" on desktop, a
+  drawer on mobile), search, account, cart and optional country/language
+  selectors. It can sit transparent over the first section, per page type,
+  and turns solid once the page scrolls.
 {%- endcomment -%}
 
 {%- liquid
@@ -10,17 +12,47 @@
   if settings.cart_type == 'drawer'
     assign cart_opener = 'data-dialog-open="CartDrawer" aria-haspopup="dialog"'
   endif
+
+  assign transparent = false
+  if s.transparent_header
+    case request.page_type
+      when 'index'
+        assign transparent = s.transparent_home
+      when 'collection'
+        assign transparent = s.transparent_collection
+      when 'product'
+        assign transparent = s.transparent_product
+      when 'list-collections'
+        assign transparent = s.transparent_list_collections
+      else
+        assign transparent = s.transparent_other
+    endcase
+  endif
+
+  # Drawer menu: the toggle shows on desktop too, before the logo.
+  assign drawer_menu = false
+  if s.menu_type == 'drawer'
+    assign drawer_menu = true
+  endif
+
+  assign scheme_class = 'color-' | append: s.color_scheme.id
+  assign transparent_class = 'color-' | append: s.transparent_color_scheme.id
 -%}
 
 <header-component
-  class="header-wrapper color-{{ s.color_scheme.id }}{% if s.border %} header-wrapper--border{% endif %}"
+  class="header-wrapper {% if transparent %}{{ transparent_class }}{% else %}{{ scheme_class }}{% endif %}{% if s.border %} header-wrapper--border{% endif %}"
   data-sticky="{{ s.sticky }}"
+  {% if transparent %}
+    data-transparent
+    data-scheme="{{ scheme_class }}"
+    data-transparent-scheme="{{ transparent_class }}"
+  {% endif %}
 >
   <header
-    class="header header--{{ s.layout }} page-width"
+    class="header header--{{ s.layout }}{% if drawer_menu %} header--drawer{% endif %}{% if s.menu_divider %} header--divider{% endif %} page-width"
     style="--logo-width: {{ s.logo_width }}px; --logo-width-mobile: {{ s.logo_width_mobile }}px; --header-padding: {{ s.padding | divided_by: 16.0 }}rem;"
   >
-    <header-drawer class="header__drawer hide-desktop">
+    <header-drawer class="header__drawer{% unless drawer_menu %} hide-desktop{% endunless %}">
       <button class="icon-button header__icon" type="button" ref="trigger" aria-haspopup="dialog" aria-expanded="false">
         {%- render 'icon', name: 'menu' -%}
         <span class="visually-hidden">{{ 'header.menu' | t }}</span>
@@ -87,6 +119,13 @@
             | image_url: width: logo_width_2x
             | image_tag: alt: shop.name, width: s.logo_width, loading: 'eager', fetchpriority: 'high', class: 'header__logo-image', widths: '120, 180, 240, 360, 480'
           }}
+          {%- if transparent and s.transparent_logo != blank -%}
+            {{
+              s.transparent_logo
+              | image_url: width: logo_width_2x
+              | image_tag: alt: shop.name, width: s.logo_width, loading: 'eager', class: 'header__logo-image header__logo-image--transparent', widths: '120, 180, 240, 360, 480'
+            }}
+          {%- endif -%}
         {%- else -%}
           <span class="header__logo-text">{{ shop.name | escape }}</span>
         {%- endif -%}
@@ -98,54 +137,27 @@
       <div class="header__heading">{{ logo }}</div>
     {%- endif -%}
 
-    {%- if menu.links.size > 0 -%}
-      <header-menu class="header__menu hide-mobile" data-open-on="{{ s.menu_open_on }}">
-        <nav aria-label="{{ 'header.menu' | t }}">
-          <ul class="header__menu-list" role="list">
-            {%- for link in menu.links -%}
-              <li class="header__menu-item">
-                {%- if link.links.size > 0 -%}
-                  <details class="header__dropdown">
-                    <summary class="header__menu-link{% if link.child_active or link.active %} is-active{% endif %}">
-                      {{- link.title | escape -}}
-                      {%- render 'icon', name: 'chevron-down' -%}
-                    </summary>
-                    <div class="header__submenu color-{{ s.dropdown_color_scheme.id }}">
-                      <ul class="header__submenu-list{% if link.levels > 1 %} header__submenu-list--mega{% endif %}" role="list">
-                        {%- for child in link.links -%}
-                          <li>
-                            <a class="header__submenu-link{% if child.links.size > 0 %} header__submenu-title{% endif %}" href="{{ child.url }}" {% if child.current %}aria-current="page"{% endif %}>{{ child.title | escape }}</a>
-                            {%- if child.links.size > 0 -%}
-                              <ul class="header__submenu-children" role="list">
-                                {%- for grandchild in child.links -%}
-                                  <li><a class="header__submenu-link" href="{{ grandchild.url }}" {% if grandchild.current %}aria-current="page"{% endif %}>{{ grandchild.title | escape }}</a></li>
-                                {%- endfor -%}
-                              </ul>
-                            {%- endif -%}
-                          </li>
-                        {%- endfor -%}
-                      </ul>
-                    </div>
-                  </details>
-                {%- else -%}
-                  <a class="header__menu-link{% if link.active %} is-active{% endif %}" href="{{ link.url }}" {% if link.current %}aria-current="page"{% endif %}>{{ link.title | escape }}</a>
-                {%- endif -%}
-              </li>
-            {%- endfor -%}
-          </ul>
-        </nav>
-      </header-menu>
+    {%- comment -%} Menu below the logo: search moves to the start of the top row (desktop). {%- endcomment -%}
+    {%- if s.show_search and s.layout == 'logo-top' and drawer_menu == false -%}
+      <a class="icon-button header__icon header__search header__search--start hide-mobile" href="{{ routes.search_url }}" data-dialog-open="SearchModal" aria-haspopup="dialog">
+        {%- render 'icon', name: 'search' -%}
+        <span class="visually-hidden">{{ 'header.search' | t }}</span>
+      </a>
+    {%- endif -%}
+
+    {%- if menu.links.size > 0 and drawer_menu == false -%}
+      {% render 'header-menu', menu: menu, section: section %}
     {%- endif -%}
 
     <div class="header__icons">
       {%- if s.show_localization_desktop -%}
-        <div class="hide-mobile">
-          {% render 'localization-form', id: 'HeaderLocalization', show_country: s.show_country, show_language: s.show_language %}
+        <div class="header__localization hide-mobile">
+          {% render 'localization-form', id: 'HeaderLocalization', show_country: s.show_country, show_language: s.show_language, inline: true %}
         </div>
       {%- endif -%}
 
       {%- if s.show_search -%}
-        <a class="icon-button header__icon" href="{{ routes.search_url }}" data-dialog-open="SearchModal" aria-haspopup="dialog">
+        <a class="icon-button header__icon header__search" href="{{ routes.search_url }}" data-dialog-open="SearchModal" aria-haspopup="dialog">
           {%- render 'icon', name: 'search' -%}
           <span class="visually-hidden">{{ 'header.search' | t }}</span>
         </a>
@@ -153,7 +165,7 @@
 
       {%- if shop.customer_accounts_enabled and s.show_account -%}
         <a class="icon-button header__icon hide-mobile" href="{{ routes.account_url }}">
-          {%- render 'icon', name: 'account' -%}
+          {%- render 'icon', name: 'account-plus' -%}
           <span class="visually-hidden">{%- if customer -%}{{ 'header.account' | t }}{%- else -%}{{ 'header.log_in' | t }}{%- endif -%}</span>
         </a>
       {%- endif -%}
@@ -165,6 +177,44 @@
       </a>
     </div>
   </header>
+
+  {%- unless drawer_menu -%}
+    <script>
+      (() => {
+        // One-line menu: items that don't fit hide and their copies in "More"
+        // show. Runs inline, so the first paint is already right (nothing cut
+        // off or overlapping); assets/header.js runs it again on resize.
+        const fit = (list) => {
+          const more = list.querySelector(':scope > [data-more]');
+          if (!more) return;
+          const items = [...list.querySelectorAll(':scope > [data-index]')];
+          for (const item of items) item.hidden = false;
+          more.hidden = true;
+
+          const available = list.clientWidth;
+          if (list.scrollWidth > available + 1) {
+            more.hidden = false;
+            const gap = parseFloat(getComputedStyle(list).columnGap) || 0;
+            let used = more.offsetWidth;
+            let fits = true;
+            for (const item of items) {
+              used += gap + item.offsetWidth;
+              if (used > available) fits = false;
+              item.hidden = !fits;
+            }
+          }
+          for (const entry of more.querySelectorAll('[data-more-index]')) {
+            entry.hidden = !items[Number(entry.dataset.moreIndex)]?.hidden;
+          }
+        };
+
+        window.Theme = window.Theme || {};
+        window.Theme.fitHeaderMenu = fit;
+        const list = document.currentScript.previousElementSibling?.querySelector('.header__menu-list');
+        if (list) fit(list);
+      })();
+    </script>
+  {%- endunless -%}
 
   {%- if s.show_search -%}
     <search-modal>
@@ -213,6 +263,7 @@
       "header"
     ]
   },
+  "max_blocks": 6,
   "settings": [
     {
       "type": "select",
@@ -220,15 +271,34 @@
       "label": "t:settings.layout",
       "options": [
         {
+          "value": "logo-left-menu-center",
+          "label": "t:options.header_layout.logo_left_menu_center"
+        },
+        {
           "value": "logo-left",
           "label": "t:options.header_layout.logo_left"
         },
         {
           "value": "logo-center",
           "label": "t:options.header_layout.logo_center"
+        },
+        {
+          "value": "logo-right",
+          "label": "t:options.header_layout.logo_right"
+        },
+        {
+          "value": "logo-top",
+          "label": "t:options.header_layout.logo_top"
         }
       ],
-      "default": "logo-left"
+      "default": "logo-left-menu-center"
+    },
+    {
+      "type": "checkbox",
+      "id": "menu_divider",
+      "label": "t:settings.header_menu_divider",
+      "default": true,
+      "visible_if": "{{ section.settings.layout == 'logo-top' }}"
     },
     {
       "type": "range",
@@ -258,6 +328,22 @@
     },
     {
       "type": "select",
+      "id": "menu_type",
+      "label": "t:settings.menu_type",
+      "options": [
+        {
+          "value": "menu",
+          "label": "t:options.menu_type.menu"
+        },
+        {
+          "value": "drawer",
+          "label": "t:options.menu_type.drawer"
+        }
+      ],
+      "default": "menu"
+    },
+    {
+      "type": "select",
       "id": "menu_open_on",
       "label": "t:settings.menu_open_on",
       "options": [
@@ -270,7 +356,29 @@
           "label": "t:options.open_on.click"
         }
       ],
-      "default": "hover"
+      "default": "hover",
+      "visible_if": "{{ section.settings.menu_type == 'menu' }}"
+    },
+    {
+      "type": "select",
+      "id": "menu_animation",
+      "label": "t:settings.menu_animation",
+      "options": [
+        {
+          "value": "fade",
+          "label": "t:options.menu_animation.fade"
+        },
+        {
+          "value": "fade-up",
+          "label": "t:options.menu_animation.fade_up"
+        },
+        {
+          "value": "fade-down",
+          "label": "t:options.menu_animation.fade_down"
+        }
+      ],
+      "default": "fade-up",
+      "visible_if": "{{ section.settings.menu_type == 'menu' }}"
     },
     {
       "type": "select",
@@ -348,6 +456,68 @@
     },
     {
       "type": "header",
+      "content": "t:headers.transparent_header"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:settings.transparent_header_info"
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_header",
+      "label": "t:settings.transparent_header",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_home",
+      "label": "t:settings.transparent_home",
+      "default": true,
+      "visible_if": "{{ section.settings.transparent_header }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_collection",
+      "label": "t:settings.transparent_collection",
+      "default": false,
+      "visible_if": "{{ section.settings.transparent_header }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_product",
+      "label": "t:settings.transparent_product",
+      "default": false,
+      "visible_if": "{{ section.settings.transparent_header }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_list_collections",
+      "label": "t:settings.transparent_list_collections",
+      "default": false,
+      "visible_if": "{{ section.settings.transparent_header }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_other",
+      "label": "t:settings.transparent_other",
+      "default": false,
+      "visible_if": "{{ section.settings.transparent_header }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "transparent_color_scheme",
+      "label": "t:settings.transparent_color_scheme",
+      "default": "scheme-2",
+      "visible_if": "{{ section.settings.transparent_header }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "transparent_logo",
+      "label": "t:settings.transparent_logo",
+      "visible_if": "{{ section.settings.transparent_header }}"
+    },
+    {
+      "type": "header",
       "content": "t:headers.appearance"
     },
     {
@@ -360,7 +530,7 @@
       "type": "color_scheme",
       "id": "dropdown_color_scheme",
       "label": "t:settings.dropdown_color_scheme",
-      "default": "scheme-5"
+      "default": "scheme-1"
     },
     {
       "type": "color_scheme",
@@ -383,6 +553,128 @@
       "step": 2,
       "unit": "px",
       "default": 14
+    }
+  ],
+  "blocks": [
+    {
+      "type": "mega_menu",
+      "name": "t:blocks.mega_menu.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "menu_item",
+          "label": "t:blocks.mega_menu.menu_item",
+          "info": "t:blocks.mega_menu.menu_item_info"
+        },
+        {
+          "type": "select",
+          "id": "layout",
+          "label": "t:settings.layout",
+          "options": [
+            {
+              "value": "links",
+              "label": "t:blocks.mega_menu.layout_links"
+            },
+            {
+              "value": "collections",
+              "label": "t:blocks.mega_menu.layout_collections"
+            }
+          ],
+          "default": "links"
+        },
+        {
+          "type": "range",
+          "id": "columns",
+          "label": "t:settings.columns_desktop",
+          "min": 2,
+          "max": 5,
+          "step": 1,
+          "default": 3
+        },
+        {
+          "type": "header",
+          "content": "t:blocks.mega_menu.promo_1"
+        },
+        {
+          "type": "checkbox",
+          "id": "promo_1_show",
+          "label": "t:blocks.mega_menu.show_promo",
+          "default": true
+        },
+        {
+          "type": "image_picker",
+          "id": "promo_1_image",
+          "label": "t:settings.image",
+          "visible_if": "{{ block.settings.promo_1_show }}"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "promo_1_heading",
+          "label": "t:settings.heading",
+          "default": "Off work on payday.",
+          "visible_if": "{{ block.settings.promo_1_show }}"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "promo_1_text",
+          "label": "t:settings.text",
+          "default": "New Arrival Sale 20% Discount",
+          "visible_if": "{{ block.settings.promo_1_show }}"
+        },
+        {
+          "type": "text",
+          "id": "promo_1_link_label",
+          "label": "t:settings.link_label",
+          "default": "Shop Now",
+          "visible_if": "{{ block.settings.promo_1_show }}"
+        },
+        {
+          "type": "url",
+          "id": "promo_1_link",
+          "label": "t:settings.link",
+          "visible_if": "{{ block.settings.promo_1_show }}"
+        },
+        {
+          "type": "header",
+          "content": "t:blocks.mega_menu.promo_2"
+        },
+        {
+          "type": "checkbox",
+          "id": "promo_2_show",
+          "label": "t:blocks.mega_menu.show_promo",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "promo_2_image",
+          "label": "t:settings.image",
+          "visible_if": "{{ block.settings.promo_2_show }}"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "promo_2_heading",
+          "label": "t:settings.heading",
+          "visible_if": "{{ block.settings.promo_2_show }}"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "promo_2_text",
+          "label": "t:settings.text",
+          "visible_if": "{{ block.settings.promo_2_show }}"
+        },
+        {
+          "type": "text",
+          "id": "promo_2_link_label",
+          "label": "t:settings.link_label",
+          "visible_if": "{{ block.settings.promo_2_show }}"
+        },
+        {
+          "type": "url",
+          "id": "promo_2_link",
+          "label": "t:settings.link",
+          "visible_if": "{{ block.settings.promo_2_show }}"
+        }
+      ]
     }
   ]
 }

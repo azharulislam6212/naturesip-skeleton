@@ -7,6 +7,7 @@
 {% enddoc %}
 
 {%- if cart.item_count > 0 -%}
-  <span class="cart-count" aria-hidden="true">{{ cart.item_count | at_most: 99 }}</span>
+  {%- comment -%} Two digits, like the design: 01, 02 … 99. {%- endcomment -%}
+  <span class="cart-count" aria-hidden="true">{% if cart.item_count < 10 %}0{% endif %}{{ cart.item_count | at_most: 99 }}</span>
   <span class="visually-hidden">{{ 'header.cart_count' | t: count: cart.item_count }}</span>
 {%- endif -%}

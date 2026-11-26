@@ -178,6 +178,13 @@
     </div>
   </header>
 
+  {%- comment -%} Mega menu panels; assets/header.js moves each into its menu item. {%- endcomment -%}
+  {%- unless drawer_menu -%}
+    <div class="header__mega-menus hide-mobile">
+      {% content_for 'blocks' %}
+    </div>
+  {%- endunless -%}
+
   {%- unless drawer_menu -%}
     <script>
       (() => {
@@ -192,9 +199,10 @@
           more.hidden = true;
 
           const available = list.clientWidth;
-          if (list.scrollWidth > available + 1) {
+          const gap = parseFloat(getComputedStyle(list).columnGap) || 0;
+          const total = items.reduce((sum, item) => sum + item.offsetWidth + gap, -gap);
+          if (total > available) {
             more.hidden = false;
-            const gap = parseFloat(getComputedStyle(list).columnGap) || 0;
             let used = more.offsetWidth;
             let fits = true;
             for (const item of items) {
@@ -210,8 +218,11 @@
 
         window.Theme = window.Theme || {};
         window.Theme.fitHeaderMenu = fit;
-        const list = document.currentScript.previousElementSibling?.querySelector('.header__menu-list');
-        if (list) fit(list);
+        const list = document.currentScript.closest('header-component')?.querySelector('.header__menu-list');
+        if (!list) return;
+        fit(list);
+        // Web fonts change the item widths: fit again once they are in.
+        document.fonts?.ready.then(() => fit(list));
       })();
     </script>
   {%- endunless -%}
@@ -378,6 +389,31 @@
         }
       ],
       "default": "fade-up",
+      "visible_if": "{{ section.settings.menu_type == 'menu' }}"
+    },
+    {
+      "type": "select",
+      "id": "menu_link_hover",
+      "label": "t:settings.menu_link_hover",
+      "options": [
+        {
+          "value": "grow",
+          "label": "t:options.menu_link_hover.grow"
+        },
+        {
+          "value": "center",
+          "label": "t:options.menu_link_hover.center"
+        },
+        {
+          "value": "slide",
+          "label": "t:options.menu_link_hover.slide"
+        },
+        {
+          "value": "none",
+          "label": "t:options.menu_link_hover.none"
+        }
+      ],
+      "default": "slide",
       "visible_if": "{{ section.settings.menu_type == 'menu' }}"
     },
     {
@@ -557,124 +593,7 @@
   ],
   "blocks": [
     {
-      "type": "mega_menu",
-      "name": "t:blocks.mega_menu.name",
-      "settings": [
-        {
-          "type": "text",
-          "id": "menu_item",
-          "label": "t:blocks.mega_menu.menu_item",
-          "info": "t:blocks.mega_menu.menu_item_info"
-        },
-        {
-          "type": "select",
-          "id": "layout",
-          "label": "t:settings.layout",
-          "options": [
-            {
-              "value": "links",
-              "label": "t:blocks.mega_menu.layout_links"
-            },
-            {
-              "value": "collections",
-              "label": "t:blocks.mega_menu.layout_collections"
-            }
-          ],
-          "default": "links"
-        },
-        {
-          "type": "range",
-          "id": "columns",
-          "label": "t:settings.columns_desktop",
-          "min": 2,
-          "max": 5,
-          "step": 1,
-          "default": 3
-        },
-        {
-          "type": "header",
-          "content": "t:blocks.mega_menu.promo_1"
-        },
-        {
-          "type": "checkbox",
-          "id": "promo_1_show",
-          "label": "t:blocks.mega_menu.show_promo",
-          "default": true
-        },
-        {
-          "type": "image_picker",
-          "id": "promo_1_image",
-          "label": "t:settings.image",
-          "visible_if": "{{ block.settings.promo_1_show }}"
-        },
-        {
-          "type": "inline_richtext",
-          "id": "promo_1_heading",
-          "label": "t:settings.heading",
-          "default": "Off work on payday.",
-          "visible_if": "{{ block.settings.promo_1_show }}"
-        },
-        {
-          "type": "inline_richtext",
-          "id": "promo_1_text",
-          "label": "t:settings.text",
-          "default": "New Arrival Sale 20% Discount",
-          "visible_if": "{{ block.settings.promo_1_show }}"
-        },
-        {
-          "type": "text",
-          "id": "promo_1_link_label",
-          "label": "t:settings.link_label",
-          "default": "Shop Now",
-          "visible_if": "{{ block.settings.promo_1_show }}"
-        },
-        {
-          "type": "url",
-          "id": "promo_1_link",
-          "label": "t:settings.link",
-          "visible_if": "{{ block.settings.promo_1_show }}"
-        },
-        {
-          "type": "header",
-          "content": "t:blocks.mega_menu.promo_2"
-        },
-        {
-          "type": "checkbox",
-          "id": "promo_2_show",
-          "label": "t:blocks.mega_menu.show_promo",
-          "default": false
-        },
-        {
-          "type": "image_picker",
-          "id": "promo_2_image",
-          "label": "t:settings.image",
-          "visible_if": "{{ block.settings.promo_2_show }}"
-        },
-        {
-          "type": "inline_richtext",
-          "id": "promo_2_heading",
-          "label": "t:settings.heading",
-          "visible_if": "{{ block.settings.promo_2_show }}"
-        },
-        {
-          "type": "inline_richtext",
-          "id": "promo_2_text",
-          "label": "t:settings.text",
-          "visible_if": "{{ block.settings.promo_2_show }}"
-        },
-        {
-          "type": "text",
-          "id": "promo_2_link_label",
-          "label": "t:settings.link_label",
-          "visible_if": "{{ block.settings.promo_2_show }}"
-        },
-        {
-          "type": "url",
-          "id": "promo_2_link",
-          "label": "t:settings.link",
-          "visible_if": "{{ block.settings.promo_2_show }}"
-        }
-      ]
+      "type": "_mega-menu"
     }
   ]
 }

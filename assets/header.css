@@ -211,8 +211,9 @@
       border-block-start: 1px solid var(--color-border);
     }
 
+    /* safe: if the line ever overflows, it runs to the end, never over the logo. */
     :is(.header--logo-left-menu-center, .header--logo-top) .header__menu-list {
-      justify-content: center;
+      justify-content: safe center;
     }
 
     /* Drawer menu: the toggle before the logo, no menu in the bar. */
@@ -370,6 +371,13 @@
   }
 
   .header__menu-item[hidden] {
+    display: none;
+  }
+
+  /* Mega menu panels wait here until the script moves them into their item;
+     a mega item's own dropdown steps aside. */
+  .header__mega-menus,
+  .header__menu-item--mega > .header__dropdown {
     display: none;
   }
 
@@ -554,10 +562,6 @@
     color: var(--color-on-accent);
   }
 
-  :is(.dropdown__link:hover, .dropdown__link:focus-visible, .dropdown__item--parent:is(:hover, :focus-within) > .dropdown__link, .dropdown__link[aria-current='page']) .dropdown__label {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-  }
 
   .dropdown__arrow {
     margin-inline-start: auto;
@@ -607,6 +611,23 @@
     width: 1.75rem;
   }
 
+  /* Flipped to the other side when it would run off screen (assets/header.js),
+     and always in "More", which sits at the end of the line. */
+  :is(.dropdown__item--parent[data-flip], .header__dropdown--end .dropdown__item--parent) > .dropdown--flyout {
+    inset-inline: auto calc(100% + 1.75rem);
+  }
+
+  :is(.dropdown__item--parent[data-flip], .header__dropdown--end .dropdown__item--parent) > .dropdown--flyout::before {
+    inset-inline: 100% auto;
+    border: 0.625rem solid transparent;
+    border-inline-start-color: var(--color-background);
+    border-inline-end: 0;
+  }
+
+  :is(.dropdown__item--parent[data-flip], .header__dropdown--end .dropdown__item--parent) > .dropdown--flyout::after {
+    inset-inline: 100% auto;
+  }
+
   /* ---------- Mega menu ---------- */
   .mega-menu {
     position: absolute;
@@ -617,16 +638,17 @@
     box-shadow: 0 24px 48px -24px rgb(from var(--color-shadow) r g b / 0.35);
   }
 
+  /* Block settings: columns per row (blocks wrap to the next row) and gap. */
   .mega-menu__inner {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(0, 1fr);
-    gap: var(--space-xl);
+    grid-template-columns: repeat(var(--mega-panel-columns, 4), minmax(0, 1fr));
+    gap: var(--mega-gap, 2rem);
     padding-block: 3.75rem;
   }
 
-  /* Links or collections take --mega-columns tracks, each promotion one. */
-  :is(.mega-menu__groups, .mega-menu__collections) {
+  /* The menu's own links take --mega-columns tracks; every nested block
+     (links, promotion, collection) one. */
+  .mega-menu__groups {
     grid-column: span var(--mega-columns, 3);
   }
 
@@ -635,6 +657,13 @@
     columns: var(--mega-columns, 3);
     column-gap: 0;
     column-rule: 1px solid var(--color-border);
+    border-inline-start: 1px solid var(--color-border);
+  }
+
+  /* A "Links" block: one column, ruled like the menu's own groups. */
+  .mega-menu__column {
+    display: grid;
+    align-content: start;
     border-inline-start: 1px solid var(--color-border);
   }
 
@@ -673,10 +702,8 @@
     text-decoration: none;
   }
 
-  :is(.mega-menu__link, .mega-menu__title):is(:hover, [aria-current='page']) {
+  :is(.mega-menu__link, .mega-menu__title):is(:hover, :focus-visible, [aria-current='page']) {
     color: var(--color-accent);
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
   }
 
   .mega-menu__promo {
@@ -707,22 +734,19 @@
     margin: 0;
   }
 
+  /* The promotion's link stays underlined; hovering draws it again. */
   .mega-menu__promo-text a {
     margin-inline-start: var(--space-2xs);
     color: inherit;
+    text-decoration: underline;
     text-underline-offset: 0.2em;
   }
 
-  /* Collections layout: image cards. */
-  .mega-menu__collections {
-    display: grid;
-    grid-template-columns: repeat(var(--mega-columns, 3), minmax(0, 1fr));
-    gap: var(--space-lg);
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  .mega-menu__promo-text a:is(:hover, :focus-visible) {
+    text-decoration-color: transparent;
   }
 
+  /* Collection card block. */
   .mega-collection {
     display: grid;
     gap: var(--space-sm);
@@ -756,10 +780,81 @@
     line-height: 1.3;
   }
 
-  .mega-collection:hover .mega-collection__title {
+  .mega-collection:is(:hover, :focus-visible) .mega-collection__title {
     color: var(--color-accent);
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
+  }
+
+  /* ---------- Animated underline (header setting "Link hover") ----------
+     A 1px line drawn as a background on an inline span, so it follows every
+     line of wrapped text. It grows from the start (default), from the
+     centre, or slides: in from the start, out at the end. */
+  .menu-underline {
+    --underline-from: left;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: var(--underline-from) 100%;
+    background-size: 0% 1px;
+    text-decoration: none;
+    transition: background-size var(--duration-base) var(--ease-out);
+  }
+
+  [dir='rtl'] .menu-underline {
+    --underline-from: right;
+  }
+
+  header-menu[data-link-hover='center'] .menu-underline {
+    --underline-from: center;
+  }
+
+  header-menu[data-link-hover='slide'] .menu-underline {
+    --underline-from: right;
+  }
+
+  [dir='rtl'] header-menu[data-link-hover='slide'] .menu-underline {
+    --underline-from: left;
+  }
+
+  /* The line shows on hover, keyboard focus and the current page. */
+  :is(
+      .dropdown__link:is(:hover, :focus-visible, [aria-current='page']),
+      .dropdown__item--parent:is(:hover, :focus-within) > .dropdown__link,
+      .mega-menu__link:is(:hover, :focus-visible, [aria-current='page']),
+      .mega-menu__title:is(:hover, :focus-visible),
+      .mega-collection:is(:hover, :focus-visible)
+    )
+    .menu-underline,
+  a.menu-underline:is(:hover, :focus-visible) {
+    background-size: 100% 1px;
+  }
+
+  /* Slide: once shown, the line leaves from the other end. */
+  header-menu[data-link-hover='slide']
+    :is(
+      .dropdown__link:is(:hover, :focus-visible, [aria-current='page']),
+      .dropdown__item--parent:is(:hover, :focus-within) > .dropdown__link,
+      .mega-menu__link:is(:hover, :focus-visible, [aria-current='page']),
+      .mega-menu__title:is(:hover, :focus-visible),
+      .mega-collection:is(:hover, :focus-visible)
+    )
+    .menu-underline,
+  header-menu[data-link-hover='slide'] a.menu-underline:is(:hover, :focus-visible) {
+    --underline-from: left;
+  }
+
+  [dir='rtl'] header-menu[data-link-hover='slide']
+    :is(
+      .dropdown__link:is(:hover, :focus-visible, [aria-current='page']),
+      .dropdown__item--parent:is(:hover, :focus-within) > .dropdown__link,
+      .mega-menu__link:is(:hover, :focus-visible, [aria-current='page']),
+      .mega-menu__title:is(:hover, :focus-visible),
+      .mega-collection:is(:hover, :focus-visible)
+    )
+    .menu-underline {
+    --underline-from: right;
+  }
+
+  header-menu[data-link-hover='none'] .menu-underline {
+    background-image: none;
   }
 
   /* Mobile drawer navigation */

@@ -211,6 +211,7 @@
       "one": "{{ count }} item",
       "other": "{{ count }} items"
     },
+    "collection": "Collection",
     "log_in": "Log in",
     "menu": "Menu",
     "more": "More",

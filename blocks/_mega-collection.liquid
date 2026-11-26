@@ -1,0 +1,61 @@
+{% doc %}
+  A collection card in a mega menu: the collection's image and title, each
+  replaceable by its own.
+{% enddoc %}
+
+{%- liquid
+  assign c = block.settings.collection
+  assign image = block.settings.image | default: c.featured_image
+  assign title = block.settings.title | default: c.title
+  if title == blank
+    assign title = 'header.collection' | t
+  endif
+-%}
+
+<div class="mega-menu__card" {{ block.shopify_attributes }}>
+  <a class="mega-collection" href="{{ c.url | default: routes.collections_url }}">
+    <span class="mega-collection__media">
+      {%- if image -%}
+        {{
+          image
+          | image_url: width: 900
+          | image_tag: alt: '', loading: 'lazy', widths: '300, 450, 600, 900', sizes: '(min-width: 990px) 30vw, 100vw'
+        }}
+      {%- else -%}
+        {{ 'collection-1' | placeholder_svg_tag: 'placeholder' }}
+      {%- endif -%}
+    </span>
+    <span class="mega-collection__title"><span class="menu-underline">{{ title | escape }}</span></span>
+  </a>
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.mega_collection.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "t:blocks.mega_collection.collection"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:settings.image",
+      "info": "t:blocks.mega_collection.image_info"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:blocks.mega_collection.title",
+      "info": "t:blocks.mega_collection.title_info"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.mega_collection.name"
+    }
+  ]
+}
+{% endschema %}

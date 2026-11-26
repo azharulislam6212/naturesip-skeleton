@@ -1,0 +1,123 @@
+{% doc %}
+  Mega menu (header), opened by the main menu item it names. It can show
+  that item's children from the admin menu as titled link groups ("Load
+  links from the menu"), plus nested blocks in any mix: link columns from any
+  menu, promotion banners and collection cards. The item is matched by its
+  handle, so case, spacing and punctuation don't matter. assets/header.js
+  moves the panel into its menu item.
+{% enddoc %}
+
+{%- liquid
+  assign m = block.settings
+  assign key = m.menu_item | handleize
+  if key == blank
+    assign key = m.menu_item | strip | downcase
+  endif
+  assign link = nil
+  for item in section.settings.menu.links
+    assign item_key = item.title | handleize
+    if item_key == blank
+      assign item_key = item.title | strip | downcase
+    endif
+    if item_key == key
+      assign link = item
+      break
+    endif
+  endfor
+-%}
+
+<div
+  class="mega-menu color-{{ section.settings.dropdown_color_scheme.id }}"
+  id="MegaMenu-{{ block.id }}"
+  data-menu-panel
+  data-mega-for="{{ key | escape }}"
+  {{ block.shopify_attributes }}
+>
+  <div
+    class="mega-menu__inner page-width"
+    style="--mega-panel-columns: {{ m.panel_columns }}; --mega-columns: {{ m.columns | at_most: m.panel_columns }}; --mega-gap: {{ m.gap | divided_by: 16.0 }}rem;"
+  >
+    {%- if m.auto_links and link.links.size > 0 -%}
+      <div class="mega-menu__groups">
+        {%- for child in link.links -%}
+          {% render 'mega-menu-group', link: child %}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {% content_for 'blocks' %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.mega_menu.name",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "_mega-links"
+    },
+    {
+      "type": "_mega-promo"
+    },
+    {
+      "type": "_mega-collection"
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "menu_item",
+      "label": "t:blocks.mega_menu.menu_item",
+      "info": "t:blocks.mega_menu.menu_item_info"
+    },
+    {
+      "type": "range",
+      "id": "panel_columns",
+      "label": "t:blocks.mega_menu.panel_columns",
+      "info": "t:blocks.mega_menu.panel_columns_info",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:blocks.mega_menu.gap",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_links",
+      "label": "t:blocks.mega_menu.auto_links",
+      "info": "t:blocks.mega_menu.auto_links_info",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "t:blocks.mega_menu.auto_columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "visible_if": "{{ block.settings.auto_links }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.mega_menu.name",
+      "blocks": [
+        {
+          "type": "_mega-promo"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

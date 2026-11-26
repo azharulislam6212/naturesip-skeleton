@@ -18,7 +18,7 @@
     {% endif %}
   >
     {%- render 'menu-config', title: link.title, source: 'icon' -%}
-    <span class="dropdown__label">{{ link.title | escape }}</span>
+    <span class="dropdown__label"><span class="menu-underline">{{ link.title | escape }}</span></span>
     {%- render 'menu-config', title: link.title, source: 'badge' -%}
     {%- if link.links.size > 0 -%}
       {%- render 'icon', name: 'chevrons-right', class: 'dropdown__arrow' -%}
@@ -36,7 +36,7 @@
             {% endif %}
           >
             {%- render 'menu-config', title: child.title, source: 'icon' -%}
-            <span class="dropdown__label">{{ child.title | escape }}</span>
+            <span class="dropdown__label"><span class="menu-underline">{{ child.title | escape }}</span></span>
             {%- render 'menu-config', title: child.title, source: 'badge' -%}
           </a>
         </li>

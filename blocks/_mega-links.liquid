@@ -1,0 +1,51 @@
+{% doc %}
+  A link column in a mega menu, from any menu in the admin. Links that have
+  their own links show as titled groups; a flat menu shows as one group
+  under the heading.
+{% enddoc %}
+
+{%- liquid
+  assign menu = block.settings.menu
+  assign grouped = false
+  for item in menu.links
+    if item.links.size > 0
+      assign grouped = true
+      break
+    endif
+  endfor
+-%}
+
+<div class="mega-menu__column" {{ block.shopify_attributes }}>
+  {%- if grouped -%}
+    {%- for item in menu.links -%}
+      {% render 'mega-menu-group', link: item %}
+    {%- endfor -%}
+  {%- else -%}
+    {% render 'mega-menu-group', link: menu, title: block.settings.heading %}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.mega_links.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:blocks.mega_links.heading"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "t:blocks.mega_links.menu",
+      "info": "t:blocks.mega_links.menu_info"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.mega_links.name"
+    }
+  ]
+}
+{% endschema %}

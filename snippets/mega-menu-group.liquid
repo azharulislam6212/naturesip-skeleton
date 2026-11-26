@@ -1,0 +1,44 @@
+{% doc %}
+  A titled link group in a mega menu: the link as its title, its children
+  (with any badge from the navigation config) below.
+
+  @param {object} link - Menu link with children.
+  @param {string} [title] - Title (rich text) in place of the link's.
+
+  @example
+  {% render 'mega-menu-group', link: child %}
+{% enddoc %}
+
+{%- liquid
+  if title != blank
+    assign heading = title
+  else
+    assign heading = link.title | escape
+  endif
+-%}
+
+<div class="mega-menu__group">
+  {%- if link.url != blank and link.url != '#' -%}
+    <a class="mega-menu__title" href="{{ link.url }}"><span class="menu-underline">{{ heading }}</span></a>
+  {%- elsif heading != blank -%}
+    <p class="mega-menu__title">{{ heading }}</p>
+  {%- endif -%}
+  {%- if link.links.size > 0 -%}
+    <ul class="mega-menu__links" role="list">
+      {%- for child in link.links -%}
+        <li>
+          <a
+            class="mega-menu__link"
+            href="{{ child.url }}"
+            {% if child.current %}
+              aria-current="page"
+            {% endif %}
+          >
+            <span><span class="menu-underline">{{ child.title | escape }}</span></span>
+            {%- render 'menu-config', title: child.title, source: 'badge' -%}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</div>

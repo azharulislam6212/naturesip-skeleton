@@ -119,12 +119,29 @@
     "mega_menu": {
       "name": "Mega menu",
       "menu_item": "Menu item",
-      "menu_item_info": "Title of the main menu item that opens this mega menu, as it is in Content > Menus.",
-      "layout_links": "Links",
-      "layout_collections": "Collections",
-      "promo_1": "Promotion 1",
-      "promo_2": "Promotion 2",
-      "show_promo": "Show promotion"
+      "menu_item_info": "Title of the main menu item that opens this mega menu. Case, spaces and punctuation don't matter.",
+      "auto_links": "Load links from the menu",
+      "auto_links_info": "Shows the menu item's own links from Content > Menus.",
+      "auto_columns": "Columns for menu links",
+      "panel_columns": "Columns",
+      "panel_columns_info": "Columns in the panel. Nested blocks take one each and wrap to a new row.",
+      "gap": "Gap"
+    },
+    "mega_collection": {
+      "name": "Collection",
+      "collection": "Collection",
+      "image_info": "Replaces the collection's image.",
+      "title": "Title",
+      "title_info": "Replaces the collection's title."
+    },
+    "mega_links": {
+      "name": "Links",
+      "heading": "Heading",
+      "menu": "Menu",
+      "menu_info": "Links with their own links show as titled groups."
+    },
+    "mega_promo": {
+      "name": "Promotion"
     }
   },
   "categories": {
@@ -541,6 +558,12 @@
       "fade": "Fade",
       "fade_up": "Fade up",
       "fade_down": "Fade down"
+    },
+    "menu_link_hover": {
+      "grow": "Underline from start",
+      "center": "Underline from center",
+      "slide": "Underline slide",
+      "none": "None"
     }
   },
   "sections": {
@@ -899,7 +922,8 @@
     "link_label": "Link label",
     "menu_type": "Menu type",
     "transparent_header": "Enable transparent header",
-    "menu_animation": "Menu animation"
+    "menu_animation": "Menu animation",
+    "menu_link_hover": "Link hover"
   },
   "settings_schema": {
     "animations": {

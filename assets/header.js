@@ -82,19 +82,30 @@ class HeaderMenu extends Component {
     return /** @type {HTMLElement | null} */ (this.querySelector('[data-menu-item][data-open]'));
   }
 
+  /** @type {WeakSet<HTMLElement>} Items whose opener is wired up. */
+  #bound = new WeakSet();
+  /** @type {MutationObserver | null} */
+  #mutationObserver = null;
+
   mount() {
     // From here on the script decides what is open (base.css opens on hover
     // and focus without it).
     this.setAttribute('data-ready', '');
-    const hover = this.dataset.openOn !== 'click';
+    this.#attachMegaMenus();
+    this.#bindItems();
 
-    for (const item of this.#items) {
-      const button = this.#button(item);
-      if (!button) continue;
-      this.listen(button, 'click', () => (item.hasAttribute('data-open') ? this.close(item) : this.open(item)));
-      if (!hover) continue;
-      this.listen(item, 'pointerenter', (event) => event.pointerType === 'mouse' && this.open(item));
-      this.listen(item, 'pointerleave', (event) => event.pointerType === 'mouse' && this.#closeLater(item));
+    // Theme editor: a mega menu block re-renders on its own; attach it again.
+    const header = this.closest('header-component');
+    if (header) {
+      this.#mutationObserver = new MutationObserver((records) => {
+        const added = records.some((record) =>
+          [...record.addedNodes].some((node) => node instanceof Element && node.matches('[data-mega-for]'))
+        );
+        if (!added) return;
+        this.#attachMegaMenus();
+        this.#bindItems();
+      });
+      this.#mutationObserver.observe(header, { childList: true, subtree: true });
     }
 
     this.listen(this, 'keydown', (event) => {
@@ -110,6 +121,11 @@ class HeaderMenu extends Component {
     this.listen(document, 'click', (event) => {
       if (!this.contains(/** @type {Node} */ (event.target))) this.closeAll();
     });
+
+    // A flyout that would run off screen opens on the other side.
+    for (const type of ['pointerover', 'focusin']) {
+      this.listen(this, type, (event) => this.#placeFlyout(/** @type {Element} */ (event.target)));
+    }
 
     // Theme editor: selecting a mega menu block shows it.
     this.listen(document, 'shopify:block:select', (event) => {
@@ -129,7 +145,70 @@ class HeaderMenu extends Component {
 
   unmount() {
     this.#resizeObserver?.disconnect();
+    this.#mutationObserver?.disconnect();
     clearTimeout(this.#closeTimer);
+  }
+
+  #bindItems() {
+    const hover = this.dataset.openOn !== 'click';
+    for (const item of this.#items) {
+      const button = this.#button(item);
+      if (!button || this.#bound.has(item)) continue;
+      this.#bound.add(item);
+      this.listen(button, 'click', () => (item.hasAttribute('data-open') ? this.close(item) : this.open(item)));
+      if (!hover) continue;
+      this.listen(item, 'pointerenter', (event) => event.pointerType === 'mouse' && this.open(item));
+      this.listen(item, 'pointerleave', (event) => event.pointerType === 'mouse' && this.#closeLater(item));
+    }
+  }
+
+  /**
+   * Each mega menu block names a menu item; its panel moves into that item
+   * (so it follows the button in the tab order) and the item opens it
+   * instead of its dropdown. An item without children gets an opener button.
+   */
+  #attachMegaMenus() {
+    const header = this.closest('header-component') ?? document;
+    /** @type {Set<HTMLElement>} */
+    const megaItems = new Set();
+
+    for (const panel of /** @type {NodeListOf<HTMLElement>} */ (header.querySelectorAll('[data-mega-for]'))) {
+      const key = CSS.escape(panel.dataset.megaFor ?? '');
+      const item = /** @type {HTMLElement | null} */ (key ? this.querySelector(`[data-menu-key="${key}"]`) : null);
+      if (!item || megaItems.has(item)) continue;
+      megaItems.add(item);
+
+      const button = this.#button(item) ?? this.#makeOpener(item);
+      if (panel.parentElement !== item) item.append(panel);
+      item.classList.add('header__menu-item--mega');
+      button.setAttribute('aria-controls', panel.id);
+    }
+
+    // Items whose mega menu went away fall back to their dropdown.
+    for (const item of /** @type {NodeListOf<HTMLElement>} */ (this.querySelectorAll('.header__menu-item--mega'))) {
+      if (megaItems.has(item)) continue;
+      item.classList.remove('header__menu-item--mega');
+      const dropdown = item.querySelector(':scope > .header__dropdown');
+      if (dropdown) this.#button(item)?.setAttribute('aria-controls', dropdown.id);
+    }
+  }
+
+  /**
+   * Turns a plain link item into one that opens a panel.
+   * @param {HTMLElement} item
+   */
+  #makeOpener(item) {
+    const link = /** @type {HTMLAnchorElement} */ (item.querySelector(':scope > a'));
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = link.className;
+    button.setAttribute('aria-expanded', 'false');
+    button.append(...link.childNodes);
+    const chevron = this.querySelector('.header__menu-link .icon')?.cloneNode(true);
+    if (chevron) button.append(chevron);
+    link.replaceWith(button);
+    item.setAttribute('data-menu-item', '');
+    return button;
   }
 
   /** @param {HTMLElement} item */
@@ -148,6 +227,19 @@ class HeaderMenu extends Component {
 
   closeAll() {
     for (const item of this.#items) this.close(item);
+  }
+
+  /** @param {Element} target */
+  #placeFlyout(target) {
+    const parent = target.closest?.('.dropdown__item--parent');
+    const flyout = parent?.querySelector(':scope > .dropdown--flyout');
+    if (!parent || !flyout || parent.closest('.header__dropdown--end')) return;
+
+    parent.removeAttribute('data-flip');
+    const rect = flyout.getBoundingClientRect();
+    const rtl = getComputedStyle(parent).direction === 'rtl';
+    const overflows = rtl ? rect.left < 0 : rect.right > document.documentElement.clientWidth;
+    parent.toggleAttribute('data-flip', overflows);
   }
 
   /** @param {HTMLElement} item */

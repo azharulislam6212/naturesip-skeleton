@@ -1,7 +1,10 @@
 {% doc %}
   Desktop main menu (assets/header.js <header-menu>): one line of pill links.
-  A top item with children opens a dropdown, or a mega menu when a "Mega
-  menu" block in the header names it. Items that don't fit move into "More".
+  A top item with children opens a dropdown. A "Mega menu" block naming an
+  item (matched by data-menu-key) turns it into a mega menu: the block renders
+  its panel after the header and the script moves it into the item, so it
+  also follows block edits in the theme editor. Items that don't fit move
+  into "More".
 
   Menus open on hover (or click) with a fade, and by keyboard: each opener is
   a button with aria-expanded; Escape closes and returns focus. Without the
@@ -19,29 +22,26 @@
   assign panel_scheme = 'color-' | append: s.dropdown_color_scheme.id
 -%}
 
-<header-menu class="header__menu hide-mobile" data-open-on="{{ s.menu_open_on }}" data-animation="{{ s.menu_animation }}">
+<header-menu class="header__menu hide-mobile" data-open-on="{{ s.menu_open_on }}" data-animation="{{ s.menu_animation }}" data-link-hover="{{ s.menu_link_hover }}">
   <nav class="header__nav" aria-label="{{ 'header.menu' | t }}">
     <ul class="header__menu-list" role="list" ref="list">
       {%- for link in menu.links -%}
         {%- liquid
           assign panel_id = 'HeaderMenu-' | append: section.id | append: '-' | append: forloop.index
-          assign key = link.title | strip | downcase
-          assign mega = nil
-          for block in section.blocks
-            assign block_key = block.settings.menu_item | strip | downcase
-            if block_key != blank and block_key == key
-              assign mega = block
-              break
-            endif
-          endfor
+          # Mega menu blocks find their item by this key (assets/header.js):
+          # the handle, or the plain lowercase title when it has no handle letters.
+          assign key = link.title | handleize
+          if key == blank
+            assign key = link.title | strip | downcase
+          endif
           assign active = false
           if link.active or link.child_active
             assign active = true
           endif
         -%}
 
-        {%- if mega or link.links.size > 0 -%}
-          <li class="header__menu-item{% if mega %} header__menu-item--mega{% endif %}" data-index="{{ forloop.index0 }}" data-menu-item>
+        {%- if link.links.size > 0 -%}
+          <li class="header__menu-item" data-index="{{ forloop.index0 }}" data-menu-key="{{ key | escape }}" data-menu-item>
             <button
               class="header__menu-link{% if active %} is-active{% endif %}"
               type="button"
@@ -52,117 +52,16 @@
               {%- render 'icon', name: 'chevron-down' -%}
             </button>
 
-            {%- if mega -%}
-              {%- assign m = mega.settings -%}
-              <div class="mega-menu {{ panel_scheme }}" id="{{ panel_id }}" data-menu-panel {{ mega.shopify_attributes }}>
-                <div class="mega-menu__inner page-width" style="--mega-columns: {{ m.columns }};">
-                  {%- if m.layout == 'collections' -%}
-                    <ul class="mega-menu__collections" role="list">
-                      {%- for child in link.links -%}
-                        {%- assign image = child.object.featured_image | default: child.object.image -%}
-                        <li>
-                          <a class="mega-collection" href="{{ child.url }}">
-                            <span class="mega-collection__media">
-                              {%- if image -%}
-                                {{
-                                  image
-                                  | image_url: width: 900
-                                  | image_tag:
-                                    alt: '',
-                                    loading: 'lazy',
-                                    widths: '300, 450, 600, 900',
-                                    sizes: '(min-width: 990px) 30vw, 100vw'
-                                }}
-                              {%- else -%}
-                                {{ 'collection-1' | placeholder_svg_tag: 'placeholder' }}
-                              {%- endif -%}
-                            </span>
-                            <span class="mega-collection__title">{{ child.title | escape }}</span>
-                          </a>
-                        </li>
-                      {%- endfor -%}
-                    </ul>
-                  {%- else -%}
-                    <div class="mega-menu__groups">
-                      {%- for child in link.links -%}
-                        <div class="mega-menu__group">
-                          <a class="mega-menu__title" href="{{ child.url }}">{{ child.title | escape }}</a>
-                          {%- if child.links.size > 0 -%}
-                            <ul class="mega-menu__links" role="list">
-                              {%- for grandchild in child.links -%}
-                                <li>
-                                  <a
-                                    class="mega-menu__link"
-                                    href="{{ grandchild.url }}"
-                                    {% if grandchild.current %}
-                                      aria-current="page"
-                                    {% endif %}
-                                  >
-                                    <span>{{ grandchild.title | escape }}</span>
-                                    {%- render 'menu-config', title: grandchild.title, source: 'badge' -%}
-                                  </a>
-                                </li>
-                              {%- endfor -%}
-                            </ul>
-                          {%- endif -%}
-                        </div>
-                      {%- endfor -%}
-                    </div>
-                  {%- endif -%}
-
-                  {%- for i in (1..2) -%}
-                    {%- liquid
-                      assign prefix = 'promo_' | append: i | append: '_'
-                      assign key_show = prefix | append: 'show'
-                      unless m[key_show]
-                        continue
-                      endunless
-                      assign key_image = prefix | append: 'image'
-                      assign key_heading = prefix | append: 'heading'
-                      assign key_text = prefix | append: 'text'
-                      assign key_label = prefix | append: 'link_label'
-                      assign key_link = prefix | append: 'link'
-                      assign promo_image = m[key_image]
-                      assign promo_heading = m[key_heading]
-                      assign promo_text = m[key_text]
-                      assign promo_label = m[key_label]
-                      assign promo_link = m[key_link]
-                    -%}
-                    <div class="mega-menu__promo">
-                      {%- if promo_heading != blank -%}
-                        <p class="mega-menu__title">{{ promo_heading }}</p>
-                      {%- endif -%}
-                      <a class="mega-menu__promo-media" href="{{ promo_link | default: '#' }}" tabindex="-1" aria-hidden="true">
-                        {%- if promo_image -%}
-                          {{ promo_image | image_url: width: 800 | image_tag: alt: '', loading: 'lazy', widths: '400, 600, 800', sizes: '340px' }}
-                        {%- else -%}
-                          {{ 'image' | placeholder_svg_tag: 'placeholder' }}
-                        {%- endif -%}
-                      </a>
-                      {%- if promo_text != blank or promo_label != blank -%}
-                        <p class="mega-menu__promo-text">
-                          {{ promo_text }}
-                          {%- if promo_label != blank %}
-                            <a href="{{ promo_link | default: '#' }}">{{ promo_label | escape }}</a>
-                          {%- endif -%}
-                        </p>
-                      {%- endif -%}
-                    </div>
-                  {%- endfor -%}
-                </div>
-              </div>
-            {%- else -%}
-              <div class="header__dropdown {{ panel_scheme }}" id="{{ panel_id }}" data-menu-panel>
-                <ul class="dropdown" role="list">
-                  {%- for child in link.links -%}
-                    {% render 'header-dropdown-item', link: child %}
-                  {%- endfor -%}
-                </ul>
-              </div>
-            {%- endif -%}
+          <div class="header__dropdown {{ panel_scheme }}" id="{{ panel_id }}" data-menu-panel>
+              <ul class="dropdown" role="list">
+                {%- for child in link.links -%}
+                  {% render 'header-dropdown-item', link: child %}
+                {%- endfor -%}
+              </ul>
+            </div>
           </li>
         {%- else -%}
-          <li class="header__menu-item" data-index="{{ forloop.index0 }}">
+          <li class="header__menu-item" data-index="{{ forloop.index0 }}" data-menu-key="{{ key | escape }}">
             <a
               class="header__menu-link{% if active %} is-active{% endif %}"
               href="{{ link.url }}"

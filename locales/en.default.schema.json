@@ -132,7 +132,8 @@
       "collection": "Collection",
       "image_info": "Replaces the collection's image.",
       "title": "Title",
-      "title_info": "Replaces the collection's title."
+      "title_info": "Replaces the collection's title.",
+      "show_count": "Show product count"
     },
     "mega_links": {
       "name": "Links",

@@ -1,6 +1,7 @@
 {% doc %}
-  A promotion banner in a mega menu: heading, image, then a line of text with
-  a link.
+  A promotion card in a mega menu: image on top, then heading, text and a
+  button. The image links too, but stays out of the tab order (the button
+  carries the link for keyboards and screen readers).
 {% enddoc %}
 
 {%- liquid
@@ -9,23 +10,26 @@
 -%}
 
 <div class="mega-menu__promo" {{ block.shopify_attributes }}>
-  {%- if p.heading != blank -%}
-    <p class="mega-menu__title">{{ p.heading }}</p>
-  {%- endif -%}
   <a class="mega-menu__promo-media" href="{{ url }}" tabindex="-1" aria-hidden="true">
     {%- if p.image -%}
       {{ p.image | image_url: width: 800 | image_tag: alt: '', loading: 'lazy', widths: '400, 600, 800', sizes: '340px' }}
     {%- else -%}
-      {{ 'image' | placeholder_svg_tag: 'placeholder' }}
+      {{ 'hero-apparel-2' | placeholder_svg_tag: 'placeholder-svg' }}
     {%- endif -%}
   </a>
-  {%- if p.text != blank or p.link_label != blank -%}
-    <p class="mega-menu__promo-text">
-      {{ p.text }}
-      {%- if p.link_label != blank %}
-        <a class="menu-underline" href="{{ url }}">{{ p.link_label | escape }}</a>
+
+  {%- if p.heading != blank or p.text != blank or p.link_label != blank -%}
+    <div class="mega-menu__promo-body">
+      {%- if p.heading != blank -%}
+        <p class="mega-menu__promo-heading">{{ p.heading }}</p>
       {%- endif -%}
-    </p>
+      {%- if p.text != blank -%}
+        <p class="mega-menu__promo-text">{{ p.text }}</p>
+      {%- endif -%}
+      {%- if p.link_label != blank -%}
+        {% render 'button', label: p.link_label, url: url, size: 'small', icon: 'arrow', class: 'mega-menu__promo-button' %}
+      {%- endif -%}
+    </div>
   {%- endif -%}
 </div>
 

@@ -8,6 +8,7 @@
  */
 import { Component, defineElement } from '@theme/component';
 import { DialogComponent } from '@theme/dialog';
+import { isDesignMode } from '@theme/utilities';
 
 class HeaderComponent extends Component {
   /** @type {ResizeObserver | null} */
@@ -65,8 +66,12 @@ class HeaderComponent extends Component {
   }
 }
 
-/** Pause before a hovered menu closes, so the pointer can cross the gap to its panel. */
-const CLOSE_DELAY = 150;
+/**
+ * Pause before a hovered menu closes, so the pointer can cross the gap to its
+ * panel, and pass over anything layered on top on the way (the theme editor's
+ * outlines and "+" buttons).
+ */
+const CLOSE_DELAY = 300;
 
 class HeaderMenu extends Component {
   /** @type {ResizeObserver | null} */
@@ -93,6 +98,13 @@ class HeaderMenu extends Component {
     this.setAttribute('data-ready', '');
     this.#attachMegaMenus();
     this.#bindItems();
+
+    // Until now hover and focus opened menus through CSS. Whatever is open
+    // that way when the script takes over stays open (no flicker).
+    const active = this.#items.find((item) =>
+      item.matches(this.dataset.openOn === 'click' ? ':focus-within' : ':hover, :focus-within')
+    );
+    if (active) this.open(active);
 
     // Theme editor: a mega menu block re-renders on its own; attach it again.
     const header = this.closest('header-component');
@@ -158,57 +170,17 @@ class HeaderMenu extends Component {
       this.listen(button, 'click', () => (item.hasAttribute('data-open') ? this.close(item) : this.open(item)));
       if (!hover) continue;
       this.listen(item, 'pointerenter', (event) => event.pointerType === 'mouse' && this.open(item));
+      // In the theme editor, block outlines and buttons cover the panel, and
+      // moving onto them would count as leaving: there a menu stays open
+      // until a click elsewhere, Escape or another menu.
+      if (isDesignMode()) continue;
       this.listen(item, 'pointerleave', (event) => event.pointerType === 'mouse' && this.#closeLater(item));
     }
   }
 
-  /**
-   * Each mega menu block names a menu item; its panel moves into that item
-   * (so it follows the button in the tab order) and the item opens it
-   * instead of its dropdown. An item without children gets an opener button.
-   */
+  /** Mega menu panels into their items (the logic is inline in sections/header.liquid). */
   #attachMegaMenus() {
-    const header = this.closest('header-component') ?? document;
-    /** @type {Set<HTMLElement>} */
-    const megaItems = new Set();
-
-    for (const panel of /** @type {NodeListOf<HTMLElement>} */ (header.querySelectorAll('[data-mega-for]'))) {
-      const key = CSS.escape(panel.dataset.megaFor ?? '');
-      const item = /** @type {HTMLElement | null} */ (key ? this.querySelector(`[data-menu-key="${key}"]`) : null);
-      if (!item || megaItems.has(item)) continue;
-      megaItems.add(item);
-
-      const button = this.#button(item) ?? this.#makeOpener(item);
-      if (panel.parentElement !== item) item.append(panel);
-      item.classList.add('header__menu-item--mega');
-      button.setAttribute('aria-controls', panel.id);
-    }
-
-    // Items whose mega menu went away fall back to their dropdown.
-    for (const item of /** @type {NodeListOf<HTMLElement>} */ (this.querySelectorAll('.header__menu-item--mega'))) {
-      if (megaItems.has(item)) continue;
-      item.classList.remove('header__menu-item--mega');
-      const dropdown = item.querySelector(':scope > .header__dropdown');
-      if (dropdown) this.#button(item)?.setAttribute('aria-controls', dropdown.id);
-    }
-  }
-
-  /**
-   * Turns a plain link item into one that opens a panel.
-   * @param {HTMLElement} item
-   */
-  #makeOpener(item) {
-    const link = /** @type {HTMLAnchorElement} */ (item.querySelector(':scope > a'));
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = link.className;
-    button.setAttribute('aria-expanded', 'false');
-    button.append(...link.childNodes);
-    const chevron = this.querySelector('.header__menu-link .icon')?.cloneNode(true);
-    if (chevron) button.append(chevron);
-    link.replaceWith(button);
-    item.setAttribute('data-menu-item', '');
-    return button;
+    window.Theme?.attachHeaderMegaMenus?.(this);
   }
 
   /** @param {HTMLElement} item */

@@ -186,6 +186,7 @@
   {%- endunless -%}
 
   {%- unless drawer_menu -%}
+    {%- comment -%} After the mega menu panels, so it can move them in. {%- endcomment -%}
     <script>
       (() => {
         // One-line menu: items that don't fit hide and their copies in "More"
@@ -216,10 +217,55 @@
           }
         };
 
+        // Mega menus: each "Mega menu" block names a menu item (data-mega-for =
+        // the item's data-menu-key). Its panel moves into that item, which
+        // then opens it instead of a dropdown; a plain link item gets an
+        // opener button. Inline too, so even the first hover shows the mega
+        // menu; assets/header.js runs it again when a block changes in the editor.
+        const attach = (menu) => {
+          const header = menu.closest('header-component') ?? document;
+          const megaItems = new Set();
+
+          for (const panel of header.querySelectorAll('[data-mega-for]')) {
+            const key = CSS.escape(panel.dataset.megaFor || '');
+            const item = key ? menu.querySelector(`[data-menu-key="${key}"]`) : null;
+            if (!item || megaItems.has(item)) continue;
+            megaItems.add(item);
+
+            let button = item.querySelector(':scope > [aria-expanded]');
+            if (!button) {
+              const link = item.querySelector(':scope > a');
+              button = document.createElement('button');
+              button.type = 'button';
+              button.className = link.className;
+              button.setAttribute('aria-expanded', 'false');
+              button.append(...link.childNodes);
+              const chevron = menu.querySelector('.header__menu-link .icon')?.cloneNode(true);
+              if (chevron) button.append(chevron);
+              link.replaceWith(button);
+              item.setAttribute('data-menu-item', '');
+            }
+            if (panel.parentElement !== item) item.append(panel);
+            item.classList.add('header__menu-item--mega');
+            button.setAttribute('aria-controls', panel.id);
+          }
+
+          // Items whose mega menu went away fall back to their dropdown.
+          for (const item of menu.querySelectorAll('.header__menu-item--mega')) {
+            if (megaItems.has(item)) continue;
+            item.classList.remove('header__menu-item--mega');
+            const dropdown = item.querySelector(':scope > .header__dropdown');
+            if (dropdown) item.querySelector(':scope > [aria-expanded]')?.setAttribute('aria-controls', dropdown.id);
+          }
+        };
+
         window.Theme = window.Theme || {};
         window.Theme.fitHeaderMenu = fit;
-        const list = document.currentScript.closest('header-component')?.querySelector('.header__menu-list');
+        window.Theme.attachHeaderMegaMenus = attach;
+        const menu = document.currentScript.closest('header-component')?.querySelector('header-menu');
+        const list = menu?.querySelector('.header__menu-list');
         if (!list) return;
+        attach(menu);
         fit(list);
         // Web fonts change the item widths: fit again once they are in.
         document.fonts?.ready.then(() => fit(list));

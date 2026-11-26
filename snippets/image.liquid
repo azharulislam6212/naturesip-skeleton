@@ -8,7 +8,7 @@
   @param {boolean} [eager] - Load eagerly with high fetch priority (above the fold / LCP).
   @param {string} [alt] - Overrides image.alt ('' for decorative images).
   @param {string} [class] - Extra class names.
-  @param {string} [placeholder] - placeholder_svg_tag name. Default: 'image'.
+  @param {string} [placeholder] - placeholder_svg_tag name (Shopify's illustrated set, e.g. 'product-apparel-1'). Default: 'hero-apparel-1'.
 
   @example
   {% render 'image', image: block.settings.image, sizes: '(min-width: 990px) 50vw, 100vw' %}
@@ -60,6 +60,6 @@
       style: focal_style
   }}
 {%- else -%}
-  {%- assign placeholder_name = placeholder | default: 'image' -%}
+  {%- assign placeholder_name = placeholder | default: 'hero-apparel-1' -%}
   {{ placeholder_name | placeholder_svg_tag: 'placeholder-svg' }}
 {%- endif -%}

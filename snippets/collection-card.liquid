@@ -28,7 +28,7 @@
 
 <a class="collection-card{% if overlay %} collection-card--overlay{% endif %}" href="{{ card_url }}">
   <span class="collection-card__media media media--hover" data-hover="{{ settings.image_hover }}" style="--ratio: {{ ratio | default: 1 }};">
-    {% render 'image', image: card_image, alt: '', sizes: sizes, placeholder: 'collection-1' %}
+    {% render 'image', image: card_image, alt: '', sizes: sizes, placeholder: 'collection-apparel-1' %}
   </span>
   <span class="collection-card__info">
     <span class="collection-card__title type-heading type-h5">{{ card_title | escape }}{% render 'icon', name: 'arrow' %}</span>

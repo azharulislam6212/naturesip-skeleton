@@ -215,6 +215,10 @@
     "log_in": "Log in",
     "menu": "Menu",
     "more": "More",
+    "products_count": {
+      "one": "{{ count }} product",
+      "other": "{{ count }} products"
+    },
     "search": "Search",
     "view_all": "All {{ title }}"
   },

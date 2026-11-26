@@ -1,12 +1,15 @@
 {% doc %}
-  A collection card in a mega menu: the collection's image and title, each
-  replaceable by its own.
+  A collection card in a mega menu: the image fills the card, and a soft
+  shade at the bottom carries the title, the product count and an arrow.
+  Image and title can replace the collection's own.
 {% enddoc %}
 
 {%- liquid
   assign c = block.settings.collection
   assign image = block.settings.image | default: c.featured_image
   assign title = block.settings.title | default: c.title
+  # A number, or nothing: an unset or missing collection has no count.
+  assign count = c.products_count
   if title == blank
     assign title = 'header.collection' | t
   endif
@@ -22,10 +25,18 @@
           | image_tag: alt: '', loading: 'lazy', widths: '300, 450, 600, 900', sizes: '(min-width: 990px) 30vw, 100vw'
         }}
       {%- else -%}
-        {{ 'collection-1' | placeholder_svg_tag: 'placeholder' }}
+        {{ 'collection-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
       {%- endif -%}
     </span>
-    <span class="mega-collection__title"><span class="menu-underline">{{ title | escape }}</span></span>
+    <span class="mega-collection__body">
+      <span class="mega-collection__text">
+        <span class="mega-collection__title"><span class="menu-underline">{{ title | escape }}</span></span>
+        {%- if block.settings.show_count and count != blank -%}
+          <span class="mega-collection__count">{{ 'header.products_count' | t: count: count }}</span>
+        {%- endif -%}
+      </span>
+      <span class="mega-collection__arrow" aria-hidden="true">{% render 'icon', name: 'arrow' %}</span>
+    </span>
   </a>
 </div>
 
@@ -50,6 +61,12 @@
       "id": "title",
       "label": "t:blocks.mega_collection.title",
       "info": "t:blocks.mega_collection.title_info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_count",
+      "label": "t:blocks.mega_collection.show_count",
+      "default": true
     }
   ],
   "presets": [

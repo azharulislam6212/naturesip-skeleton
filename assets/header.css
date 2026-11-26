@@ -288,6 +288,7 @@
 
   .header__icon {
     position: relative;
+    isolation: isolate;
     width: 3rem;
     height: 3rem;
     border: 0;
@@ -295,7 +296,22 @@
     background: none;
     color: var(--color-foreground);
     text-decoration: none;
+    transition: color var(--duration-base) var(--ease-out);
     --icon-size: 1.5rem;
+  }
+
+  /* Gradient fill on its own layer: a gradient can't transition, its
+     opacity can, so hovering fades the fill in and out smoothly. */
+  :is(.header__menu-link, .header__icon)::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background-image: var(--gradient-accent);
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-out);
+    pointer-events: none;
   }
 
   /* Everything stacks in one cell, so extra children (the cart count's
@@ -304,11 +320,14 @@
     grid-area: 1 / 1;
   }
 
-  .header__icon:hover,
+  .header__icon:is(:hover, :focus-visible),
   .header__cart {
     background-color: transparent;
-    background-image: var(--gradient-accent);
     color: var(--color-on-accent);
+  }
+
+  :is(.header__icon:is(:hover, :focus-visible), .header__cart)::after {
+    opacity: 1;
   }
 
   @media (max-width: 749px) {
@@ -388,6 +407,7 @@
 
   .header__menu-link {
     position: relative;
+    isolation: isolate;
     display: inline-flex;
     align-items: center;
     gap: var(--space-2xs);
@@ -406,32 +426,35 @@
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
-    transition: color var(--duration-fast);
+    transition: color var(--duration-base) var(--ease-out);
     --icon-size: 1.5rem;
   }
 
   /* Gradient label, like the outline. */
+  /* Gradient label; on hover its colour fades in over the gradient. */
   .header__menu-label {
     background-image: var(--gradient-accent);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    transition: color var(--duration-base) var(--ease-out);
   }
 
   .header__menu-link .icon {
     transition: rotate var(--duration-base) var(--ease-out);
   }
 
-  .header__menu-link:hover,
-  .header__menu-link.is-active,
+  .header__menu-link:is(:hover, :focus-visible, .is-active),
   .header__menu-item[data-open] > .header__menu-link {
-    background-image: var(--gradient-accent);
     color: var(--color-on-accent);
   }
 
-  :is(.header__menu-link:hover, .header__menu-link.is-active, .header__menu-item[data-open] > .header__menu-link) .header__menu-label {
-    background: none;
-    color: inherit;
+  :is(.header__menu-link:is(:hover, :focus-visible, .is-active), .header__menu-item[data-open] > .header__menu-link)::after {
+    opacity: 1;
+  }
+
+  :is(.header__menu-link:is(:hover, :focus-visible, .is-active), .header__menu-item[data-open] > .header__menu-link) .header__menu-label {
+    color: var(--color-on-accent);
   }
 
   .header__menu-item[data-open] > .header__menu-link .icon {
@@ -504,7 +527,8 @@
   .dropdown {
     position: relative;
     display: grid;
-    gap: 0;
+    /* A hair between rows, so highlighted neighbours never merge. */
+    gap: 2px;
     min-width: 13.75rem;
     margin: 0;
     padding: var(--space-2xs);
@@ -639,6 +663,16 @@
   }
 
   /* Block settings: columns per row (blocks wrap to the next row) and gap. */
+  /* Keeps hover alive across the gap between the item and the panel (the
+     header's bottom padding), over the whole width. */
+  .mega-menu::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 100%;
+    height: calc(var(--header-padding, 1rem) + 0.5rem);
+  }
+
   .mega-menu__inner {
     display: grid;
     grid-template-columns: repeat(var(--mega-panel-columns, 4), minmax(0, 1fr));
@@ -706,17 +740,31 @@
     color: var(--color-accent);
   }
 
+  /* Promotion card: image on top, a soft surface around everything. */
   .mega-menu__promo {
     display: grid;
     align-content: start;
     gap: var(--space-sm);
+    padding: var(--space-xs);
+    border: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+    border-radius: 1.25rem;
+    background-color: color-mix(in srgb, var(--color-foreground) 3%, var(--color-background));
+    transition:
+      box-shadow var(--duration-base) var(--ease-out),
+      translate var(--duration-base) var(--ease-out);
+  }
+
+  .mega-menu__promo:hover {
+    translate: 0 -2px;
+    box-shadow: 0 18px 36px -24px rgb(from var(--color-shadow) r g b / 0.4);
   }
 
   .mega-menu__promo-media {
     display: block;
     overflow: hidden;
     aspect-ratio: 340 / 220;
-    border-radius: 1rem;
+    border-radius: 0.875rem;
+    background-color: color-mix(in srgb, var(--color-foreground) 7%, var(--color-background));
   }
 
   .mega-menu__promo-media :is(img, svg) {
@@ -726,40 +774,63 @@
     transition: scale var(--duration-slow) var(--ease-out);
   }
 
-  .mega-menu__promo-media:hover :is(img, svg) {
-    scale: 1.04;
+
+  .mega-menu__promo:hover .mega-menu__promo-media :is(img, svg) {
+    scale: 1.05;
+  }
+
+  .mega-menu__promo-body {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-2xs);
+    padding: 0 var(--space-2xs) var(--space-2xs);
+  }
+
+  .mega-menu__promo-heading {
+    margin: 0;
+    color: var(--color-heading);
+    font-family: var(--font-heading--family);
+    font-weight: var(--font-heading--weight);
+    font-size: 1.375rem;
+    line-height: 1.2;
   }
 
   .mega-menu__promo-text {
     margin: 0;
+    color: var(--color-subtext, var(--color-foreground));
+    line-height: 1.5;
   }
 
-  /* The promotion's link stays underlined; hovering draws it again. */
-  .mega-menu__promo-text a {
-    margin-inline-start: var(--space-2xs);
-    color: inherit;
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
+  .mega-menu__promo-button {
+    margin-block-start: var(--space-2xs);
   }
 
-  .mega-menu__promo-text a:is(:hover, :focus-visible) {
-    text-decoration-color: transparent;
-  }
-
-  /* Collection card block. */
+  /* Collection card block: the image fills the card, a shade at the bottom
+     carries the title, count and an arrow that slides on hover. */
   .mega-collection {
-    display: grid;
-    gap: var(--space-sm);
-    color: var(--color-heading);
-    text-align: center;
+    position: relative;
+    isolation: isolate;
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+    border-radius: 1.25rem;
+    background-color: color-mix(in srgb, var(--color-foreground) 7%, var(--color-background));
+    color: #fff;
     text-decoration: none;
+    transition:
+      translate var(--duration-base) var(--ease-out),
+      box-shadow var(--duration-base) var(--ease-out);
+  }
+
+  .mega-collection:is(:hover, :focus-visible) {
+    translate: 0 -3px;
+    box-shadow: 0 22px 40px -24px rgb(from var(--color-shadow) r g b / 0.5);
   }
 
   .mega-collection__media {
-    display: block;
-    overflow: hidden;
-    aspect-ratio: 416 / 400;
-    border-radius: 1rem;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
   }
 
   .mega-collection__media :is(img, svg) {
@@ -769,19 +840,79 @@
     transition: scale var(--duration-slow) var(--ease-out);
   }
 
-  .mega-collection:hover .mega-collection__media :is(img, svg) {
-    scale: 1.04;
+
+  .mega-collection:is(:hover, :focus-visible) .mega-collection__media :is(img, svg) {
+    scale: 1.06;
+  }
+
+  /* Shade: keeps white text readable on any image. */
+  .mega-collection::after {
+    content: '';
+    position: absolute;
+    inset: 40% 0 0;
+    z-index: -1;
+    background: linear-gradient(to top, rgb(0 0 0 / 0.65), transparent);
+    pointer-events: none;
+  }
+
+  .mega-collection__body {
+    position: absolute;
+    inset: auto 0 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+  }
+
+  .mega-collection__text {
+    display: grid;
+    gap: var(--space-3xs);
+    min-width: 0;
   }
 
   .mega-collection__title {
     font-family: var(--font-heading--family);
     font-weight: var(--font-heading--weight);
     font-size: 1.375rem;
-    line-height: 1.3;
+    line-height: 1.2;
   }
 
-  .mega-collection:is(:hover, :focus-visible) .mega-collection__title {
-    color: var(--color-accent);
+  .mega-collection__count {
+    font-size: 0.875rem;
+    opacity: 0.85;
+  }
+
+  .mega-collection__arrow {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background-color: #fff;
+    color: #010507;
+    transition:
+      background-color var(--duration-base) var(--ease-out),
+      color var(--duration-base) var(--ease-out);
+    --icon-size: 1.25rem;
+  }
+
+  .mega-collection__arrow .icon {
+    transition: translate var(--duration-base) var(--ease-out);
+  }
+
+  .mega-collection:is(:hover, :focus-visible) .mega-collection__arrow {
+    background-color: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+
+  .mega-collection:is(:hover, :focus-visible) .mega-collection__arrow .icon {
+    translate: 3px 0;
+  }
+
+  [dir='rtl'] .mega-collection__arrow .icon {
+    scale: -1 1;
   }
 
   /* ---------- Animated underline (header setting "Link hover") ----------
@@ -822,8 +953,7 @@
       .mega-menu__title:is(:hover, :focus-visible),
       .mega-collection:is(:hover, :focus-visible)
     )
-    .menu-underline,
-  a.menu-underline:is(:hover, :focus-visible) {
+    .menu-underline {
     background-size: 100% 1px;
   }
 
@@ -836,8 +966,7 @@
       .mega-menu__title:is(:hover, :focus-visible),
       .mega-collection:is(:hover, :focus-visible)
     )
-    .menu-underline,
-  header-menu[data-link-hover='slide'] a.menu-underline:is(:hover, :focus-visible) {
+    .menu-underline {
     --underline-from: left;
   }
 

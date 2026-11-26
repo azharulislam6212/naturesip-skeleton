@@ -1003,6 +1003,7 @@
     background-color: var(--b-background);
     background-image: var(--b-fill);
     box-shadow: var(--button-shadow-offset) var(--button-shadow-offset) 0 var(--color-shadow);
+    transition: border-color var(--duration-base) var(--ease-out);
   }
 
   .button__fill--hover {
@@ -1165,10 +1166,11 @@
     height: auto;
   }
 
+  /* Shopify's illustrated placeholders keep their own colours. */
   .placeholder-svg {
     width: 100%;
     height: 100%;
-    fill: color-mix(in srgb, var(--color-foreground) 35%, transparent);
+    object-fit: cover;
   }
 
   /* Image hover, set per element with data-hover (theme setting image_hover).

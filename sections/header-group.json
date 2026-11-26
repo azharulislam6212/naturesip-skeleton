@@ -13,6 +13,19 @@
   "sections": {
     "announcement": {
       "type": "announcement-bar",
+      "blocks": {
+        "one": {
+          "type": "_announcement",
+          "settings": {
+            "text": "Free shipping on all order USA wide",
+            "link": ""
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "one"
+      ],
       "settings": {
         "color_scheme": "scheme-3",
         "show_social": true,
@@ -20,23 +33,119 @@
         "contact_text": "+12 (123) 00 960000",
         "contact_link": "tel:+1212300960000",
         "contact_icon": "phone"
-      },
-      "blocks": {
-        "one": {
-          "type": "_announcement",
-          "settings": {
-            "text": "Free shipping on all order USA wide"
-          }
-        }
-      },
-      "block_order": [
-        "one"
-      ]
+      }
     },
     "header": {
       "type": "header",
+      "blocks": {
+        "mega_menu_GM3k8N": {
+          "type": "_mega-menu",
+          "name": "t:blocks.mega_menu.name",
+          "settings": {
+            "menu_item": "Shop",
+            "panel_columns": 4,
+            "gap": 32,
+            "auto_links": true,
+            "columns": 3
+          },
+          "blocks": {
+            "mega_promo_Q9PRwR": {
+              "type": "_mega-promo",
+              "settings": {
+                "heading": "Off work on payday.",
+                "text": "New Arrival Sale 20% Discount",
+                "link_label": "Shop Now",
+                "link": ""
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "mega_promo_Q9PRwR"
+          ]
+        },
+        "mega_menu_hPDCTd": {
+          "type": "_mega-menu",
+          "name": "t:blocks.mega_menu.name",
+          "settings": {
+            "menu_item": "Cross border",
+            "panel_columns": 3,
+            "gap": 32,
+            "auto_links": true,
+            "columns": 3
+          },
+          "blocks": {
+            "mega_collection_WVNHJD": {
+              "type": "_mega-collection",
+              "name": "t:blocks.mega_collection.name",
+              "settings": {
+                "collection": "",
+                "title": "",
+                "show_count": true
+              },
+              "blocks": {}
+            },
+            "mega_collection_AjgTEA": {
+              "type": "_mega-collection",
+              "name": "t:blocks.mega_collection.name",
+              "settings": {
+                "collection": "",
+                "title": "",
+                "show_count": true
+              },
+              "blocks": {}
+            },
+            "mega_collection_RQF3mH": {
+              "type": "_mega-collection",
+              "name": "t:blocks.mega_collection.name",
+              "settings": {
+                "collection": "",
+                "title": "",
+                "show_count": true
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "mega_collection_WVNHJD",
+            "mega_collection_AjgTEA",
+            "mega_collection_RQF3mH"
+          ]
+        }
+      },
+      "block_order": [
+        "mega_menu_GM3k8N",
+        "mega_menu_hPDCTd"
+      ],
       "settings": {
-        "color_scheme": "scheme-1"
+        "layout": "logo-left-menu-center",
+        "menu_divider": true,
+        "logo_width": 140,
+        "logo_width_mobile": 110,
+        "menu": "main-menu",
+        "menu_type": "menu",
+        "menu_open_on": "hover",
+        "menu_animation": "fade-up",
+        "menu_link_hover": "slide",
+        "sticky": "scroll-up",
+        "show_search": true,
+        "show_account": true,
+        "cart_icon": "bag",
+        "show_country": true,
+        "show_language": true,
+        "show_localization_desktop": false,
+        "transparent_header": true,
+        "transparent_home": true,
+        "transparent_collection": false,
+        "transparent_product": false,
+        "transparent_list_collections": false,
+        "transparent_other": false,
+        "transparent_color_scheme": "",
+        "color_scheme": "scheme-1",
+        "dropdown_color_scheme": "",
+        "drawer_color_scheme": "",
+        "border": false,
+        "padding": 14
       }
     }
   },

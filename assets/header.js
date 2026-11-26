@@ -236,8 +236,153 @@ class HeaderMenu extends Component {
 }
 
 class HeaderDrawer extends DialogComponent {
+  mount() {
+    super.mount();
+    const menu = /** @type {HTMLElement | undefined} */ (this.refs.menu);
+    if (!menu) return;
+
+    this.listen(menu, 'click', (event) => {
+      const target = /** @type {Element} */ (event.target);
+      const opener = target.closest('[data-submenu-open]');
+      if (opener instanceof HTMLElement) this.#openPanel(opener);
+      else if (target.closest('[data-submenu-back]')) this.#back();
+    });
+    this.listen(menu, 'keydown', (event) => {
+      if (event.key !== 'Escape' || !this.#current?.dataset.level || this.#current.dataset.level === '0') return;
+      event.preventDefault();
+      event.stopPropagation();
+      this.#back();
+    });
+  }
+
   afterOpen() {
-    this.dialog.querySelector('a, summary, button:not([ref="close"])')?.focus();
+    this.#fillMegaMenus();
+    this.dialog.querySelector('.drawer-menu__panel[data-open] :is(a, button)')?.focus();
+  }
+
+  async close() {
+    await super.close();
+    // Back to the main list for next time.
+    for (const panel of this.#panels) {
+      panel.toggleAttribute('data-open', panel.dataset.level === '0');
+      panel.removeAttribute('data-behind');
+    }
+    for (const opener of this.querySelectorAll('[data-submenu-open]')) opener.setAttribute('aria-expanded', 'false');
+  }
+
+  get #panels() {
+    return /** @type {HTMLElement[]} */ ([...this.querySelectorAll('.drawer-menu__panel')]);
+  }
+
+  /** The panel in front: the deepest open one. */
+  get #current() {
+    return this.#panels.filter((panel) => panel.hasAttribute('data-open')).at(-1) ?? null;
+  }
+
+  /** @param {HTMLElement} opener */
+  #openPanel(opener) {
+    const panel = document.getElementById(opener.getAttribute('aria-controls') ?? '');
+    const current = this.#current;
+    if (!panel || !current) return;
+    current.setAttribute('data-behind', '');
+    panel.setAttribute('data-open', '');
+    opener.setAttribute('aria-expanded', 'true');
+    panel.scrollTop = 0;
+    // Focus once the panel is visible (it was visibility: hidden).
+    requestAnimationFrame(() => panel.querySelector('[data-submenu-back]')?.focus({ preventScroll: true }));
+  }
+
+  #back() {
+    const panel = this.#current;
+    if (!panel || panel.dataset.level === '0') return;
+    const opener = this.querySelector(`[aria-controls="${panel.id}"]`);
+    panel.removeAttribute('data-open');
+    const previous = this.#current;
+    previous?.removeAttribute('data-behind');
+    opener?.setAttribute('aria-expanded', 'false');
+    if (opener instanceof HTMLElement) opener.focus({ preventScroll: true });
+  }
+
+  /**
+   * Mega menus show in the drawer too: each one's content (link groups,
+   * promotions, collection cards) fills the panel of its menu item, which
+   * gets a panel first when it is a plain link.
+   */
+  #fillMegaMenus() {
+    const menu = /** @type {HTMLElement | undefined} */ (this.refs.menu);
+    const header = this.closest('header-component');
+    if (!menu || !header) return;
+
+    for (const mega of /** @type {NodeListOf<HTMLElement>} */ (header.querySelectorAll('[data-mega-for]'))) {
+      const key = CSS.escape(mega.dataset.megaFor ?? '');
+      const item = key ? menu.querySelector(`[data-drawer-key="${key}"]`) : null;
+      const inner = mega.querySelector('.mega-menu__inner');
+      if (!item || !inner || item.hasAttribute('data-mega-filled')) continue;
+      item.setAttribute('data-mega-filled', '');
+
+      const content = this.#panelFor(item, menu)?.querySelector('[data-submenu-content]');
+      if (!content) continue;
+      const copy = /** @type {HTMLElement} */ (inner.cloneNode(true));
+      copy.className = 'drawer-mega';
+      copy.removeAttribute('style');
+      for (const node of copy.querySelectorAll('[id], [data-shopify-editor-block]')) {
+        node.removeAttribute('id');
+        node.removeAttribute('data-shopify-editor-block');
+      }
+      content.replaceChildren(copy);
+    }
+  }
+
+  /**
+   * @param {Element} item
+   * @param {HTMLElement} menu
+   */
+  #panelFor(item, menu) {
+    const opener = item.querySelector(':scope > [data-submenu-open]');
+    if (opener) return document.getElementById(opener.getAttribute('aria-controls') ?? '');
+
+    // A plain link: give it an opener and a panel of its own.
+    const link = /** @type {HTMLAnchorElement | null} */ (item.querySelector(':scope > a'));
+    if (!link) return null;
+    const id = `${menu.closest('nav')?.id || 'DrawerMenu'}-mega-${item.getAttribute('data-drawer-key')}`;
+    const title = link.querySelector('.drawer-menu__label')?.textContent ?? '';
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = link.className;
+    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-controls', id);
+    button.setAttribute('data-submenu-open', '');
+    button.append(...link.childNodes);
+    const chevron = menu.querySelector('.drawer-menu__chevron')?.cloneNode(true);
+    if (chevron) button.append(chevron);
+    link.replaceWith(button);
+
+    const back = menu.querySelector('[data-submenu-back]')?.cloneNode(true);
+    const panel = document.createElement('div');
+    panel.className = 'drawer-menu__panel';
+    panel.id = id;
+    panel.dataset.level = '1';
+    panel.setAttribute('role', 'group');
+    panel.setAttribute('aria-label', title);
+    if (back instanceof HTMLElement) {
+      const label = back.querySelector('span');
+      if (label) label.textContent = title;
+      panel.append(back);
+    } else {
+      const fallback = document.createElement('button');
+      fallback.type = 'button';
+      fallback.className = 'drawer-menu__back';
+      fallback.setAttribute('data-submenu-back', '');
+      fallback.textContent = title;
+      panel.append(fallback);
+    }
+    const content = document.createElement('div');
+    content.className = 'drawer-menu__content';
+    content.setAttribute('data-submenu-content', '');
+    panel.append(content);
+    menu.append(panel);
+    return panel;
   }
 }
 

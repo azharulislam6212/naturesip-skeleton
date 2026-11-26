@@ -13,9 +13,6 @@
   "sections": {
     "footer": {
       "type": "footer",
-      "settings": {
-        "color_scheme": "scheme-2"
-      },
       "blocks": {
         "about": {
           "type": "group",
@@ -39,10 +36,12 @@
               }
             },
             "signup": {
-              "type": "email-signup"
+              "type": "email-signup",
+              "settings": {}
             },
             "social": {
-              "type": "social-links"
+              "type": "social-links",
+              "settings": {}
             }
           },
           "block_order": [
@@ -71,7 +70,10 @@
         "about",
         "menu_1",
         "menu_2"
-      ]
+      ],
+      "settings": {
+        "color_scheme": "scheme-2"
+      }
     }
   },
   "order": [

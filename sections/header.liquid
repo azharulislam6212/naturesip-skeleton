@@ -42,6 +42,9 @@
 <header-component
   class="header-wrapper {% if transparent %}{{ transparent_class }}{% else %}{{ scheme_class }}{% endif %}{% if s.border %} header-wrapper--border{% endif %}"
   data-sticky="{{ s.sticky }}"
+  {% if s.panel_background != blank %}
+    style="--menu-panel-background: {{ s.panel_background }};"
+  {% endif %}
   {% if transparent %}
     data-transparent
     data-scheme="{{ scheme_class }}"
@@ -59,53 +62,31 @@
       </button>
       <dialog class="drawer drawer--start color-{{ s.drawer_color_scheme.id }}" ref="dialog" aria-label="{{ 'header.menu' | t }}" data-lenis-prevent>
         <div class="drawer__inner">
-          <div class="drawer__header">
-            <span class="type-h5">{{ shop.name | escape }}</span>
-            <button class="icon-button" type="button" ref="close">
+          <div class="drawer__header drawer-nav__header">
+            <a class="drawer-nav__logo" href="{{ routes.root_url }}">
+              {%- if settings.logo != blank -%}
+                {{ settings.logo | image_url: width: 240 | image_tag: alt: shop.name, width: 120, loading: 'lazy' }}
+              {%- else -%}
+                <span class="type-h5">{{ shop.name | escape }}</span>
+              {%- endif -%}
+            </a>
+            <button class="icon-button header__icon" type="button" ref="close">
               {%- render 'icon', name: 'close' -%}
               <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
             </button>
           </div>
-          <nav class="drawer__body mobile-nav" aria-label="{{ 'header.menu' | t }}">
-            <ul class="mobile-nav__list" role="list">
-              {%- for link in menu.links -%}
-                <li>
-                  {%- if link.links.size > 0 -%}
-                    <details class="accordion mobile-nav__details">
-                      <summary class="accordion__summary mobile-nav__link">
-                        {{ link.title | escape }}
-                        <span class="accordion__icon">{% render 'icon', name: 'plus' %}</span>
-                      </summary>
-                      <ul class="mobile-nav__sublist" role="list">
-                        <li><a class="mobile-nav__sublink" href="{{ link.url }}">{%- assign escaped_value = link.title | escape -%}{{ 'header.view_all' | t: title: escaped_value }}</a></li>
-                        {%- for child in link.links -%}
-                          <li>
-                            <a class="mobile-nav__sublink" href="{{ child.url }}" {% if child.current %}aria-current="page"{% endif %}>{{ child.title | escape }}</a>
-                            {%- if child.links.size > 0 -%}
-                              <ul class="mobile-nav__sublist" role="list">
-                                {%- for grandchild in child.links -%}
-                                  <li><a class="mobile-nav__sublink" href="{{ grandchild.url }}">{{ grandchild.title | escape }}</a></li>
-                                {%- endfor -%}
-                              </ul>
-                            {%- endif -%}
-                          </li>
-                        {%- endfor -%}
-                      </ul>
-                    </details>
-                  {%- else -%}
-                    <a class="mobile-nav__link" href="{{ link.url }}" {% if link.current %}aria-current="page"{% endif %}>{{ link.title | escape }}</a>
-                  {%- endif -%}
-                </li>
-              {%- endfor -%}
-            </ul>
+          <nav class="drawer__body drawer-nav" aria-label="{{ 'header.menu' | t }}">
+            {% render 'header-drawer-menu', menu: menu, id: section.id %}
+          </nav>
+          <div class="drawer__footer drawer-nav__footer">
             {%- if shop.customer_accounts_enabled -%}
-              <a class="mobile-nav__account" href="{{ routes.account_url }}">
+              <a class="drawer-nav__account" href="{{ routes.account_url }}">
                 {%- render 'icon', name: 'account' -%}
                 {%- if customer -%}{{ 'header.account' | t }}{%- else -%}{{ 'header.log_in' | t }}{%- endif -%}
               </a>
             {%- endif -%}
-            {% render 'localization-form', id: 'HeaderDrawerLocalization', show_country: s.show_country, show_language: s.show_language %}
-          </nav>
+            {% render 'localization-form', id: 'HeaderDrawerLocalization', show_country: s.show_country, show_language: s.show_language, inline: true %}
+          </div>
         </div>
       </dialog>
     </header-drawer>
@@ -301,7 +282,7 @@
             </form>
             <div class="predictive-search__results" id="PredictiveSearchResults" ref="results"></div>
           </predictive-search>
-          <button class="icon-button search-modal__close" type="button" ref="close">
+          <button class="icon-button header__icon search-modal__close" type="button" ref="close">
             {%- render 'icon', name: 'close' -%}
             <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
           </button>
@@ -548,7 +529,7 @@
       "type": "checkbox",
       "id": "transparent_header",
       "label": "t:settings.transparent_header",
-      "default": false
+      "default": true
     },
     {
       "type": "checkbox",
@@ -615,10 +596,17 @@
       "default": "scheme-1"
     },
     {
+      "type": "color",
+      "id": "panel_background",
+      "label": "t:settings.panel_background",
+      "info": "t:settings.panel_background_info",
+      "default": "#FDF5E9"
+    },
+    {
       "type": "color_scheme",
       "id": "drawer_color_scheme",
       "label": "t:settings.drawer_color_scheme",
-      "default": "scheme-5"
+      "default": "scheme-1"
     },
     {
       "type": "checkbox",

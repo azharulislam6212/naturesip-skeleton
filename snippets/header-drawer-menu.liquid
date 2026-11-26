@@ -1,0 +1,134 @@
+{% doc %}
+  Mobile (and "Drawer" menu type) navigation: sliding panels. The main list
+  shows first; an item with links opens its own panel, which slides in over
+  it, with a back button to return. Third-level links get a panel too.
+  A mega menu's content (link groups, promotions, collection cards) fills the
+  panel of the item it belongs to (assets/header.js copies it in on open).
+
+  @param {object} menu - The link list.
+  @param {string} id - Unique id prefix.
+
+  @example
+  {% render 'header-drawer-menu', menu: section.settings.menu, id: section.id %}
+{% enddoc %}
+
+{%- capture chevron -%}{% render 'icon', name: 'chevron-right', class: 'drawer-menu__chevron' %}{%- endcapture -%}
+
+<div class="drawer-menu" ref="menu">
+  {%- comment -%} Main panel {%- endcomment -%}
+  <div class="drawer-menu__panel" data-level="0" data-open>
+    <ul class="drawer-menu__list" role="list">
+      {%- for link in menu.links -%}
+        {%- liquid
+          assign panel_id = 'DrawerMenu-' | append: id | append: '-' | append: forloop.index
+          assign key = link.title | handleize
+          if key == blank
+            assign key = link.title | strip | downcase
+          endif
+        -%}
+        <li class="drawer-menu__item" data-drawer-key="{{ key | escape }}" style="--item-index: {{ forloop.index0 }};">
+          {%- if link.links.size > 0 -%}
+            <button class="drawer-menu__link" type="button" aria-expanded="false" aria-controls="{{ panel_id }}" data-submenu-open>
+              {%- render 'menu-config', title: link.title, source: 'icon' -%}
+              <span class="drawer-menu__label">{{ link.title | escape }}</span>
+              {{ chevron }}
+            </button>
+          {%- else -%}
+            <a
+              class="drawer-menu__link"
+              href="{{ link.url }}"
+              {% if link.current %}
+                aria-current="page"
+              {% endif %}
+            >
+              {%- render 'menu-config', title: link.title, source: 'icon' -%}
+              <span class="drawer-menu__label">{{ link.title | escape }}</span>
+            </a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+
+  {%- comment -%} Second and third level panels {%- endcomment -%}
+  {%- for link in menu.links -%}
+    {%- if link.links.size > 0 -%}
+      {%- assign panel_id = 'DrawerMenu-' | append: id | append: '-' | append: forloop.index -%}
+      <div class="drawer-menu__panel" id="{{ panel_id }}" data-level="1" role="group" aria-label="{{ link.title | escape }}">
+        <button class="drawer-menu__back" type="button" data-submenu-back>
+          {%- render 'icon', name: 'chevron-left' -%}
+          <span>{{ link.title | escape }}</span>
+        </button>
+        <div class="drawer-menu__content" data-submenu-content>
+          <ul class="drawer-menu__list" role="list">
+            <li class="drawer-menu__item" style="--item-index: 0;">
+              <a class="drawer-menu__link drawer-menu__link--all" href="{{ link.url }}">
+                {%- assign escaped_title = link.title | escape -%}
+                <span class="drawer-menu__label">{{ 'header.view_all' | t: title: escaped_title }}</span>
+              </a>
+            </li>
+            {%- for child in link.links -%}
+              {%- assign child_panel_id = panel_id | append: '-' | append: forloop.index -%}
+              <li class="drawer-menu__item" style="--item-index: {{ forloop.index }};">
+                {%- if child.links.size > 0 -%}
+                  <button class="drawer-menu__link" type="button" aria-expanded="false" aria-controls="{{ child_panel_id }}" data-submenu-open>
+                    {%- render 'menu-config', title: child.title, source: 'icon' -%}
+                    <span class="drawer-menu__label">{{ child.title | escape }}</span>
+                    {{ chevron }}
+                  </button>
+                {%- else -%}
+                  <a
+                    class="drawer-menu__link"
+                    href="{{ child.url }}"
+                    {% if child.current %}
+                      aria-current="page"
+                    {% endif %}
+                  >
+                    {%- render 'menu-config', title: child.title, source: 'icon' -%}
+                    <span class="drawer-menu__label">{{ child.title | escape }}</span>
+                    {%- render 'menu-config', title: child.title, source: 'badge' -%}
+                  </a>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+
+      {%- for child in link.links -%}
+        {%- if child.links.size > 0 -%}
+          {%- assign child_panel_id = panel_id | append: '-' | append: forloop.index -%}
+          <div class="drawer-menu__panel" id="{{ child_panel_id }}" data-level="2" role="group" aria-label="{{ child.title | escape }}">
+            <button class="drawer-menu__back" type="button" data-submenu-back>
+              {%- render 'icon', name: 'chevron-left' -%}
+              <span>{{ child.title | escape }}</span>
+            </button>
+            <ul class="drawer-menu__list" role="list">
+              <li class="drawer-menu__item" style="--item-index: 0;">
+                <a class="drawer-menu__link drawer-menu__link--all" href="{{ child.url }}">
+                  {%- assign escaped_title = child.title | escape -%}
+                  <span class="drawer-menu__label">{{ 'header.view_all' | t: title: escaped_title }}</span>
+                </a>
+              </li>
+              {%- for grandchild in child.links -%}
+                <li class="drawer-menu__item" style="--item-index: {{ forloop.index }};">
+                  <a
+                    class="drawer-menu__link"
+                    href="{{ grandchild.url }}"
+                    {% if grandchild.current %}
+                      aria-current="page"
+                    {% endif %}
+                  >
+                    {%- render 'menu-config', title: grandchild.title, source: 'icon' -%}
+                    <span class="drawer-menu__label">{{ grandchild.title | escape }}</span>
+                    {%- render 'menu-config', title: grandchild.title, source: 'badge' -%}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+  {%- endfor -%}
+</div>

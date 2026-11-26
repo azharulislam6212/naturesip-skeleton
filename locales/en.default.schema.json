@@ -924,7 +924,9 @@
     "menu_type": "Menu type",
     "transparent_header": "Enable transparent header",
     "menu_animation": "Menu animation",
-    "menu_link_hover": "Link hover"
+    "menu_link_hover": "Link hover",
+    "panel_background": "Panel background",
+    "panel_background_info": "Dropdowns and mega menus. Clear it to use the dropdown color scheme."
   },
   "settings_schema": {
     "animations": {

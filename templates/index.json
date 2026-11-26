@@ -11,18 +11,6 @@
   "sections": {
     "hero": {
       "type": "section",
-      "settings": {
-        "color_scheme": "scheme-2",
-        "min_height": 85,
-        "shape_bottom": "wave",
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "flex-end",
-        "background_priority": true,
-        "padding_top": 120,
-        "padding_bottom": 120,
-        "padding_top_mobile": 80,
-        "padding_bottom_mobile": 80
-      },
       "blocks": {
         "eyebrow": {
           "type": "text",
@@ -63,15 +51,22 @@
         "heading",
         "text",
         "button"
-      ]
+      ],
+      "settings": {
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "flex-end",
+        "min_height": 85,
+        "background_priority": true,
+        "color_scheme": "scheme-2",
+        "shape_bottom": "wave",
+        "padding_top": 120,
+        "padding_bottom": 120,
+        "padding_top_mobile": 80,
+        "padding_bottom_mobile": 80
+      }
     },
     "steps": {
       "type": "feature-steps",
-      "settings": {
-        "color_scheme": "scheme-1",
-        "shape_bottom": "wave",
-        "columns": 5
-      },
       "blocks": {
         "heading": {
           "type": "section-heading",
@@ -156,13 +151,15 @@
         "step_3",
         "step_4",
         "step_5"
-      ]
+      ],
+      "settings": {
+        "columns": 5,
+        "color_scheme": "scheme-1",
+        "shape_bottom": "wave"
+      }
     },
     "marquee": {
       "type": "marquee",
-      "settings": {
-        "color_scheme": "scheme-5"
-      },
       "blocks": {
         "m_1": {
           "type": "_marquee-item",
@@ -201,17 +198,13 @@
         "m_3",
         "m_4",
         "m_5"
-      ]
+      ],
+      "settings": {
+        "color_scheme": "scheme-5"
+      }
     },
     "image_text": {
       "type": "section",
-      "settings": {
-        "direction": "row",
-        "horizontal_alignment": "stretch",
-        "vertical_alignment": "center",
-        "gap": 64,
-        "color_scheme": "scheme-1"
-      },
       "blocks": {
         "image": {
           "type": "image",
@@ -263,14 +256,17 @@
       "block_order": [
         "image",
         "content"
-      ]
+      ],
+      "settings": {
+        "direction": "row",
+        "horizontal_alignment": "stretch",
+        "vertical_alignment": "center",
+        "gap": 64,
+        "color_scheme": "scheme-1"
+      }
     },
     "highlights": {
       "type": "feature-highlights",
-      "settings": {
-        "color_scheme": "scheme-2",
-        "shape_bottom": "wave"
-      },
       "blocks": {
         "heading": {
           "type": "section-heading",
@@ -314,11 +310,11 @@
             "icon": "bolt",
             "frame": "square",
             "frame_size": 56,
-            "layout": "vertical",
-            "alignment": "left",
-            "title_size": "h6",
             "title": "Natural energy boost",
-            "text": "<p>A clean, sustained lift without the jitters.</p>"
+            "title_size": "h6",
+            "text": "<p>A clean, sustained lift without the jitters.</p>",
+            "layout": "vertical",
+            "alignment": "left"
           }
         },
         "f_2": {
@@ -327,11 +323,11 @@
             "icon": "heart",
             "frame": "square",
             "frame_size": 56,
-            "layout": "vertical",
-            "alignment": "left",
-            "title_size": "h6",
             "title": "Probiotic gut health",
-            "text": "<p>Live cultures that support healthy digestion.</p>"
+            "title_size": "h6",
+            "text": "<p>Live cultures that support healthy digestion.</p>",
+            "layout": "vertical",
+            "alignment": "left"
           }
         },
         "f_3": {
@@ -340,11 +336,11 @@
             "icon": "sparkle",
             "frame": "square",
             "frame_size": 56,
-            "layout": "vertical",
-            "alignment": "left",
-            "title_size": "h6",
             "title": "Antioxidant-rich",
-            "text": "<p>Helps protect your body from free radicals.</p>"
+            "title_size": "h6",
+            "text": "<p>Helps protect your body from free radicals.</p>",
+            "layout": "vertical",
+            "alignment": "left"
           }
         },
         "f_4": {
@@ -353,11 +349,11 @@
             "icon": "drop",
             "frame": "square",
             "frame_size": 56,
-            "layout": "vertical",
-            "alignment": "left",
-            "title_size": "h6",
             "title": "Low-calorie refreshment",
-            "text": "<p>Crisp taste without worrying about calories.</p>"
+            "title_size": "h6",
+            "text": "<p>Crisp taste without worrying about calories.</p>",
+            "layout": "vertical",
+            "alignment": "left"
           }
         },
         "f_5": {
@@ -366,11 +362,11 @@
             "icon": "leaf",
             "frame": "square",
             "frame_size": 56,
-            "layout": "vertical",
-            "alignment": "left",
-            "title_size": "h6",
             "title": "Vegan-friendly",
-            "text": "<p>Made to support an ethical lifestyle.</p>"
+            "title_size": "h6",
+            "text": "<p>Made to support an ethical lifestyle.</p>",
+            "layout": "vertical",
+            "alignment": "left"
           }
         },
         "f_6": {
@@ -379,11 +375,11 @@
             "icon": "ban",
             "frame": "square",
             "frame_size": 56,
-            "layout": "vertical",
-            "alignment": "left",
-            "title_size": "h6",
             "title": "No artificial additives",
-            "text": "<p>No artificial preservatives, colors or flavors.</p>"
+            "title_size": "h6",
+            "text": "<p>No artificial preservatives, colors or flavors.</p>",
+            "layout": "vertical",
+            "alignment": "left"
           }
         }
       },
@@ -394,15 +390,14 @@
         "f_4",
         "f_5",
         "f_6"
-      ]
+      ],
+      "settings": {
+        "color_scheme": "scheme-2",
+        "shape_bottom": "wave"
+      }
     },
     "comparison": {
       "type": "comparison-table",
-      "settings": {
-        "us_label": "NatureSip",
-        "them_label": "Other energy drinks",
-        "color_scheme": "scheme-1"
-      },
       "blocks": {
         "heading": {
           "type": "section-heading",
@@ -466,16 +461,15 @@
         "r_3",
         "r_4",
         "r_5"
-      ]
+      ],
+      "settings": {
+        "us_label": "NatureSip",
+        "them_label": "Other energy drinks",
+        "color_scheme": "scheme-1"
+      }
     },
     "collection": {
       "type": "featured-collection",
-      "settings": {
-        "layout": "carousel",
-        "columns_desktop": 3,
-        "color_scheme": "scheme-4",
-        "shape_bottom": "wave"
-      },
       "blocks": {
         "heading": {
           "type": "section-heading",
@@ -512,14 +506,16 @@
             "text"
           ]
         }
+      },
+      "settings": {
+        "layout": "carousel",
+        "columns_desktop": 3,
+        "color_scheme": "scheme-4",
+        "shape_bottom": "wave"
       }
     },
     "testimonials": {
       "type": "testimonials",
-      "settings": {
-        "color_scheme": "scheme-4",
-        "shape_bottom": "wave"
-      },
       "blocks": {
         "heading": {
           "type": "section-heading",
@@ -586,17 +582,19 @@
         "t_1",
         "t_2",
         "t_3"
-      ]
+      ],
+      "settings": {
+        "color_scheme": "scheme-4",
+        "shape_bottom": "wave"
+      }
     },
     "featured": {
       "type": "featured-product",
-      "settings": {
-        "color_scheme": "scheme-1"
-      },
       "blocks": {
         "media-gallery": {
           "type": "_product-media-gallery",
-          "static": true
+          "static": true,
+          "settings": {}
         },
         "rating": {
           "type": "_product-rating",
@@ -617,7 +615,8 @@
           }
         },
         "description": {
-          "type": "_product-description"
+          "type": "_product-description",
+          "settings": {}
         },
         "variant_picker": {
           "type": "_product-variant-picker",
@@ -633,7 +632,8 @@
           }
         },
         "buy_buttons": {
-          "type": "_product-buy-buttons"
+          "type": "_product-buy-buttons",
+          "settings": {}
         }
       },
       "block_order": [
@@ -644,7 +644,10 @@
         "variant_picker",
         "inventory",
         "buy_buttons"
-      ]
+      ],
+      "settings": {
+        "color_scheme": "scheme-1"
+      }
     }
   },
   "order": [

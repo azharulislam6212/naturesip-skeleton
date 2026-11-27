@@ -1,8 +1,8 @@
 {% doc %}
   One slide of the Slideshow (hero): its gradient (with the section's wave
   and grid), its can on a stage fixed to the viewport (snippets/hero-can.liquid,
-  moved by assets/hero-slideshow.js), the big word behind the can, the copy
-  and button, and its floating images.
+  moved by assets/hero-slideshow.js), the big word behind the can, and its
+  blocks: heading, text and button, and floating images.
 
   The word is split into letters here, so its entrance plays from the first
   paint (assets/section-hero-slideshow.css).
@@ -16,10 +16,6 @@
   assign index = section.blocks | find_index: 'id', block.id
   if index == nil
     assign index = 0
-  endif
-  assign link = s.button_link
-  if link == blank and s.product != blank
-    assign link = s.product.url
   endif
   assign position = index | plus: 1
   assign letters = s.word | strip | split: ''
@@ -61,20 +57,14 @@
     </div>
   </div>
 
-  <div class="hero-slide__floaters" aria-hidden="true">
+  {%- comment -%}
+    Heading, text and button blocks stack bottom left; floating images are
+    placed over the whole slide (assets/section-hero-slideshow.css). The
+    color scheme gives the blocks their button colors; the slide's gradient
+    stays the background.
+  {%- endcomment -%}
+  <div class="hero-slide__content color-{{ s.color_scheme.id }}">
     {% content_for 'blocks' %}
-  </div>
-
-  <div class="hero-slide__copy">
-    {%- if s.heading != blank -%}
-      <h2 class="hero-slide__heading">{{ s.heading }}</h2>
-    {%- endif -%}
-    {%- if s.text != blank -%}
-      <div class="hero-slide__text">{{ s.text }}</div>
-    {%- endif -%}
-    {%- if s.button_label != blank -%}
-      {% render 'button', label: s.button_label, url: link, icon: 'bag', class: 'hero-slide__button' %}
-    {%- endif -%}
   </div>
 </div>
 
@@ -83,6 +73,15 @@
   "name": "t:blocks.hero_slide.name",
   "tag": null,
   "blocks": [
+    {
+      "type": "heading"
+    },
+    {
+      "type": "text"
+    },
+    {
+      "type": "button"
+    },
     {
       "type": "_hero-floater"
     }
@@ -134,39 +133,56 @@
       "default": "#FFFFFF"
     },
     {
-      "type": "inline_richtext",
-      "id": "heading",
-      "label": "t:settings.heading",
-      "default": "Made From Nature"
-    },
-    {
-      "type": "richtext",
-      "id": "text",
-      "label": "t:settings.text",
-      "default": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "info": "t:blocks.hero_slide.settings.color_scheme_info",
+      "default": "scheme-1"
     },
     {
       "type": "color",
       "id": "text_color",
-      "label": "t:settings.text_color",
+      "label": "t:blocks.hero_slide.settings.text_color",
       "default": "#FFFFFF"
-    },
-    {
-      "type": "text",
-      "id": "button_label",
-      "label": "t:settings.button_label",
-      "default": "Shop guava"
-    },
-    {
-      "type": "url",
-      "id": "button_link",
-      "label": "t:settings.link",
-      "info": "t:blocks.hero_slide.settings.link_info"
     }
   ],
   "presets": [
     {
-      "name": "t:blocks.hero_slide.name"
+      "name": "t:blocks.hero_slide.name",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Made From Nature",
+            "type_preset": "h4",
+            "animation": "none",
+            "text_animation": "none"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>",
+            "type_preset": "paragraph",
+            "animation": "none",
+            "text_animation": "none"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "label": "Shop now",
+            "style": "primary",
+            "icon": "bag",
+            "animation": "none"
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "text",
+        "button"
+      ]
     }
   ]
 }

@@ -20,13 +20,37 @@
             "scroll_turn": true,
             "word": "Mango",
             "word_color": "#ffffff",
-            "heading": "Real Fruit. Real Energy",
-            "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>",
             "text_color": "#ffffff",
-            "button_label": "Shop mango",
-            "button_link": ""
+            "color_scheme": "scheme-1"
           },
           "blocks": {
+            "lmhcdm_heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "Real Fruit. Real Energy",
+                "type_preset": "h4",
+                "animation": "none",
+                "text_animation": "none"
+              }
+            },
+            "lmhcdm_text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>",
+                "type_preset": "paragraph",
+                "animation": "none",
+                "text_animation": "none"
+              }
+            },
+            "lmhcdm_button": {
+              "type": "button",
+              "settings": {
+                "label": "Shop mango",
+                "style": "primary",
+                "icon": "bag",
+                "animation": "none"
+              }
+            },
             "hero_floater_maNMjP": {
               "type": "_hero-floater",
               "settings": {
@@ -109,6 +133,9 @@
             }
           },
           "block_order": [
+            "lmhcdm_heading",
+            "lmhcdm_text",
+            "lmhcdm_button",
             "hero_floater_maNMjP",
             "hero_floater_PTYwmM",
             "hero_floater_wDBxiF",
@@ -124,13 +151,37 @@
             "scroll_turn": true,
             "word": "Guava",
             "word_color": "#ffffff",
-            "heading": "Made From Nature",
-            "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>",
             "text_color": "#ffffff",
-            "button_label": "Shop guava",
-            "button_link": ""
+            "color_scheme": "scheme-1"
           },
           "blocks": {
+            "mkwptw_heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "Made From Nature",
+                "type_preset": "h4",
+                "animation": "none",
+                "text_animation": "none"
+              }
+            },
+            "mkwptw_text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>",
+                "type_preset": "paragraph",
+                "animation": "none",
+                "text_animation": "none"
+              }
+            },
+            "mkwptw_button": {
+              "type": "button",
+              "settings": {
+                "label": "Shop guava",
+                "style": "primary",
+                "icon": "bag",
+                "animation": "none"
+              }
+            },
             "hero_floater_BAP9TB": {
               "type": "_hero-floater",
               "settings": {
@@ -197,6 +248,9 @@
             }
           },
           "block_order": [
+            "mkwptw_heading",
+            "mkwptw_text",
+            "mkwptw_button",
             "hero_floater_BAP9TB",
             "hero_floater_dQWpin",
             "hero_floater_7HhPKF",
@@ -211,13 +265,37 @@
             "scroll_turn": true,
             "word": "Lemon",
             "word_color": "#ffffff",
-            "heading": "Clean Ingredients Only",
-            "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>",
             "text_color": "#ffffff",
-            "button_label": "Shop lemon",
-            "button_link": ""
+            "color_scheme": "scheme-1"
           },
           "blocks": {
+            "lemnqx_heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "Clean Ingredients Only",
+                "type_preset": "h4",
+                "animation": "none",
+                "text_animation": "none"
+              }
+            },
+            "lemnqx_text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>",
+                "type_preset": "paragraph",
+                "animation": "none",
+                "text_animation": "none"
+              }
+            },
+            "lemnqx_button": {
+              "type": "button",
+              "settings": {
+                "label": "Shop lemon",
+                "style": "primary",
+                "icon": "bag",
+                "animation": "none"
+              }
+            },
             "hero_floater_lem0": {
               "type": "_hero-floater",
               "settings": {
@@ -284,6 +362,9 @@
             }
           },
           "block_order": [
+            "lemnqx_heading",
+            "lemnqx_text",
+            "lemnqx_button",
             "hero_floater_lem0",
             "hero_floater_lem1",
             "hero_floater_lem2",
@@ -299,7 +380,7 @@
       "name": "t:sections.hero_slideshow.name",
       "settings": {
         "accessible_name": "Featured flavours",
-        "height": 100,
+        "height": "full",
         "word_size": 100,
         "wave": true,
         "below_color": "#fef6f2",
@@ -310,7 +391,10 @@
         "end_offset": 0,
         "end_scale": 85,
         "autoplay": false,
-        "autoplay_speed": 6
+        "autoplay_speed": 6,
+        "height_custom": 720,
+        "height_mobile": "full",
+        "height_mobile_custom": 600
       }
     },
     "hero": {

@@ -184,7 +184,8 @@
         "scroll_turn_info": "The can flips and turns as the page scrolls. Off, it only floats (and can still be dragged).",
         "word": "Word behind the can",
         "word_color": "Word color",
-        "link_info": "Defaults to the product."
+        "text_color": "Content color",
+        "color_scheme_info": "Sets the button colors. The slide keeps its own gradient and content color."
       }
     },
     "hero_floater": {
@@ -421,12 +422,6 @@
     "heading_layout": {
       "horizontal": "Side by side",
       "vertical": "Stacked"
-    },
-    "height": {
-      "full": "Full screen",
-      "large": "Large",
-      "medium": "Medium",
-      "small": "Small"
     },
     "highlight": {
       "gradient": "Gradient",
@@ -798,7 +793,29 @@
       }
     },
     "slideshow": {
-      "name": "Slideshow"
+      "name": "Slideshow",
+      "settings": {
+        "height_header": {
+          "content": "Height"
+        },
+        "height": {
+          "label": "Height",
+          "small": "Small",
+          "medium": "Medium",
+          "large": "Large",
+          "full": "Full screen",
+          "custom": "Custom"
+        },
+        "height_custom": {
+          "label": "Custom height"
+        },
+        "height_mobile": {
+          "label": "Height on mobile"
+        },
+        "height_mobile_custom": {
+          "label": "Custom height on mobile"
+        }
+      }
     },
     "testimonials": {
       "name": "Testimonials"
@@ -1018,8 +1035,6 @@
     "show_swatches": "Show swatches",
     "show_tax_note": "Show tax note",
     "size": "Size",
-    "slide_height": "Height on desktop",
-    "slide_height_mobile": "Height on mobile",
     "social_label": "Social label",
     "stack_on_mobile": "Stack on mobile",
     "stagger_children": "Stagger children",

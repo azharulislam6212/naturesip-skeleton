@@ -8,7 +8,7 @@
 {%- assign s = section.settings -%}
 <section
   class="section section--full-width slideshow color-{{ s.color_scheme.id }}"
-  style="--slide-height: {{ s.height }}svh; --slide-height-mobile: {{ s.height_mobile }}svh;"
+  style="{% render 'section-height', settings: s %}"
   {% render 'shape-attributes', settings: s %}
 >
   <slider-component
@@ -38,52 +38,86 @@
   ],
   "settings": [
     {
+      "type": "header",
+      "content": "t:sections.slideshow.settings.height_header.content"
+    },
+    {
       "type": "select",
       "id": "height",
-      "label": "t:settings.slide_height",
+      "label": "t:sections.slideshow.settings.height.label",
+      "default": "medium",
       "options": [
         {
-          "value": "50",
-          "label": "t:options.height.small"
+          "value": "small",
+          "label": "t:sections.slideshow.settings.height.small"
         },
         {
-          "value": "70",
-          "label": "t:options.height.medium"
+          "value": "medium",
+          "label": "t:sections.slideshow.settings.height.medium"
         },
         {
-          "value": "85",
-          "label": "t:options.height.large"
+          "value": "large",
+          "label": "t:sections.slideshow.settings.height.large"
         },
         {
-          "value": "100",
-          "label": "t:options.height.full"
+          "value": "full",
+          "label": "t:sections.slideshow.settings.height.full"
+        },
+        {
+          "value": "custom",
+          "label": "t:sections.slideshow.settings.height.custom"
         }
-      ],
-      "default": "85"
+      ]
+    },
+    {
+      "visible_if": "{{ section.settings.height == 'custom' }}",
+      "type": "range",
+      "id": "height_custom",
+      "min": 300,
+      "max": 1200,
+      "step": 10,
+      "unit": "px",
+      "label": "t:sections.slideshow.settings.height_custom.label",
+      "default": 720
     },
     {
       "type": "select",
       "id": "height_mobile",
-      "label": "t:settings.slide_height_mobile",
+      "label": "t:sections.slideshow.settings.height_mobile.label",
+      "default": "medium",
       "options": [
         {
-          "value": "50",
-          "label": "t:options.height.small"
+          "value": "small",
+          "label": "t:sections.slideshow.settings.height.small"
         },
         {
-          "value": "70",
-          "label": "t:options.height.medium"
+          "value": "medium",
+          "label": "t:sections.slideshow.settings.height.medium"
         },
         {
-          "value": "85",
-          "label": "t:options.height.large"
+          "value": "large",
+          "label": "t:sections.slideshow.settings.height.large"
         },
         {
-          "value": "100",
-          "label": "t:options.height.full"
+          "value": "full",
+          "label": "t:sections.slideshow.settings.height.full"
+        },
+        {
+          "value": "custom",
+          "label": "t:sections.slideshow.settings.height.custom"
         }
-      ],
-      "default": "70"
+      ]
+    },
+    {
+      "visible_if": "{{ section.settings.height_mobile == 'custom' }}",
+      "type": "range",
+      "id": "height_mobile_custom",
+      "min": 240,
+      "max": 1000,
+      "step": 10,
+      "unit": "px",
+      "label": "t:sections.slideshow.settings.height_mobile_custom.label",
+      "default": 600
     },
     {
       "type": "text",

@@ -17,6 +17,7 @@
 
 <div
   class="hero-floater hero-floater--{{ s.layer }} hero-floater--{{ s.motion }}{% if s.hide_mobile %} hero-floater--desktop{% endif %}"
+  aria-hidden="true"
   style="--x: {{ s.x }}%; --y: {{ s.y }}%; --w: {{ s.width }}; --r: {{ s.rotation }}deg; --depth: {{ s.depth | divided_by: 100.0 }}; --speed: {{ s.speed }}s; --delay: {{ s.delay }};"
   {{ block.shopify_attributes }}
 >

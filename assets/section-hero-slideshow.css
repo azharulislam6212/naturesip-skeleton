@@ -8,7 +8,9 @@
    fixed can stages (z 4), then the copy, buttons and "in front" images (z 5). */
 @layer sections {
   hero-slideshow {
-    --hero-h: max(var(--hero-height, 100svh), 36rem);
+    /* Height (section settings, snippets/section-height.liquid); a floor
+       keeps the can and the copy from colliding. */
+    --hero-h: max(var(--section-height, 100svh), 24rem);
     --wave-h: 11.11vw;
     --ease-power1: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     display: block;
@@ -275,13 +277,36 @@
     animation: hero-letter-out 0.5s ease-in calc(var(--i) * 25ms) both;
   }
 
-  /* Floating images: placed by the block, drifting with the pointer
-     (translate, eased) and the scroll (transform), bobbing on their own. */
-  .hero-slide__floaters {
+  /* Blocks: heading, text and button stack bottom left; floating images
+     sit over the whole slide. No z-index here, so each block's layer
+     (z 5, or 3 for "behind" images) interleaves with the can's (z 4). */
+  .hero-slide__content {
     position: absolute;
     inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: calc(var(--hero-h) * 0.584) 0 0 6.8%;
+    /* The slide's color scheme only colors its buttons: no surface, and
+       text keeps the slide's content color. */
+    background: none;
+    color: var(--copy-color, #fff);
     pointer-events: none;
   }
+
+  .hero-slide__content > :not(.hero-floater) {
+    /* Headings too, unless a block sets its own color. */
+    --color-heading: var(--copy-color, #fff);
+    position: relative;
+    z-index: 5;
+    max-width: min(20rem, 21vw);
+    margin: 0;
+    pointer-events: auto;
+  }
+
+  /* Floating images: placed by the block, drifting with the pointer
+     (translate, eased) and the scroll (transform), bobbing on their own. */
 
   .hero-floater {
     position: absolute;
@@ -341,55 +366,20 @@
     animation: hero-pop-out 0.45s ease-in calc(var(--delay) * 0.04s) both;
   }
 
-  /* Copy and button, bottom left. */
-  .hero-slide__copy {
-    position: absolute;
-    left: 6.8%;
-    top: 58.4%;
-    z-index: 5;
-    display: grid;
-    justify-items: start;
-    width: min(20rem, 21%);
-    color: var(--copy-color, #fff);
-  }
-
-  .hero-slide__heading {
-    margin: 0 0 0.75em;
-    color: inherit;
-    font-family: var(--font-heading--family);
-    font-style: var(--font-heading--style);
-    font-weight: var(--font-heading--weight);
-    font-size: clamp(1.125rem, 1.53vw, 1.75rem);
-    line-height: 1.2;
-    letter-spacing: 0.01em;
-  }
-
-  .hero-slide__text {
-    font-size: clamp(0.9375rem, 1.11vw, 1.125rem);
-    line-height: 1.2;
-  }
-
-  .hero-slide__text > * {
-    margin: 0;
-  }
-
-  .hero-slide__button {
-    margin-block-start: 1.1rem;
-  }
-
-  .hero-slide[data-active] .hero-slide__copy > * {
+  /* The copy rises in block by block with its slide. */
+  .hero-slide[data-active] .hero-slide__content > :not(.hero-floater) {
     animation: hero-rise 1.25s var(--ease-power1) calc(var(--enter-delay, 0s) + 0.45s) both;
   }
 
-  .hero-slide[data-active] .hero-slide__copy > :nth-child(2) {
+  .hero-slide[data-active] .hero-slide__content > :nth-child(2 of :not(.hero-floater)) {
     animation-delay: calc(var(--enter-delay, 0s) + 0.55s);
   }
 
-  .hero-slide[data-active] .hero-slide__copy > :nth-child(3) {
+  .hero-slide[data-active] .hero-slide__content > :nth-child(n + 3 of :not(.hero-floater)) {
     animation-delay: calc(var(--enter-delay, 0s) + 0.65s);
   }
 
-  .hero-slide[data-leaving] .hero-slide__copy > * {
+  .hero-slide[data-leaving] .hero-slide__content > :not(.hero-floater) {
     animation: fade-out 0.35s ease-in both;
   }
 
@@ -444,6 +434,10 @@
 
   /* ---------- Mobile ---------- */
   @media (max-width: 749px) {
+    hero-slideshow {
+      --hero-h: max(var(--section-height-mobile, 100svh), 24rem);
+    }
+
     .hero-slideshow__can {
       --can-size: min(calc(var(--hero-h) * var(--hero-can, 68) / 100 * 0.78), 92vw);
       top: calc(var(--hero-h) * 0.46);
@@ -462,12 +456,13 @@
       display: none;
     }
 
-    .hero-slide__copy {
-      left: 1.25rem;
-      right: calc(1.25rem + 6.5rem);
-      top: auto;
-      bottom: calc(var(--wave-h) + 1.75rem);
-      width: auto;
+    .hero-slide__content {
+      justify-content: flex-end;
+      padding: 0 calc(1.25rem + 6.5rem) calc(var(--wave-h) + 1.75rem) 1.25rem;
+    }
+
+    .hero-slide__content > :not(.hero-floater) {
+      max-width: none;
     }
 
     .hero-slideshow__nav {
@@ -483,7 +478,7 @@
     .hero-floater__motion,
     .hero-slide .hero-slide__letter,
     .hero-slide .hero-floater :is(img, .hero-floater__placeholder),
-    .hero-slide .hero-slide__copy > *,
+    .hero-slide .hero-slide__content > :not(.hero-floater),
     .hero-slide .hero-slideshow__model,
     .hero-slide .hero-slideshow__can-image,
     .hero-slide .hero-slide__backdrop {

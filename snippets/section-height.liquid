@@ -1,0 +1,42 @@
+{% doc %}
+  Banner and slideshow height: turns the section's height settings (height,
+  height_custom, height_mobile, height_mobile_custom) into the custom
+  properties --section-height and --section-height-mobile.
+
+  Small, medium, large and full are shares of the viewport (svh); custom
+  is a fixed height in px.
+
+  @param {object} settings - The section's settings.
+
+  @example
+  <section style="{% render 'section-height', settings: section.settings %}">
+{% enddoc %}
+
+{%- liquid
+  case settings.height
+    when 'small'
+      assign desktop = '50svh'
+    when 'large'
+      assign desktop = '85svh'
+    when 'full'
+      assign desktop = '100svh'
+    when 'custom'
+      assign desktop = settings.height_custom | append: 'px'
+    else
+      assign desktop = '70svh'
+  endcase
+
+  case settings.height_mobile
+    when 'small'
+      assign mobile = '50svh'
+    when 'large'
+      assign mobile = '85svh'
+    when 'full'
+      assign mobile = '100svh'
+    when 'custom'
+      assign mobile = settings.height_mobile_custom | append: 'px'
+    else
+      assign mobile = '70svh'
+  endcase
+-%}
+--section-height: {{ desktop }}; --section-height-mobile: {{ mobile }};

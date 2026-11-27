@@ -3836,10 +3836,11 @@
     border-radius: var(--radius-card);
     background-color: var(--color-input-background);
     color: var(--color-input-text);
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
+    line-height: 1.3;
     text-transform: uppercase;
     pointer-events: auto;
-    --icon-size: 2rem;
+    gap: var(--space-2xs);
   }
 
   .media-gallery__features .icon-text__title {
@@ -3851,7 +3852,17 @@
   }
 
   .media-gallery__features .icon-text__media {
+    --frame-size: 2.25rem;
     color: var(--color-accent);
+  }
+
+  .media-gallery__features .icon-text__media .icon {
+    --icon-size: 1.5rem;
+  }
+
+  .media-gallery__features .icon-text__text {
+    font-size: 0.6875rem;
+    line-height: 1.35;
   }
 
   @media (max-width: 989px) {

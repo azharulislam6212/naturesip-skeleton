@@ -27,7 +27,7 @@
 >
   {%- if article != blank -%}
     <div class="article-card__media media media--hover" data-hover="{{ settings.image_hover }}" style="--ratio: {{ ratio }};">
-      {% render 'image', image: article.image, sizes: sizes, placeholder: 'lifestyle-apparel-2' %}
+      {% render 'image', image: article.image, sizes: sizes, placeholder: 'lifestyle-2' %}
     </div>
     {%- if show_date or settings.blog_card_show_author -%}
       <p class="type-subheading">
@@ -41,7 +41,7 @@
       <p>{{ article.excerpt_or_content | strip_html | truncatewords: excerpt_words }}</p>
     {%- endif -%}
   {%- else -%}
-    <div class="article-card__media media" style="--ratio: {{ ratio }};">{{ 'lifestyle-apparel-2' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+    <div class="article-card__media media" style="--ratio: {{ ratio }};">{{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}</div>
     <{{ tag }} class="type-heading type-h5">{{ 'onboarding.article_title' | t }}</{{ tag }}>
   {%- endif -%}
 </article>

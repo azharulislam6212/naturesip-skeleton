@@ -1,0 +1,337 @@
+{%- comment -%}
+  Slideshow (hero): one 3D can over a gradient hero with a wavy edge. Each
+  slide brings its own gradient, can (a product's 3D model, a GLB link or a
+  flat image), big word behind the can, copy and floating images.
+
+  The can lives on a fixed stage (assets/hero-slideshow.js): it stays in
+  view and turns while the page scrolls through the next sections, then
+  scrolls away with the last of them.
+{%- endcomment -%}
+
+{{ 'section-hero-slideshow.css' | asset_url | stylesheet_tag }}
+
+{%- assign s = section.settings -%}
+
+<hero-slideshow
+  class="hero-slideshow"
+  data-travel="{{ s.travel }}"
+  data-spin="{{ s.spin }}"
+  data-end-x="{{ s.end_offset }}"
+  data-end-scale="{{ s.end_scale | divided_by: 100.0 }}"
+  {% if s.autoplay %}
+    data-autoplay="{{ s.autoplay_speed | times: 1000 }}"
+  {% endif %}
+  style="--hero-height: {{ s.height }}svh; --hero-can: {{ s.can_size }}; --hero-word-scale: {{ s.word_size | divided_by: 100.0 }}; --hero-below: {{ s.below_color }};"
+  aria-roledescription="{{ 'accessibility.carousel' | t }}"
+  aria-label="{{ s.accessible_name | escape }}"
+>
+  <div class="hero-slideshow__backdrop{% if s.wave %} hero-slideshow__backdrop--wave{% endif %}" aria-hidden="true">
+    {%- for block in section.blocks -%}
+      <div
+        class="hero-slideshow__gradient"
+        data-index="{{ forloop.index0 }}"
+        style="background: {{ block.settings.gradient | default: 'linear-gradient(120deg, #342a5e, #6c4541)' }};"
+        {% if forloop.first %}
+          data-active
+        {% endif %}
+      ></div>
+    {%- endfor -%}
+    {%- if s.grid -%}
+      <div class="hero-slideshow__grid" style="background-image: url('{{ 'hero-grid.png' | asset_url }}');"></div>
+    {%- endif -%}
+  </div>
+
+
+  {%- comment -%} The can: one per slide, on a stage fixed to the viewport. {%- endcomment -%}
+  <div class="hero-slideshow__stage" ref="stage" aria-hidden="true">
+    <div class="hero-slideshow__can" ref="can">
+      <div class="hero-slideshow__float">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign b = block.settings
+            assign model_src = b.model_url
+            assign poster = b.image
+            if b.product != blank
+              for media in b.product.media
+                if media.media_type == 'model'
+                  for source in media.sources
+                    if source.format == 'glb'
+                      assign model_src = source.url
+                    endif
+                  endfor
+                  if poster == blank
+                    assign poster = media.preview_image
+                  endif
+                  break
+                endif
+              endfor
+              if poster == blank
+                assign poster = b.product.featured_image
+              endif
+            endif
+          -%}
+          <div class="hero-slideshow__model" data-index="{{ forloop.index0 }}" {% if forloop.first %}data-active{% endif %}>
+            {%- if model_src != blank -%}
+              <model-viewer
+                src="{{ model_src }}"
+                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                reveal="auto"
+                environment-image="neutral"
+                exposure="1.05"
+                shadow-intensity="0"
+                interaction-prompt="none"
+                disable-tap
+                disable-zoom
+                disable-pan
+                field-of-view="30deg"
+                camera-orbit="0deg 90deg auto"
+                min-camera-orbit="auto 0deg 0m"
+                max-camera-orbit="auto 180deg 1000m"
+                orientation="0deg 0deg 0deg"
+              ></model-viewer>
+            {%- elsif poster != blank -%}
+              {{
+                poster
+                | image_url: width: 1200
+                | image_tag:
+                  class: 'hero-slideshow__can-image',
+                  alt: '',
+                  loading: 'eager',
+                  sizes: '(min-width: 750px) 40vw, 70vw',
+                  widths: '400, 600, 800, 1000, 1200'
+              }}
+            {%- else -%}
+              {{ 'product-1' | placeholder_svg_tag: 'hero-slideshow__can-image hero-slideshow__can-image--placeholder' }}
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+
+  <ul class="hero-slideshow__slides" role="list">
+    {% content_for 'blocks' %}
+  </ul>
+
+  {%- if section.blocks.size > 1 -%}
+    <div class="hero-slideshow__nav">
+      <button class="hero-slideshow__arrow" type="button" ref="previous" aria-label="{{ 'accessibility.previous' | t }}">
+        {%- render 'icon', name: 'undo' -%}
+      </button>
+      <button class="hero-slideshow__arrow hero-slideshow__arrow--next" type="button" ref="next" aria-label="{{ 'accessibility.next' | t }}">
+        {%- render 'icon', name: 'redo' -%}
+      </button>
+    </div>
+    <p class="visually-hidden" aria-live="polite" ref="status"></p>
+  {%- endif -%}
+</hero-slideshow>
+
+{% schema %}
+{
+  "name": "t:sections.hero_slideshow.name",
+  "class": "section-wrapper",
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "_hero-slide"
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "accessible_name",
+      "label": "t:settings.accessible_name",
+      "default": "Featured flavours"
+    },
+    {
+      "type": "range",
+      "id": "height",
+      "label": "t:settings.height",
+      "min": 60,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "word_size",
+      "label": "t:sections.hero_slideshow.settings.word_size",
+      "min": 50,
+      "max": 130,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "checkbox",
+      "id": "wave",
+      "label": "t:sections.hero_slideshow.settings.wave",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "below_color",
+      "label": "t:sections.hero_slideshow.settings.below_color",
+      "info": "t:sections.hero_slideshow.settings.below_color_info",
+      "default": "#FEF6F2"
+    },
+    {
+      "type": "checkbox",
+      "id": "grid",
+      "label": "t:sections.hero_slideshow.settings.grid",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.hero_slideshow.headers.can"
+    },
+    {
+      "type": "range",
+      "id": "can_size",
+      "label": "t:sections.hero_slideshow.settings.can_size",
+      "min": 40,
+      "max": 90,
+      "step": 1,
+      "unit": "%",
+      "default": 72
+    },
+    {
+      "type": "select",
+      "id": "travel",
+      "label": "t:sections.hero_slideshow.settings.travel",
+      "info": "t:sections.hero_slideshow.settings.travel_info",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.hero_slideshow.options.travel_none"
+        },
+        {
+          "value": "1",
+          "label": "t:sections.hero_slideshow.options.travel_one"
+        },
+        {
+          "value": "2",
+          "label": "t:sections.hero_slideshow.options.travel_two"
+        },
+        {
+          "value": "3",
+          "label": "t:sections.hero_slideshow.options.travel_three"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "checkbox",
+      "id": "spin",
+      "label": "t:sections.hero_slideshow.settings.spin",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "end_offset",
+      "label": "t:sections.hero_slideshow.settings.end_offset",
+      "info": "t:sections.hero_slideshow.settings.end_offset_info",
+      "min": -40,
+      "max": 40,
+      "step": 1,
+      "unit": "%",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "end_scale",
+      "label": "t:sections.hero_slideshow.settings.end_scale",
+      "min": 40,
+      "max": 120,
+      "step": 5,
+      "unit": "%",
+      "default": 85
+    },
+    {
+      "type": "header",
+      "content": "t:carousel.headers.carousel"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "t:settings.autoplay",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "t:sections.hero_slideshow.settings.autoplay_speed",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "unit": "s",
+      "default": 6,
+      "visible_if": "{{ section.settings.autoplay }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.hero_slideshow.name",
+      "category": "t:categories.sections.banners",
+      "blocks": {
+        "mango": {
+          "type": "_hero-slide",
+          "settings": {
+            "gradient": "linear-gradient(120deg, rgba(52, 42, 94, 1) 0%, rgba(108, 69, 65, 1) 100%)",
+            "word": "Mango",
+            "button_label": "Shop mango"
+          },
+          "blocks": {
+            "pair_left": {
+              "type": "_hero-floater",
+              "settings": { "sample": "pair", "x": 11, "y": 10, "width": 6, "rotation": 0, "depth": 40, "delay": 0 }
+            },
+            "whole_top": {
+              "type": "_hero-floater",
+              "settings": { "sample": "whole", "x": 45, "y": 6, "width": 7, "rotation": 0, "depth": 25, "delay": 1 }
+            },
+            "whole_right": {
+              "type": "_hero-floater",
+              "settings": { "sample": "whole", "x": 80, "y": 14, "width": 7, "rotation": 0, "depth": 55, "delay": 2 }
+            },
+            "pair_bottom": {
+              "type": "_hero-floater",
+              "settings": { "sample": "pair", "x": 68, "y": 60, "width": 8, "rotation": 0, "depth": 70, "delay": 3 }
+            }
+          },
+          "block_order": ["pair_left", "whole_top", "whole_right", "pair_bottom"]
+        },
+        "guava": {
+          "type": "_hero-slide",
+          "settings": {
+            "gradient": "linear-gradient(120deg, rgba(92, 107, 85, 1) 0%, rgba(63, 74, 58, 1) 100%)",
+            "word": "Guava",
+            "button_label": "Shop guava"
+          },
+          "blocks": {
+            "whole_left": {
+              "type": "_hero-floater",
+              "settings": { "sample": "whole", "x": 9, "y": 9, "width": 7, "rotation": -10, "depth": 40, "delay": 0 }
+            },
+            "pair_top": {
+              "type": "_hero-floater",
+              "settings": { "sample": "pair", "x": 46, "y": 7, "width": 7, "rotation": 10, "depth": 25, "delay": 1 }
+            },
+            "pair_right": {
+              "type": "_hero-floater",
+              "settings": { "sample": "pair", "x": 81, "y": 16, "width": 7, "rotation": -5, "depth": 55, "delay": 2 }
+            },
+            "whole_bottom": {
+              "type": "_hero-floater",
+              "settings": { "sample": "whole", "x": 69, "y": 59, "width": 7, "rotation": 15, "depth": 70, "delay": 3 }
+            }
+          },
+          "block_order": ["whole_left", "pair_top", "pair_right", "whole_bottom"]
+        }
+      },
+      "block_order": ["mango", "guava"]
+    }
+  ]
+}
+{% endschema %}

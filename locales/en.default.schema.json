@@ -170,6 +170,53 @@
     },
     "cart_summary": {
       "name": "Order summary"
+    },
+    "hero_slide": {
+      "name": "Hero slide",
+      "headers": {
+        "can": "Can"
+      },
+      "settings": {
+        "product_info": "Its 3D model is used for the can, and its page for the button when no link is set.",
+        "model_url": "3D model link (GLB)",
+        "model_url_info": "Used when the product has no 3D model. Upload the .glb file in Content > Files and paste its link.",
+        "image": "Can image",
+        "image_info": "Shown when there is no 3D model.",
+        "word": "Word behind the can",
+        "word_color": "Word color",
+        "link_info": "Defaults to the product."
+      }
+    },
+    "hero_floater": {
+      "name": "Floating image",
+      "headers": {
+        "position": "Position"
+      },
+      "settings": {
+        "sample": "Sample image",
+        "sample_info": "Shown until you choose an image.",
+        "x": "From the left",
+        "y": "From the top",
+        "rotation": "Rotation",
+        "layer": "Layer",
+        "hide_mobile": "Hide on mobile",
+        "motion": "Motion",
+        "speed": "Loop length",
+        "delay": "Order",
+        "delay_info": "Images pop in by this order, and their loops start apart.",
+        "depth": "Depth",
+        "depth_info": "Deeper images drift more with the pointer and the scroll."
+      },
+      "options": {
+        "whole": "Guava",
+        "pair": "Guava halves",
+        "front": "In front of the can",
+        "back": "Behind the can",
+        "float": "Float",
+        "sway": "Sway",
+        "spin": "Spin",
+        "still": "Still"
+      }
     }
   },
   "categories": {
@@ -785,6 +832,33 @@
         "custom": {
           "label": "Custom width"
         }
+      }
+    },
+    "hero_slideshow": {
+      "name": "Slideshow (hero)",
+      "headers": {
+        "can": "3D can"
+      },
+      "settings": {
+        "word_size": "Word size",
+        "wave": "Wavy bottom edge",
+        "below_color": "Color below the wave",
+        "below_color_info": "Match the background of the next section.",
+        "grid": "Show grid pattern",
+        "can_size": "Can size",
+        "travel": "Can travels with the scroll",
+        "travel_info": "The can stays in view and turns while the page scrolls through this many sections, then scrolls away with the last one.",
+        "spin": "Turn the can while scrolling",
+        "end_offset": "Horizontal position at the end",
+        "end_offset_info": "Moves the can to the side as it reaches its last section.",
+        "end_scale": "Size at the end",
+        "autoplay_speed": "Change slides every"
+      },
+      "options": {
+        "travel_none": "Stay in the hero",
+        "travel_one": "Next section",
+        "travel_two": "Next 2 sections",
+        "travel_three": "Next 3 sections"
       }
     }
   },

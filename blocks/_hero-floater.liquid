@@ -1,0 +1,200 @@
+{% doc %}
+  A small floating image on a hero slide (fruit, leaf, ice…), placed by its
+  top-left corner in % of the hero. It bobs on its own loop, drifts with the
+  pointer and the scroll by its depth, and pops in and out with its slide.
+
+  @example
+  {% content_for 'block', type: '_hero-floater', id: 'floater' %}
+{% enddoc %}
+
+{%- liquid
+  assign s = block.settings
+  case s.sample
+    when 'pair'
+      assign sample = 'hero-guava-pair.webp'
+    else
+      assign sample = 'hero-guava-whole.webp'
+  endcase
+-%}
+
+<div
+  class="hero-floater hero-floater--{{ s.layer }} hero-floater--{{ s.motion }}{% if s.hide_mobile %} hero-floater--desktop{% endif %}"
+  style="--x: {{ s.x }}%; --y: {{ s.y }}%; --w: {{ s.width }}; --r: {{ s.rotation }}deg; --depth: {{ s.depth | divided_by: 100.0 }}; --speed: {{ s.speed }}s; --delay: {{ s.delay }};"
+  {{ block.shopify_attributes }}
+>
+  <div class="hero-floater__drift">
+    <div class="hero-floater__motion">
+      {%- if s.image != blank -%}
+        {{
+          s.image
+          | image_url: width: 600
+          | image_tag: alt: s.image.alt, loading: 'lazy', sizes: '(min-width: 750px) 12vw, 20vw', widths: '150, 300, 450, 600'
+        }}
+      {%- else -%}
+        <img src="{{ sample | asset_url }}" alt="" width="600" height="400" loading="lazy">
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.hero_floater.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:settings.image"
+    },
+    {
+      "type": "select",
+      "id": "sample",
+      "label": "t:blocks.hero_floater.settings.sample",
+      "info": "t:blocks.hero_floater.settings.sample_info",
+      "options": [
+        {
+          "value": "whole",
+          "label": "t:blocks.hero_floater.options.whole"
+        },
+        {
+          "value": "pair",
+          "label": "t:blocks.hero_floater.options.pair"
+        }
+      ],
+      "default": "whole",
+      "visible_if": "{{ block.settings.image == blank }}"
+    },
+    {
+      "type": "header",
+      "content": "t:blocks.hero_floater.headers.position"
+    },
+    {
+      "type": "range",
+      "id": "x",
+      "label": "t:blocks.hero_floater.settings.x",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "y",
+      "label": "t:blocks.hero_floater.settings.y",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "width",
+      "label": "t:settings.width",
+      "min": 2,
+      "max": 30,
+      "step": 1,
+      "unit": "%",
+      "default": 7
+    },
+    {
+      "type": "range",
+      "id": "rotation",
+      "label": "t:blocks.hero_floater.settings.rotation",
+      "min": -180,
+      "max": 180,
+      "step": 5,
+      "unit": "°",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "layer",
+      "label": "t:blocks.hero_floater.settings.layer",
+      "options": [
+        {
+          "value": "front",
+          "label": "t:blocks.hero_floater.options.front"
+        },
+        {
+          "value": "back",
+          "label": "t:blocks.hero_floater.options.back"
+        }
+      ],
+      "default": "front"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_mobile",
+      "label": "t:blocks.hero_floater.settings.hide_mobile",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:headers.animation"
+    },
+    {
+      "type": "select",
+      "id": "motion",
+      "label": "t:blocks.hero_floater.settings.motion",
+      "options": [
+        {
+          "value": "float",
+          "label": "t:blocks.hero_floater.options.float"
+        },
+        {
+          "value": "sway",
+          "label": "t:blocks.hero_floater.options.sway"
+        },
+        {
+          "value": "spin",
+          "label": "t:blocks.hero_floater.options.spin"
+        },
+        {
+          "value": "still",
+          "label": "t:blocks.hero_floater.options.still"
+        }
+      ],
+      "default": "float"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "t:blocks.hero_floater.settings.speed",
+      "min": 2,
+      "max": 20,
+      "step": 1,
+      "unit": "s",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "delay",
+      "label": "t:blocks.hero_floater.settings.delay",
+      "info": "t:blocks.hero_floater.settings.delay_info",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "depth",
+      "label": "t:blocks.hero_floater.settings.depth",
+      "info": "t:blocks.hero_floater.settings.depth_info",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.hero_floater.name"
+    }
+  ]
+}
+{% endschema %}

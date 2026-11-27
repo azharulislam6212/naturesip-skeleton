@@ -1,0 +1,156 @@
+{% doc %}
+  One slide of the Slideshow (hero): the big word behind the can, the copy
+  and button, and its floating images. Its gradient and can are drawn by the
+  section (sections/hero-slideshow.liquid), from these same settings.
+
+  The word is split into letters here, so its entrance plays from the first
+  paint (assets/section-hero-slideshow.css).
+
+  @example
+  {% content_for 'block', type: '_hero-slide', id: 'slide' %}
+{% enddoc %}
+
+{%- liquid
+  assign s = block.settings
+  assign index = section.blocks | find_index: 'id', block.id
+  if index == nil
+    assign index = 0
+  endif
+  assign link = s.button_link
+  if link == blank and s.product != blank
+    assign link = s.product.url
+  endif
+  assign letters = s.word | strip | split: ''
+-%}
+
+<li
+  class="hero-slide"
+  data-index="{{ index }}"
+  style="--word-color: {{ s.word_color }}; --copy-color: {{ s.text_color }};"
+  aria-roledescription="{{ 'accessibility.slide' | t }}"
+  {% if index == 0 %}
+    data-active
+  {% else %}
+    aria-hidden="true"
+  {% endif %}
+  {{ block.shopify_attributes }}
+>
+  {%- if letters.size > 0 -%}
+    <p class="hero-slide__word" aria-label="{{ s.word | escape }}">
+      {%- for letter in letters -%}
+        <span class="hero-slide__letter" style="--i: {{ forloop.index0 }};" aria-hidden="true">
+          {%- if letter == ' ' -%}&nbsp;{%- else -%}{{ letter | escape }}{%- endif -%}
+        </span>
+      {%- endfor -%}
+    </p>
+  {%- endif -%}
+
+  <div class="hero-slide__floaters">
+    {% content_for 'blocks' %}
+  </div>
+
+  <div class="hero-slide__copy">
+    {%- if s.heading != blank -%}
+      <h2 class="hero-slide__heading">{{ s.heading }}</h2>
+    {%- endif -%}
+    {%- if s.text != blank -%}
+      <div class="hero-slide__text">{{ s.text }}</div>
+    {%- endif -%}
+    {%- if s.button_label != blank -%}
+      {% render 'button', label: s.button_label, url: link, icon: 'bag', class: 'hero-slide__button' %}
+    {%- endif -%}
+  </div>
+</li>
+
+{% schema %}
+{
+  "name": "t:blocks.hero_slide.name",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "_hero-floater"
+    }
+  ],
+  "settings": [
+    {
+      "type": "color_background",
+      "id": "gradient",
+      "label": "t:settings.gradient",
+      "default": "linear-gradient(120deg, rgba(52, 42, 94, 1) 0%, rgba(108, 69, 65, 1) 100%)"
+    },
+    {
+      "type": "header",
+      "content": "t:blocks.hero_slide.headers.can"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "t:settings.product",
+      "info": "t:blocks.hero_slide.settings.product_info"
+    },
+    {
+      "type": "url",
+      "id": "model_url",
+      "label": "t:blocks.hero_slide.settings.model_url",
+      "info": "t:blocks.hero_slide.settings.model_url_info"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:blocks.hero_slide.settings.image",
+      "info": "t:blocks.hero_slide.settings.image_info"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.content"
+    },
+    {
+      "type": "text",
+      "id": "word",
+      "label": "t:blocks.hero_slide.settings.word",
+      "default": "Mango"
+    },
+    {
+      "type": "color",
+      "id": "word_color",
+      "label": "t:blocks.hero_slide.settings.word_color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:settings.heading",
+      "default": "Made From Nature"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:settings.text",
+      "default": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:settings.text_color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:settings.button_label",
+      "default": "Shop guava"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:settings.link",
+      "info": "t:blocks.hero_slide.settings.link_info"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.hero_slide.name"
+    }
+  ]
+}
+{% endschema %}

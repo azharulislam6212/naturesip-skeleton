@@ -21,44 +21,44 @@
               "type": "icon-text",
               "settings": {
                 "icon": "leaf",
+                "frame": "none",
                 "title": "100% natural",
                 "title_size": "subheading",
                 "layout": "vertical",
-                "alignment": "center",
-                "frame": "none"
+                "alignment": "center"
               }
             },
             "feature_2": {
               "type": "icon-text",
               "settings": {
                 "icon": "bolt",
+                "frame": "none",
                 "title": "Clean energy",
                 "title_size": "subheading",
                 "layout": "vertical",
-                "alignment": "center",
-                "frame": "none"
+                "alignment": "center"
               }
             },
             "feature_3": {
               "type": "icon-text",
               "settings": {
                 "icon": "drop",
+                "frame": "none",
                 "title": "No added sugar",
                 "title_size": "subheading",
                 "layout": "vertical",
-                "alignment": "center",
-                "frame": "none"
+                "alignment": "center"
               }
             },
             "feature_4": {
               "type": "icon-text",
               "settings": {
                 "icon": "sparkle",
+                "frame": "none",
                 "title": "Refreshing",
                 "title_size": "subheading",
                 "layout": "vertical",
-                "alignment": "center",
-                "frame": "none"
+                "alignment": "center"
               }
             }
           },
@@ -161,7 +161,6 @@
           ]
         }
       },
-      "block_order": [],
       "settings": {}
     },
     "recommendations": {

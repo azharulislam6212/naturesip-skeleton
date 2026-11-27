@@ -46,6 +46,7 @@ const REGISTRY = {
   'deferred-media': { module: '@theme/store-utilities', load: 'interaction' },
   'marquee-banner': { module: '@theme/store-utilities', load: 'interaction' },
   'share-copy': { module: '@theme/store-utilities', load: 'visible' },
+  'hero-slideshow': { module: '@theme/hero-slideshow', load: 'eager' },
 };
 
 /** @type {Map<string, Promise<unknown>>} */

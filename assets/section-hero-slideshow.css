@@ -1,0 +1,462 @@
+/* Section: Slideshow (hero), sections/hero-slideshow.liquid.
+   Laid out on the 1440 × 929 design: positions are % of the hero box, sizes
+   follow its width (vw) or height (--hero-h).
+
+   Stacking: nothing between the hero and its pieces makes a stacking
+   context, so the word and "behind" images (z 1), the fixed can stage (z 2)
+   and the copy, buttons and "in front" images (z 3) layer together. */
+@layer sections {
+  hero-slideshow {
+    --hero-h: max(var(--hero-height, 100svh), 36rem);
+    --wave-h: 11.11vw;
+    --ease-power1: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: block;
+    position: relative;
+    height: var(--hero-h);
+    background-color: var(--hero-below, transparent);
+    color: #fff;
+    overflow-x: clip;
+  }
+
+  /* ---------- Backdrop: gradients, grid, wavy edge ---------- */
+  .hero-slideshow__backdrop {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .hero-slideshow__backdrop--wave {
+    --wave: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%20740%201440%20160'%20preserveAspectRatio='none'%3E%3Cpath%20d='M1440%200H0V753.718C0%20829.641%2073.7639%20883.691%20146.158%20860.816C168.183%20853.856%20191.817%20853.856%20213.842%20860.816L299.739%20887.958C338.957%20900.351%20381.043%20900.351%20420.261%20887.958L479.739%20869.164C518.957%20856.771%20561.043%20856.771%20600.261%20869.164L659.739%20887.958C698.957%20900.351%20741.043%20900.351%20780.261%20887.958L839.739%20869.164C878.957%20856.771%20921.043%20856.771%20960.261%20869.164L1019.74%20887.958C1058.96%20900.351%201101.04%20900.351%201140.26%20887.958L1226.16%20860.816C1248.18%20853.856%201271.82%20853.856%201293.84%20860.816C1366.24%20883.691%201440%20829.641%201440%20753.718V0Z'/%3E%3C/svg%3E");
+    -webkit-mask:
+      linear-gradient(#000 0 0) top / 100% calc(100% - var(--wave-h) + 1px) no-repeat,
+      var(--wave) bottom / 100% var(--wave-h) no-repeat;
+    mask:
+      linear-gradient(#000 0 0) top / 100% calc(100% - var(--wave-h) + 1px) no-repeat,
+      var(--wave) bottom / 100% var(--wave-h) no-repeat;
+  }
+
+  .hero-slideshow__gradient {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1s var(--ease-in-out);
+  }
+
+  .hero-slideshow__gradient[data-active] {
+    opacity: 1;
+  }
+
+  .hero-slideshow__grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.4;
+    background-repeat: repeat;
+    background-size: 27.15vw 32.43vw;
+  }
+
+  /* ---------- Can stage (fixed; assets/hero-slideshow.js moves it) ---------- */
+  .hero-slideshow__stage {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 2;
+    height: 100lvh;
+    pointer-events: none;
+    transform: translate3d(0, var(--stage-y, 0px), 0);
+  }
+
+  .hero-slideshow__can {
+    --can-size: calc(var(--hero-h) * var(--hero-can, 68) / 100);
+    position: absolute;
+    left: 50%;
+    top: calc(var(--hero-h) * 0.518);
+    width: var(--can-size);
+    aspect-ratio: 1;
+    margin: calc(var(--can-size) / -2) 0 0 calc(var(--can-size) / -2);
+    transform: translate3d(var(--can-x, 0px), 0, 0) scale(var(--can-scale, 1));
+  }
+
+  /* An idle bob and tilt, like a can floating in water. */
+  .hero-slideshow__float {
+    width: 100%;
+    height: 100%;
+    animation: hero-can-float 3.2s ease-in-out infinite alternate;
+  }
+
+  .hero-slideshow__model {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.6s var(--ease-out),
+      visibility 0s linear 0.6s;
+  }
+
+  .hero-slideshow__model[data-active] {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+
+  .hero-slideshow__model model-viewer {
+    --poster-color: transparent;
+    --progress-bar-height: 0px;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+  }
+
+  .hero-slideshow__can-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    rotate: var(--can-turn, 0deg);
+  }
+
+  .hero-slideshow__model[data-spin] .hero-slideshow__can-image {
+    animation: hero-can-flip 1s var(--ease-in-out);
+  }
+
+  /* ---------- Slides ---------- */
+  .hero-slideshow__slides {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hero-slide {
+    position: absolute;
+    inset: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .hero-slide:is([data-active], [data-leaving]) {
+    visibility: visible;
+  }
+
+  .hero-slide[data-active] {
+    pointer-events: auto;
+  }
+
+  /* The word behind the can: drifts down and fades as the page scrolls. */
+  .hero-slide__word {
+    position: absolute;
+    inset-inline: 0;
+    top: 36.9%;
+    z-index: 1;
+    margin: 0;
+    color: var(--word-color, #fff);
+    font-family: var(--font-heading--family);
+    font-style: var(--font-heading--style);
+    font-weight: var(--font-heading--weight-bold);
+    font-size: calc(min(27.3vw, var(--hero-h) * 0.423) * var(--hero-word-scale, 1));
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-align: center;
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    translate: 0 -50%;
+    transform: translate3d(0, calc(var(--hero-scroll, 0) * 22vh), 0);
+    opacity: calc(1 - var(--hero-scroll, 0) * 1.4);
+  }
+
+  .hero-slide__letter {
+    display: inline-block;
+  }
+
+  .hero-slide[data-active] .hero-slide__letter {
+    animation: hero-letter-in 1.25s var(--ease-power1) calc(var(--enter-delay, 0s) + 0.15s + var(--i) * 35ms) both;
+  }
+
+  .hero-slide[data-leaving] .hero-slide__letter {
+    animation: hero-letter-out 0.5s ease-in calc(var(--i) * 25ms) both;
+  }
+
+  /* Floating images: placed by the block, drifting with the pointer
+     (translate, eased) and the scroll (transform), bobbing on their own. */
+  .hero-slide__floaters {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .hero-floater {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    z-index: 3;
+    width: calc(var(--w) * 1%);
+  }
+
+  .hero-floater--back {
+    z-index: 1;
+  }
+
+  .hero-floater__drift {
+    translate: calc(var(--mx, 0) * var(--depth) * 2.5rem) calc(var(--my, 0) * var(--depth) * 1.5rem);
+    transform: translate3d(0, calc(var(--hero-scroll, 0) * var(--depth) * -45vh), 0);
+    transition: translate 0.8s var(--ease-out);
+  }
+
+  .hero-floater__motion {
+    rotate: var(--r);
+    animation: hero-float var(--speed) ease-in-out calc(var(--delay) * -1.3s) infinite alternate;
+  }
+
+  .hero-floater--sway .hero-floater__motion {
+    animation-name: hero-sway;
+  }
+
+  .hero-floater--spin .hero-floater__motion {
+    animation: hero-spin calc(var(--speed) * 3) linear infinite;
+  }
+
+  .hero-floater--still .hero-floater__motion {
+    animation: none;
+  }
+
+  .hero-floater img {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 0.75rem 1rem rgb(0 0 0 / 0.25));
+  }
+
+  .hero-slide[data-active] .hero-floater img {
+    animation: hero-pop-in 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--enter-delay, 0s) + 0.35s + var(--delay) * 0.09s) both;
+  }
+
+  .hero-slide[data-leaving] .hero-floater img {
+    animation: hero-pop-out 0.45s ease-in calc(var(--delay) * 0.04s) both;
+  }
+
+  /* Copy and button, bottom left. */
+  .hero-slide__copy {
+    position: absolute;
+    left: 6.8%;
+    top: 58.4%;
+    z-index: 3;
+    display: grid;
+    justify-items: start;
+    width: min(20rem, 21%);
+    color: var(--copy-color, #fff);
+  }
+
+  .hero-slide__heading {
+    margin: 0 0 0.75em;
+    color: inherit;
+    font-family: var(--font-heading--family);
+    font-style: var(--font-heading--style);
+    font-weight: var(--font-heading--weight);
+    font-size: clamp(1.125rem, 1.53vw, 1.75rem);
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+  }
+
+  .hero-slide__text {
+    font-size: clamp(0.9375rem, 1.11vw, 1.125rem);
+    line-height: 1.2;
+  }
+
+  .hero-slide__text > * {
+    margin: 0;
+  }
+
+  .hero-slide__button {
+    margin-block-start: 1.1rem;
+  }
+
+  .hero-slide[data-active] .hero-slide__copy > * {
+    animation: hero-rise 1.25s var(--ease-power1) calc(var(--enter-delay, 0s) + 0.45s) both;
+  }
+
+  .hero-slide[data-active] .hero-slide__copy > :nth-child(2) {
+    animation-delay: calc(var(--enter-delay, 0s) + 0.55s);
+  }
+
+  .hero-slide[data-active] .hero-slide__copy > :nth-child(3) {
+    animation-delay: calc(var(--enter-delay, 0s) + 0.65s);
+  }
+
+  .hero-slide[data-leaving] .hero-slide__copy > * {
+    animation: fade-out 0.35s ease-in both;
+  }
+
+  /* ---------- Previous / next ---------- */
+  .hero-slideshow__nav {
+    position: absolute;
+    left: 87.2%;
+    top: 66.9%;
+    z-index: 3;
+    display: flex;
+    gap: 0.625rem;
+  }
+
+  .hero-slideshow__arrow {
+    display: grid;
+    place-items: center;
+    width: clamp(2.75rem, 3.27vw, 3.25rem);
+    aspect-ratio: 1;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 0.75rem;
+    background:
+      linear-gradient(#fff, #fff) padding-box,
+      linear-gradient(#fac67a, #fe8a80) border-box;
+    color: #010507;
+    cursor: pointer;
+    transition:
+      translate var(--duration-fast) var(--ease-out),
+      box-shadow var(--duration-base) var(--ease-out);
+  }
+
+  .hero-slideshow__arrow--next {
+    border-color: #010507;
+    background: linear-gradient(#fac67a, #fe8a80);
+  }
+
+  .hero-slideshow__arrow:hover {
+    translate: 0 -2px;
+    box-shadow: 2px 2px 0 #010507;
+  }
+
+  .hero-slideshow__arrow .icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    stroke-width: 2;
+  }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 749px) {
+    .hero-slideshow__can {
+      --can-size: min(calc(var(--hero-h) * var(--hero-can, 68) / 100 * 0.78), 92vw);
+      top: calc(var(--hero-h) * 0.46);
+    }
+
+    .hero-slide__word {
+      top: 27%;
+      font-size: calc(min(30vw, var(--hero-h) * 0.3) * var(--hero-word-scale, 1));
+    }
+
+    .hero-floater {
+      width: calc(var(--w) * 1.7%);
+    }
+
+    .hero-floater--desktop {
+      display: none;
+    }
+
+    .hero-slide__copy {
+      left: 1.25rem;
+      right: calc(1.25rem + 6.5rem);
+      top: auto;
+      bottom: calc(var(--wave-h) + 1.75rem);
+      width: auto;
+    }
+
+    .hero-slideshow__nav {
+      left: auto;
+      right: 1.25rem;
+      top: auto;
+      bottom: calc(var(--wave-h) + 1.85rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-slideshow__float,
+    .hero-floater__motion,
+    .hero-slide .hero-slide__letter,
+    .hero-slide .hero-floater img,
+    .hero-slide .hero-slide__copy > *,
+    .hero-slideshow__model[data-spin] .hero-slideshow__can-image {
+      animation: none;
+    }
+
+    .hero-floater__drift {
+      transition: none;
+    }
+  }
+}
+
+@keyframes hero-letter-in {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(50%);
+  }
+}
+
+@keyframes hero-letter-out {
+  to {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(-40%);
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    filter: blur(3px);
+    transform: translateY(2.5vh);
+  }
+}
+
+@keyframes hero-pop-in {
+  from {
+    opacity: 0;
+    filter: blur(6px) drop-shadow(0 0.75rem 1rem rgb(0 0 0 / 0.25));
+    scale: 0.3;
+  }
+}
+
+@keyframes hero-pop-out {
+  to {
+    opacity: 0;
+    filter: blur(6px) drop-shadow(0 0.75rem 1rem rgb(0 0 0 / 0.25));
+    scale: 0.5;
+  }
+}
+
+@keyframes hero-float {
+  from {
+    transform: translateY(-8%) rotate(-5deg);
+  }
+  to {
+    transform: translateY(8%) rotate(5deg);
+  }
+}
+
+@keyframes hero-sway {
+  from {
+    transform: translateX(-7%) rotate(-9deg);
+  }
+  to {
+    transform: translateX(7%) rotate(9deg);
+  }
+}
+
+@keyframes hero-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hero-can-float {
+  from {
+    transform: translateY(-1.6%) rotate(-1.5deg);
+  }
+  to {
+    transform: translateY(1.6%) rotate(1.5deg);
+  }
+}
+
+@keyframes hero-can-flip {
+  to {
+    transform: rotateY(360deg);
+  }
+}

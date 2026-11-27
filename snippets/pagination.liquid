@@ -16,8 +16,6 @@
   {% render 'pagination', paginate: paginate, type: 'load_more' %}
 {% enddoc %}
 
-{{ 'component-pagination.css' | asset_url | stylesheet_tag }}
-
 {%- assign type = type | default: 'numbered' -%}
 
 {%- if paginate.pages > 1 -%}
@@ -96,3 +94,150 @@
     </pagination-component>
   {%- endif -%}
 {%- endif -%}
+
+{% stylesheet %}
+@layer components {
+  .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2xs);
+    margin-block-start: var(--space-xl);
+    padding: 0;
+    list-style: none;
+  }
+
+  .pagination a,
+  .pagination span {
+    display: grid;
+    place-items: center;
+    min-width: 2.75rem;
+    height: 2.75rem;
+    padding-inline: var(--space-2xs);
+    border-radius: var(--radius-input);
+    text-decoration: none;
+  }
+
+  .pagination [aria-current='page'] {
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+  }
+
+  .pagination-component {
+    display: block;
+  }
+
+
+  /* Load more / infinite scroll */
+  .load-more {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-sm);
+    margin-block-start: var(--space-xl);
+    text-align: center;
+  }
+
+  .load-more__status {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--color-subtext, var(--color-foreground));
+  }
+
+  .load-more__progress {
+    width: min(14rem, 100%);
+    height: 3px;
+    border-radius: 999px;
+    background-color: color-mix(in srgb, var(--color-foreground) 12%, transparent);
+    overflow: hidden;
+  }
+
+  .load-more__progress > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background-image: var(--gradient-accent);
+    background-color: var(--color-accent);
+    transition: width var(--duration-slow) var(--ease-out);
+  }
+
+  .load-more__spinner {
+    display: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 2px solid color-mix(in srgb, var(--color-foreground) 18%, transparent);
+    border-block-start-color: var(--color-foreground);
+    border-radius: 50%;
+    animation: load-more-spin 0.8s linear infinite;
+  }
+
+  .load-more[aria-busy='true'] .load-more__spinner {
+    display: block;
+  }
+
+  .load-more[aria-busy='true'] .load-more__button {
+    display: none;
+  }
+
+  /* Infinite scroll loads on its own; the link stays only as a no-JS fallback. */
+  .load-more[data-type='infinite'][data-ready] .load-more__button {
+    display: none;
+  }
+
+  /* Infinite scroll: status + progress float at the bottom of the screen while
+     the grid scrolls, so progress stays visible. Back in place on the last page. */
+  .load-more[data-type='infinite'][data-ready]:not([data-next-url='']) {
+    position: sticky;
+    inset-block-end: var(--space-md);
+    z-index: 5;
+    grid-template-columns: auto auto;
+    align-items: center;
+    column-gap: var(--space-sm);
+    row-gap: var(--space-2xs);
+    width: fit-content;
+    margin-inline: auto;
+    padding: var(--space-xs) var(--space-md);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background-color: var(--color-card, var(--color-background));
+    color: var(--color-foreground);
+    box-shadow: 0 12px 32px -16px var(--color-shadow);
+  }
+
+  .load-more[data-type='infinite'][data-ready]:not([data-next-url='']) .load-more__status {
+    grid-column: 1;
+  }
+
+  .load-more[data-type='infinite'][data-ready]:not([data-next-url='']) .load-more__progress {
+    grid-column: 1;
+    width: 100%;
+    min-width: 10rem;
+  }
+
+  .load-more[data-type='infinite'][data-ready]:not([data-next-url='']) .load-more__spinner {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  /* Keep the pill the same size while loading (spinner swaps visibility only). */
+  .load-more[data-type='infinite'][data-ready]:not([data-next-url='']) .load-more__spinner {
+    display: block;
+    visibility: hidden;
+  }
+
+  .load-more[data-type='infinite'][data-ready][aria-busy='true'] .load-more__spinner {
+    visibility: visible;
+  }
+
+  @keyframes load-more-spin {
+    to { rotate: 360deg; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .load-more__spinner {
+      animation-duration: 2.4s;
+    }
+  }
+}
+{% endstylesheet %}

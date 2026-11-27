@@ -4,12 +4,14 @@
   CSS is split the way Horizon does it:
   - base.css            reset, tokens, layout, core components (button,
                         media, price, dialog, animations), utilities
-  - component-*.css     shared components. The ones used across pages load
-                        here; the rest are loaded by the snippet or section
-                        that renders them (cart, facets, pagination, search,
-                        scroll to top).
+  - component-*.css     components spread over several files: carousel
+                        (here), cart, facets and search (loaded by their
+                        sections).
   - section-*.css       one file per section, loaded by the section itself.
-  - {% stylesheet %}    public blocks keep their own CSS inside the block file.
+  - {% stylesheet %}    public blocks and component snippets keep their own
+                        CSS inside the file (accordion, icon-text, product-card,
+                        swatch, variant-picker, quantity-input, pagination, ...).
+                        Shopify bundles these into one file on every page.
   - rtl.css             right-to-left languages only.
 
   The layer order is declared inline at the top of <head> in each layout:
@@ -25,14 +27,8 @@
 {%- capture direction -%}{% render 'text-direction' %}{%- endcapture -%}
 
 {{ 'base.css' | asset_url | stylesheet_tag }}
-{{ 'component-accordion.css' | asset_url | stylesheet_tag }}
 {%- unless context == 'minimal' %}
-  {{ 'component-product-card.css' | asset_url | stylesheet_tag }}
   {{ 'component-carousel.css' | asset_url | stylesheet_tag }}
-  {{ 'component-swatch.css' | asset_url | stylesheet_tag }}
-  {{ 'component-custom-select.css' | asset_url | stylesheet_tag }}
-  {{ 'component-quantity.css' | asset_url | stylesheet_tag }}
-  {{ 'component-collection-card.css' | asset_url | stylesheet_tag }}
 {%- endunless %}
 {%- if direction == 'rtl' %}
   {{ 'rtl.css' | asset_url | stylesheet_tag }}

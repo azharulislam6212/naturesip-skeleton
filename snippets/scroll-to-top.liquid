@@ -10,7 +10,6 @@
 {% enddoc %}
 
 {%- if settings.scroll_to_top -%}
-  {{ 'component-scroll-top.css' | asset_url | stylesheet_tag }}
   <scroll-to-top class="scroll-top">
     <button class="scroll-top__button" type="button" ref="button" tabindex="-1">
       {%- render 'icon', name: 'arrow-up', class: 'scroll-top__icon' -%}
@@ -18,3 +17,120 @@
     </button>
   </scroll-to-top>
 {%- endif -%}
+
+{% stylesheet %}
+@layer components {
+  /* ---------- Scroll to top ----------
+     Bottom inline-end corner (snippets/scroll-to-top.liquid). Drawn like the
+     icon-text "sketch" frame: a light rounded square with a stroke (::after)
+     on a tilted gradient shape (::before). The shape turns as the page
+     scrolls (--scroll-progress, 0–1, set by assets/scroll-to-top.js). */
+  .scroll-top {
+    position: fixed;
+    inset-inline-end: calc(var(--space-md) + 0.4rem);
+    inset-block-end: max(calc(var(--space-md) + 0.4rem), calc(env(safe-area-inset-bottom) + var(--space-sm)));
+    z-index: 30;
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 1.25rem;
+    scale: 0.6;
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      translate var(--duration-slow) var(--ease-out),
+      scale var(--duration-slow) var(--ease-out),
+      visibility 0s linear var(--duration-slow);
+  }
+
+  .scroll-top[data-visible] {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+    scale: 1;
+    transition-delay: 0s;
+  }
+
+  .scroll-top__button {
+    --tilt: calc(-7deg + var(--scroll-progress, 0) * 15deg);
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    padding: 0;
+    border: 0;
+    border-radius: 34%;
+    background: none;
+    color: var(--color-accent);
+    cursor: pointer;
+    transition:
+      translate var(--duration-base) var(--ease-out),
+      scale var(--duration-base) var(--ease-out);
+  }
+
+  .scroll-top__button::before,
+  .scroll-top__button::after {
+    content: "";
+    position: absolute;
+    border-radius: inherit;
+  }
+
+  /* Tilted gradient shape behind. */
+  .scroll-top__button::before {
+    inset: -0.3rem;
+    z-index: -2;
+    border: 1.5px solid var(--color-heading-stroke);
+    background-image: var(--gradient-heading);
+    rotate: var(--tilt);
+    transition: rotate var(--duration-slow) var(--ease-out);
+  }
+
+  /* Light face with the stroke. */
+  .scroll-top__button::after {
+    inset: 0;
+    z-index: -1;
+    border: 2px solid var(--color-heading-stroke);
+    background-color: var(--color-background);
+  }
+
+  .scroll-top__icon {
+    --icon-size: 1.125rem;
+    stroke-width: 2.25;
+    transition: translate var(--duration-base) var(--ease-out);
+  }
+
+  /* While the page moves, the button lifts slightly. */
+  .scroll-top[data-scrolling] .scroll-top__button {
+    scale: 1.05;
+  }
+
+  .scroll-top__button:focus-visible {
+    outline: 2px solid var(--color-foreground);
+    outline-offset: 8px;
+  }
+
+  @media (hover: hover) {
+    .scroll-top__button:hover {
+      translate: 0 -4px;
+    }
+
+    .scroll-top__button:hover::before {
+      rotate: calc(var(--tilt) - 8deg);
+    }
+
+    .scroll-top__button:hover .scroll-top__icon {
+      animation: scroll-top-nudge 0.9s var(--ease-in-out) infinite;
+    }
+  }
+
+  .scroll-top__button:active {
+    scale: 0.94;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-top__button:hover .scroll-top__icon {
+      animation: none;
+    }
+  }
+}
+{% endstylesheet %}

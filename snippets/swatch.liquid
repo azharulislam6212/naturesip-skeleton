@@ -68,3 +68,84 @@
   {% endif %}
   aria-hidden="true"
 ></span>
+
+{% stylesheet %}
+@layer components {
+  /* Swatch (snippets/swatch.liquid). The fill sits on its own layer: a
+     value that isn't a colour leaves it empty and the neutral base shows. */
+  .swatch {
+    --swatch-ring: var(--color-foreground);
+    position: relative;
+    display: inline-block;
+    width: var(--swatch-size);
+    height: var(--swatch-size);
+    border-radius: var(--swatch-radius);
+    background-color: color-mix(in srgb, var(--color-foreground) 12%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-foreground) 18%, transparent);
+  }
+
+  .swatch::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--swatch-background);
+    background-position: center;
+    background-size: cover;
+    box-shadow: inherit;
+  }
+
+  /* Value name on hover (Theme settings > Swatches). */
+  .swatch[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    inset-block-end: calc(100% + 0.5rem);
+    inset-inline-start: 50%;
+    z-index: 3;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+    font-size: 0.75rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    opacity: 0;
+    translate: -50% 0.25rem;
+    pointer-events: none;
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      translate var(--duration-fast) var(--ease-out);
+  }
+
+  :is(a, label, .option__pill):is(:hover, :focus-visible) > .swatch[data-tooltip]::after,
+  .swatch[data-tooltip]:hover::after {
+    opacity: 1;
+    translate: -50% 0;
+  }
+
+  /* Unavailable: a diagonal strike. */
+  .swatch--unavailable {
+    background-image: linear-gradient(
+      -45deg,
+      transparent calc(50% - 0.75px),
+      var(--color-foreground) calc(50% - 0.75px),
+      var(--color-foreground) calc(50% + 0.75px),
+      transparent calc(50% + 0.75px)
+    );
+  }
+
+  .swatch--unavailable::before {
+    background:
+      linear-gradient(
+        -45deg,
+        transparent calc(50% - 0.75px),
+        var(--color-foreground) calc(50% - 0.75px),
+        var(--color-foreground) calc(50% + 0.75px),
+        transparent calc(50% + 0.75px)
+      ),
+      var(--swatch-background);
+    background-size: 100% 100%, cover;
+    opacity: 0.6;
+  }
+}
+{% endstylesheet %}

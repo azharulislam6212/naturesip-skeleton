@@ -129,3 +129,88 @@
     </script>
   </variant-picker>
 {%- endunless -%}
+
+{% stylesheet %}
+@layer components {
+  .option-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    padding: 0;
+    border: 0;
+  }
+
+  .option-list legend {
+    width: 100%;
+    margin-block-end: var(--space-2xs);
+    font-size: 0.875rem;
+    font-weight: var(--font-body--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .option-list__value {
+    font-weight: var(--font-body--weight);
+    text-transform: none;
+    color: var(--color-subtext);
+  }
+
+  .option {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .option input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .option__pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2xs);
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: var(--space-2xs) var(--space-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-input);
+    background-color: var(--color-input-background);
+    color: var(--color-input-text);
+    font-size: 0.875rem;
+    transition: border-color var(--duration-fast), box-shadow var(--duration-fast);
+  }
+
+  .option__pill--swatch {
+    min-width: 0;
+    min-height: 0;
+    padding: 0.1875rem;
+    border-radius: var(--swatch-radius);
+  }
+
+  .option input:checked + .option__pill {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent);
+  }
+
+  .option input:focus-visible + .option__pill {
+    outline: 2px solid var(--color-foreground);
+    outline-offset: 2px;
+  }
+
+  .option input:disabled + .option__pill,
+  .option input[data-unavailable] + .option__pill {
+    color: var(--color-subtext);
+    text-decoration: line-through;
+  }
+
+  .option__image {
+    width: 2.5rem;
+    height: 2.5rem;
+    object-fit: cover;
+    border-radius: calc(var(--radius-input) - 2px);
+  }
+}
+{% endstylesheet %}

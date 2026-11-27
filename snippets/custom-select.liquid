@@ -99,3 +99,206 @@
     {%- endif -%}
   </div>
 </custom-select>
+
+{% stylesheet %}
+@layer components {
+  /* ---------- Custom select ----------
+     <custom-select> (snippets/custom-select.liquid): the native select stays
+     for the form and for no-JS; with JS the button and animated panel show. */
+  .custom-select {
+    position: relative;
+    display: block;
+    width: 100%;
+  }
+
+  /* Inline localization (header): selectors side by side, labels for screen readers. */
+  .localization--inline form {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+
+  .localization--inline :is(.field, .custom-select) {
+    width: auto;
+  }
+
+  .js .custom-select__native,
+  .no-js .custom-select__button,
+  .no-js .custom-select__panel {
+    display: none;
+  }
+
+  .custom-select__button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2xs);
+    padding-inline-end: var(--space-sm);
+    background-image: none;
+    text-align: start;
+    cursor: pointer;
+  }
+
+  .custom-select__value {
+    overflow: hidden;
+    min-width: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .custom-select__icon {
+    --icon-size: 1rem;
+    transition: rotate var(--duration-base) var(--ease-out);
+  }
+
+  custom-select[data-open] .custom-select__icon {
+    rotate: 180deg;
+  }
+
+  /* Animated container: optional search field + the option list. */
+  .custom-select__panel {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: calc(100% + 0.375rem);
+    z-index: 20;
+    display: grid;
+    min-width: max-content;
+    padding: var(--space-3xs);
+    border: 1px solid var(--color-input-border);
+    border-radius: var(--radius-input);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    box-shadow: 0 18px 40px -20px rgb(0 0 0 / 0.35);
+    transform-origin: top center;
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 -0.5rem;
+    scale: 0.98;
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      translate var(--duration-base) var(--ease-out),
+      scale var(--duration-base) var(--ease-out),
+      visibility 0s linear var(--duration-base);
+  }
+
+  custom-select[data-upward] .custom-select__panel {
+    inset-block: auto calc(100% + 0.375rem);
+    transform-origin: bottom center;
+    translate: 0 0.5rem;
+  }
+
+  custom-select[data-open] .custom-select__panel {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+    scale: 1;
+    transition-delay: 0s;
+  }
+
+  .custom-select__list {
+    display: grid;
+    gap: 2px;
+    max-height: 18rem;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    list-style: none;
+  }
+
+  .custom-select__list:focus {
+    outline: none;
+  }
+
+  /* Search field for long lists (countries). */
+  .custom-select--searchable .custom-select__panel {
+    min-width: min(18rem, 100%);
+  }
+
+  .custom-select__search {
+    position: relative;
+    margin-block-end: var(--space-3xs);
+  }
+
+  .custom-select__search-icon {
+    --icon-size: 1rem;
+    position: absolute;
+    inset-inline-start: var(--space-xs);
+    top: 50%;
+    translate: 0 -50%;
+    color: var(--color-subtext);
+    pointer-events: none;
+  }
+
+  .custom-select__search-input {
+    width: 100%;
+    min-height: 2.5rem;
+    padding-block: var(--space-2xs);
+    padding-inline: calc(var(--space-xs) + 1.5rem) var(--space-xs);
+    border: 1px solid var(--color-input-border);
+    border-radius: max(0px, calc(var(--radius-input) - 4px));
+    background-color: var(--color-input-background);
+    color: var(--color-input-text);
+    font: inherit;
+  }
+
+  .custom-select__search-input:focus-visible {
+    outline: 2px solid var(--color-foreground);
+    outline-offset: 1px;
+  }
+
+  .custom-select__option[hidden] {
+    display: none;
+  }
+
+  .custom-select__empty {
+    margin: 0;
+    padding: var(--space-xs) var(--space-sm);
+    color: var(--color-subtext);
+  }
+
+  .custom-select__option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding: var(--space-2xs) var(--space-sm);
+    padding-inline-end: 2.25rem;
+    border-radius: max(0px, calc(var(--radius-input) - 4px));
+    cursor: pointer;
+    transition: background-color var(--duration-fast);
+  }
+
+  .custom-select__option[data-active] {
+    background-color: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+  }
+
+  .custom-select__list:focus-visible .custom-select__option[data-active] {
+    outline: 2px solid var(--color-foreground);
+    outline-offset: -2px;
+  }
+
+  .custom-select__option[aria-selected="true"] {
+    font-weight: var(--font-body--weight-bold);
+  }
+
+  /* Check mark on the selected option. */
+  .custom-select__option[aria-selected="true"]::after {
+    content: "";
+    position: absolute;
+    inset-inline-end: var(--space-sm);
+    top: 50%;
+    width: 0.35rem;
+    height: 0.65rem;
+    border-block-end: 2px solid currentColor;
+    border-inline-end: 2px solid currentColor;
+    translate: 0 -60%;
+    rotate: 45deg;
+  }
+
+  .custom-select__option[aria-disabled="true"] {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+{% endstylesheet %}

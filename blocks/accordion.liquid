@@ -17,6 +17,66 @@
   {% content_for 'blocks' %}
 </div>
 
+{% stylesheet %}
+/* Global: Shopify bundles this into every page, so <details class="accordion">
+   in filters, cart, product and password pages uses it too. */
+@layer components {
+  .accordion {
+    border-block-end: 1px solid var(--color-border);
+  }
+
+  .accordion__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    min-height: 3rem;
+    padding-block: var(--space-sm);
+    cursor: pointer;
+    list-style: none;
+    font-weight: var(--font-body--weight-bold);
+  }
+
+  .accordion__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .accordion__icon {
+    transition: rotate var(--duration-base) var(--ease-out);
+  }
+
+  .accordion[open] .accordion__icon {
+    rotate: 45deg;
+  }
+
+  .accordion::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size var(--duration-base) var(--ease-out), content-visibility var(--duration-base) allow-discrete;
+  }
+
+  .accordion[open]::details-content {
+    block-size: auto;
+  }
+
+  .accordion__content {
+    padding-block-end: var(--space-md);
+  }
+
+
+  /* Accordion: overflow: clip animates the height; room on the sides and
+     top keeps checkbox, swatch and slider focus rings whole. */
+  .accordion::details-content {
+    margin-inline: -0.5rem;
+    padding-inline: 0.5rem;
+  }
+
+  .accordion__content {
+    padding-block-start: 0.375rem;
+  }
+}
+{% endstylesheet %}
+
 {% schema %}
 {
   "name": "t:blocks.accordion.name",

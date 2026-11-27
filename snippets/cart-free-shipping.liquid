@@ -3,11 +3,19 @@
   more to spend, or that free shipping is unlocked. The threshold is in the
   store's currency; carts in another currency compare in their own amounts.
 
+  @param {boolean} [always] - Show even when the bar is off in theme settings (cart page block). The threshold still applies.
+
   @example
   {% render 'cart-free-shipping' %}
 {% enddoc %}
 
-{%- if settings.cart_free_shipping and settings.cart_free_shipping_threshold > 0 -%}
+{%- liquid
+  assign show_bar = settings.cart_free_shipping
+  if always
+    assign show_bar = true
+  endif
+-%}
+{%- if show_bar and settings.cart_free_shipping_threshold > 0 -%}
   {%- liquid
     assign threshold = settings.cart_free_shipping_threshold | times: 100
     assign remaining = threshold | minus: cart.total_price

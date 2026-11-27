@@ -1,0 +1,43 @@
+{% doc %}
+  Cart-level discounts, the subtotal and the tax and shipping note.
+
+  @param {boolean} [show_tax_note] - Show the tax and shipping note. Default: true.
+
+  @example
+  {% render 'cart-totals' %}
+{% enddoc %}
+
+{%- if cart.cart_level_discount_applications.size > 0 -%}
+  <ul class="cart-summary__discounts" role="list">
+    {%- for discount in cart.cart_level_discount_applications -%}
+      <li>
+        {%- render 'icon', name: 'gift' -%}
+        {{ discount.title | escape }}
+        <span>−{{ discount.total_allocated_amount | money }}</span>
+      </li>
+    {%- endfor -%}
+  </ul>
+{%- endif -%}
+
+<div class="cart-summary__total">
+  <span>{{ 'cart.subtotal' | t }}</span>
+  <span class="cart-summary__amount">
+    {%- if settings.currency_code_enabled -%}
+      {{ cart.total_price | money_with_currency }}
+    {%- else -%}
+      {{ cart.total_price | money }}
+    {%- endif -%}
+  </span>
+</div>
+
+{%- unless show_tax_note == false -%}
+  <p class="cart-summary__tax">
+    {%- if cart.duties_included and cart.taxes_included -%}
+      {{ 'cart.duties_and_taxes_included_shipping_at_checkout_html' | t: link: shop.shipping_policy.url }}
+    {%- elsif cart.taxes_included -%}
+      {{ 'cart.taxes_included_shipping_at_checkout_html' | t: link: shop.shipping_policy.url }}
+    {%- else -%}
+      {{ 'cart.taxes_and_shipping_at_checkout_html' | t: link: shop.shipping_policy.url }}
+    {%- endif -%}
+  </p>
+{%- endunless -%}

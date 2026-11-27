@@ -5,12 +5,13 @@
   country (<address-form>).
 
   @param {string} context - 'page' or 'drawer', for unique ids.
+  @param {boolean} [always] - Show even when the theme setting is off (cart page block).
 
   @example
   {% render 'cart-shipping-estimator', context: 'drawer' %}
 {% enddoc %}
 
-{%- if settings.cart_shipping_estimator -%}
+{%- if always or settings.cart_shipping_estimator -%}
   {%- assign default_country = localization.country.name | default: shop.address.country -%}
   <details class="accordion cart-estimator">
     <summary class="accordion__summary">

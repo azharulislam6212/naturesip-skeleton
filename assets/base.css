@@ -4799,37 +4799,98 @@
     font-size: 0.875em;
   }
 
-  /* Cart page */
+  /* Cart page: sections/main-cart with the static _cart-items and
+     _cart-summary blocks. */
   .cart-page {
     display: grid;
-    gap: var(--space-xl);
+    gap: var(--cart-gap-mobile, var(--space-xl));
+  }
+
+  .cart-page > * {
+    min-width: 0;
   }
 
   @media (min-width: 990px) {
-    .cart-page:has(.cart-page__summary) {
-      grid-template-columns: minmax(0, 1fr) 24rem;
+    .cart-page:not(.cart-page--empty) {
+      grid-template-columns: minmax(0, 1fr) var(--cart-summary-width, 26rem);
       align-items: start;
+      gap: var(--cart-gap, 4rem);
     }
 
-    .cart-page__title {
-      grid-column: 1 / -1;
-    }
-
-    .cart-page__summary {
+    .cart-summary-panel--sticky {
       position: sticky;
-      top: calc(var(--header-height) + var(--space-md));
+      top: calc(var(--header-height, 0px) + var(--space-md));
     }
   }
 
-  .cart-page__summary {
-    padding: var(--space-lg);
+  .cart-page__blocks {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-block-start: var(--space-xl);
+  }
+
+  .cart-main {
+    display: grid;
+    align-content: start;
+    gap: var(--space-md);
+  }
+
+  .cart-main__title {
+    margin: 0;
+  }
+
+  .cart-main__count {
+    color: var(--color-subtext);
+    font-size: 0.5em;
+    vertical-align: middle;
+  }
+
+  .cart-main .cart-item {
+    grid-template-columns: var(--cart-image-size, 7rem) minmax(0, 1fr);
+    gap: var(--space-md);
+  }
+
+  .cart-main:not(.cart-main--dividers) .cart-item {
+    border-block-end: 0;
+  }
+
+  .cart-main--dividers .cart-items__list {
+    border-block-start: 1px solid var(--color-border);
+  }
+
+  @media (max-width: 749px) {
+    .cart-main .cart-item {
+      grid-template-columns: min(var(--cart-image-size, 7rem), 5.5rem) minmax(0, 1fr);
+      gap: var(--space-sm);
+    }
+  }
+
+  .cart-summary-panel .cart-summary {
+    gap: var(--summary-gap, var(--space-sm));
+  }
+
+  .cart-summary-panel--card {
     border: 1px solid var(--color-border);
     border-radius: var(--radius-card);
     background-color: var(--color-card);
   }
 
-  .cart-page .cart-item {
-    grid-template-columns: 7rem minmax(0, 1fr);
+  .cart-summary-panel :is(h2, h3, h4, p):first-child {
+    margin-block-start: 0;
+  }
+
+  .cart-checkout {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .cart-checkout__payment {
+    justify-content: center;
+  }
+
+  .cart-checkout__payment .payment-icons__icon {
+    width: 2.25rem;
   }
 }
 

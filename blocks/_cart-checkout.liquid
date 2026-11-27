@@ -1,0 +1,188 @@
+{% doc %}
+  Cart totals and checkout: discounts, subtotal, tax and shipping note, the
+  checkout button, accelerated checkout buttons and payment icons. Static,
+  so the cart can always be checked out.
+
+  Static block of the `_cart-summary` block.
+
+  @example
+  {% content_for 'block', type: '_cart-checkout', id: 'checkout' %}
+{% enddoc %}
+
+{%- assign s = block.settings -%}
+
+<div class="cart-checkout spacing-style" style="{%- render 'spacing-style', settings: s -%}" {{ block.shopify_attributes }}>
+  {% render 'cart-totals', show_tax_note: s.show_tax_note %}
+  {% render 'cart-checkout', context: 'page', icon: s.button_icon, show_dynamic_checkout: s.show_dynamic_checkout %}
+
+  {%- if s.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+    <ul class="payment-icons__list cart-checkout__payment" role="list" aria-label="{{ 'footer.payment_methods' | t }}">
+      {%- for type in shop.enabled_payment_types -%}
+        <li class="payment-icons__item">{{ type | payment_type_svg_tag: class: 'payment-icons__icon' }}</li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.cart_checkout.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_tax_note",
+      "label": "t:settings.show_tax_note",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "t:settings.show_dynamic_checkout",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "button_icon",
+      "label": "t:settings.icon",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.icon.none"
+        },
+        {
+          "value": "lock",
+          "label": "t:options.icon.lock"
+        },
+        {
+          "value": "arrow",
+          "label": "t:options.icon.arrow"
+        },
+        {
+          "value": "bag",
+          "label": "t:options.icon.bag"
+        },
+        {
+          "value": "cart",
+          "label": "t:options.icon.cart"
+        }
+      ],
+      "default": "lock"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "t:settings.show_payment_icons",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    }
+  ]
+}
+{% endschema %}

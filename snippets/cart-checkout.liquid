@@ -1,0 +1,23 @@
+{% doc %}
+  The cart form with the checkout button, plus accelerated checkout buttons.
+  Line item quantity fields and the order note join this form by its id.
+
+  @param {string} context - 'page' or 'drawer' (form id CartForm-{context}).
+  @param {string} [icon] - Checkout button icon. Default: 'lock'.
+  @param {boolean} [show_dynamic_checkout] - Show accelerated checkout buttons.
+
+  @example
+  {% render 'cart-checkout', context: 'drawer', show_dynamic_checkout: true %}
+{% enddoc %}
+
+<form id="CartForm-{{ context }}" action="{{ routes.cart_url }}" method="post" novalidate>
+  {%- liquid
+    assign checkout_label = 'cart.checkout' | t
+    assign checkout_icon = icon | default: 'lock'
+  -%}
+  {% render 'button', label: checkout_label, type: 'submit', icon: checkout_icon, full_width: true, attributes: 'name="checkout"' %}
+</form>
+
+{%- if show_dynamic_checkout and additional_checkout_buttons -%}
+  <div class="cart-summary__dynamic">{{ content_for_additional_checkout_buttons }}</div>
+{%- endif -%}

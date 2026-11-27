@@ -149,6 +149,27 @@
     },
     "product_payment_icons": {
       "name": "Payment icons"
+    },
+    "cart_checkout": {
+      "name": "Checkout"
+    },
+    "cart_free_shipping": {
+      "name": "Free shipping bar"
+    },
+    "cart_gift_wrap": {
+      "name": "Gift wrap"
+    },
+    "cart_items": {
+      "name": "Cart items"
+    },
+    "cart_note": {
+      "name": "Order note"
+    },
+    "cart_shipping_estimator": {
+      "name": "Shipping calculator"
+    },
+    "cart_summary": {
+      "name": "Order summary"
     }
   },
   "categories": {
@@ -159,7 +180,8 @@
       "layout": "Layout",
       "media": "Media",
       "product": "Product",
-      "text": "Text"
+      "text": "Text",
+      "cart": "Cart"
     },
     "sections": {
       "advanced": "Advanced",
@@ -1008,7 +1030,16 @@
     "subscription_badge": "Subscription badge",
     "thumb_radius": "Thumbnail corner radius",
     "thumb_size": "Thumbnail size",
-    "thumbs_position": "Thumbnails position"
+    "thumbs_position": "Thumbnails position",
+    "cart_free_shipping_info": "Set the free shipping amount in Theme settings > Cart. The bar stays hidden until it is set.",
+    "cart_gift_wrap_info": "Choose the gift wrap product in Theme settings > Cart. Nothing shows until it is chosen.",
+    "image_size": "Image size",
+    "show_card": "Show as a card",
+    "show_dividers": "Show dividers",
+    "show_item_count": "Show item count",
+    "show_title": "Show title",
+    "sticky_summary": "Stick to the top while scrolling (desktop)",
+    "summary_width": "Summary width"
   },
   "settings_schema": {
     "animations": {

@@ -1,0 +1,222 @@
+{% doc %}
+  Cart page items column: the page title, then the line items — or the empty
+  cart when there is nothing in it. Quantity and remove controls are
+  enhanced by <cart-items> (assets/cart.js).
+
+  Static block of sections/main-cart.
+
+  @example
+  {% content_for 'block', type: '_cart-items', id: 'items' %}
+{% enddoc %}
+
+{%- assign s = block.settings -%}
+
+<div
+  class="cart-main spacing-style{% if s.show_dividers %} cart-main--dividers{% endif %}"
+  style="
+    {%- render 'spacing-style', settings: s -%}
+    --cart-image-size: {{ s.image_size | divided_by: 16.0 }}rem;
+  "
+  {{ block.shopify_attributes }}
+>
+  {%- comment -%} The page keeps its h1 even when the title is hidden. {%- endcomment -%}
+  <h1 class="cart-main__title type-heading type-{{ s.title_size | replace: '_', '-' }}{% unless s.show_title %} visually-hidden{% endunless %}">
+    {{- 'cart.title' | t -}}
+    {%- if s.show_count and cart.item_count > 0 %}
+      <span class="cart-main__count">({{ cart.item_count }})</span>
+    {%- endif -%}
+  </h1>
+
+  {%- if cart.item_count > 0 -%}
+    <cart-items class="cart-items cart-main__items">
+      {% render 'cart-line-items', context: 'page' %}
+    </cart-items>
+  {%- else -%}
+    <div class="cart-main__empty">
+      {% render 'cart-empty', context: 'page' %}
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.cart_items.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "t:settings.show_title",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "title_size",
+      "label": "t:settings.title_size",
+      "options": [
+        {
+          "value": "display_xl",
+          "label": "t:options.type_preset.display_xl"
+        },
+        {
+          "value": "display_l",
+          "label": "t:options.type_preset.display_l"
+        },
+        {
+          "value": "display_m",
+          "label": "t:options.type_preset.display_m"
+        },
+        {
+          "value": "display_s",
+          "label": "t:options.type_preset.display_s"
+        },
+        {
+          "value": "h1",
+          "label": "t:options.type_preset.h1"
+        },
+        {
+          "value": "h2",
+          "label": "t:options.type_preset.h2"
+        },
+        {
+          "value": "h3",
+          "label": "t:options.type_preset.h3"
+        }
+      ],
+      "default": "h1",
+      "visible_if": "{{ block.settings.show_title }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_count",
+      "label": "t:settings.show_item_count",
+      "default": true,
+      "visible_if": "{{ block.settings.show_title }}"
+    },
+    {
+      "type": "range",
+      "id": "image_size",
+      "label": "t:settings.image_size",
+      "min": 64,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 112
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dividers",
+      "label": "t:settings.show_dividers",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    }
+  ]
+}
+{% endschema %}

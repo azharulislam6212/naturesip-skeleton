@@ -4,13 +4,20 @@
   <cart-gift-wrap>). Checked when the wrapping is already in the cart.
 
   @param {string} context - 'page' or 'drawer', for unique ids.
+  @param {boolean} [always] - Show even when gift wrap is off in theme settings (cart page block). Needs the wrapping product.
 
   @example
   {% render 'cart-gift-wrap', context: 'drawer' %}
 {% enddoc %}
 
-{%- assign wrap = settings.cart_gift_wrap_product -%}
-{%- if settings.cart_gift_wrap and wrap.available -%}
+{%- liquid
+  assign wrap = settings.cart_gift_wrap_product
+  assign show_wrap = settings.cart_gift_wrap
+  if always
+    assign show_wrap = true
+  endif
+-%}
+{%- if show_wrap and wrap.available -%}
   {%- liquid
     assign wrap_variant = wrap.selected_or_first_available_variant
     assign wrap_line = nil

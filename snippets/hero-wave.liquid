@@ -1,0 +1,41 @@
+{% doc %}
+  The bottom edge of the Slideshow (hero): the chosen shape as a --wave
+  mask (assets/section-hero-slideshow.css). Only that shape is printed, so
+  more shapes cost the page nothing.
+
+  Each shape is drawn 1440 × 160 (the edge's height is 11.11vw), filled
+  from the top down to the edge.
+
+  @param {string} shape - 'wave', 'waves', 'curve', 'arch', 'slant', 'zigzag' or 'scallop'.
+
+  @example
+  style="{% render 'hero-wave', shape: section.settings.wave_style %}"
+{% enddoc %}
+
+{%- liquid
+  assign view_box = '0 0 1440 160'
+  case shape
+    when 'waves'
+      assign path = 'M0 0H1440V90C1380 157 1320 157 1260 90C1200 23 1140 23 1080 90C1020 157 960 157 900 90C840 23 780 23 720 90C660 157 600 157 540 90C480 23 420 23 360 90C300 157 240 157 180 90C120 23 60 23 0 90Z'
+    when 'curve'
+      assign path = 'M0 0H1440V40Q720 200 0 40Z'
+    when 'arch'
+      assign path = 'M0 0H1440V150Q720 -10 0 150Z'
+    when 'slant'
+      assign path = 'M0 0H1440V30L0 150Z'
+    when 'zigzag'
+      assign path = 'M0 0H1440V50L1380 130L1320 50L1260 130L1200 50L1140 130L1080 50L1020 130L960 50L900 130L840 50L780 130L720 50L660 130L600 50L540 130L480 50L420 130L360 50L300 130L240 50L180 130L120 50L60 130L0 50Z'
+    when 'scallop'
+      assign path = 'M0 0H1440V50A60 60 0 0 1 1320 50A60 60 0 0 1 1200 50A60 60 0 0 1 1080 50A60 60 0 0 1 960 50A60 60 0 0 1 840 50A60 60 0 0 1 720 50A60 60 0 0 1 600 50A60 60 0 0 1 480 50A60 60 0 0 1 360 50A60 60 0 0 1 240 50A60 60 0 0 1 120 50A60 60 0 0 1 0 50Z'
+    else
+      # The design's wave: wide dips at the ends, small ripples between.
+      assign view_box = '0 740 1440 160'
+      assign path = 'M1440 0H0V753.718C0 829.641 73.7639 883.691 146.158 860.816C168.183 853.856 191.817 853.856 213.842 860.816L299.739 887.958C338.957 900.351 381.043 900.351 420.261 887.958L479.739 869.164C518.957 856.771 561.043 856.771 600.261 869.164L659.739 887.958C698.957 900.351 741.043 900.351 780.261 887.958L839.739 869.164C878.957 856.771 921.043 856.771 960.261 869.164L1019.74 887.958C1058.96 900.351 1101.04 900.351 1140.26 887.958L1226.16 860.816C1248.18 853.856 1271.82 853.856 1293.84 860.816C1366.24 883.691 1440 829.641 1440 753.718V0Z'
+  endcase
+
+  capture svg
+    echo "<svg xmlns='http://www.w3.org/2000/svg' viewBox='" | append: view_box | append: "' preserveAspectRatio='none'><path d='" | append: path | append: "'/></svg>"
+  endcapture
+-%}
+{%- # Printed inside a style="" attribute: no double quotes, and the SVG's own quotes escaped. -%}
+--wave: url('data:image/svg+xml,{{ svg | url_escape | replace: "'", '%27' }}');

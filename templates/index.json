@@ -382,7 +382,6 @@
         "accessible_name": "Featured flavours",
         "height": "full",
         "word_size": 100,
-        "wave": true,
         "below_color": "#fef6f2",
         "grid": true,
         "grid_size": 27,
@@ -394,7 +393,8 @@
         "autoplay_speed": 6,
         "height_custom": 720,
         "height_mobile": "full",
-        "height_mobile_custom": 600
+        "height_mobile_custom": 600,
+        "wave_style": "wave"
       }
     },
     "hero": {

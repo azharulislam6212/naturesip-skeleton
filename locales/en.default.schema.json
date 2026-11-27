@@ -177,15 +177,11 @@
         "can": "Can"
       },
       "settings": {
-        "product_info": "Its 3D model (add a .glb file to the product's media) is used for the can, and its page for the button when no link is set.",
         "image": "Can image",
-        "image_info": "Shown when the product has no 3D model.",
         "scroll_turn": "Rotate on scroll",
-        "scroll_turn_info": "The can flips and turns as the page scrolls. Off, it only floats (and can still be dragged).",
         "word": "Word behind the can",
         "word_color": "Word color",
-        "text_color": "Content color",
-        "color_scheme_info": "Sets the button colors. The slide keeps its own gradient and content color."
+        "text_color": "Content color"
       }
     },
     "hero_floater": {
@@ -202,9 +198,7 @@
         "motion": "Motion",
         "speed": "Loop length",
         "delay": "Order",
-        "delay_info": "Images pop in by this order, and their loops start apart.",
-        "depth": "Depth",
-        "depth_info": "Deeper images drift more with the pointer and the scroll."
+        "depth": "Depth"
       },
       "options": {
         "front": "In front of the can",
@@ -854,18 +848,14 @@
       },
       "settings": {
         "word_size": "Word size",
-        "wave": "Wavy bottom edge",
+        "wave": "Bottom edge",
         "below_color": "Color below the wave",
-        "below_color_info": "Match the background of the next section.",
         "grid": "Show grid pattern",
         "grid_image": "Grid image",
-        "grid_image_info": "A tile that repeats over the gradient. Without one, a dashed grid is drawn.",
         "grid_size": "Grid tile width",
         "can_size": "Can size",
         "travel": "Can travels with the scroll",
-        "travel_info": "The can stays in view and turns while the page scrolls through this many sections, then scrolls away with the last one.",
         "end_offset": "Horizontal position at the end",
-        "end_offset_info": "Moves the can to the side as it reaches its last section.",
         "end_scale": "Size at the end",
         "autoplay_speed": "Change slides every"
       },
@@ -873,7 +863,15 @@
         "travel_none": "Stay in the hero",
         "travel_one": "Next section",
         "travel_two": "Next 2 sections",
-        "travel_three": "Next 3 sections"
+        "travel_three": "Next 3 sections",
+        "wave_none": "None",
+        "wave_wave": "Wave",
+        "wave_waves": "Waves",
+        "wave_curve": "Curve",
+        "wave_arch": "Arch",
+        "wave_slant": "Slant",
+        "wave_zigzag": "Zigzag",
+        "wave_scallop": "Scallop"
       }
     }
   },

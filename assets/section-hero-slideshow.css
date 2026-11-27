@@ -59,12 +59,19 @@
 
   /* ---------- Can stage: fixed; assets/hero-slideshow.js sets --stage-y,
      --can-x, --can-scale and --can-turn on the hero ---------- */
+  /* Until the script has measured the page, the stage sits in the hero, so
+     the can starts where it belongs (below anything above the hero, like
+     the announcement bar); then it's fixed at the same spot. */
   .hero-slideshow__stage {
-    position: fixed;
+    position: absolute;
     inset: 0 0 auto;
     z-index: 4;
     height: 100lvh;
     pointer-events: none;
+  }
+
+  hero-slideshow[data-staged] .hero-slideshow__stage {
+    position: fixed;
     transform: translate3d(0, var(--stage-y, 0px), 0);
   }
 
@@ -90,6 +97,11 @@
     width: 100%;
     height: 100%;
     animation: hero-can-float 3.2s ease-in-out infinite alternate;
+  }
+
+  /* A 3D can is sized by its camera instead (a scaled canvas blurs). */
+  .hero-slideshow__can:has(model-viewer) {
+    transform: translate3d(var(--can-x, 0px), 0, 0);
   }
 
   .hero-slideshow__float:has(model-viewer) {
@@ -118,6 +130,57 @@
     width: 100%;
     height: 100%;
     background: transparent;
+    opacity: 0;
+    transition: opacity 0.4s ease-out;
+  }
+
+  /* Shown once framed by its own camera, so it never jumps into place. */
+  .hero-slideshow__model[data-loaded] model-viewer {
+    opacity: 1;
+  }
+
+  /* Loading bar while a 3D can downloads: shows only if it takes a moment
+     (fades in after 0.25s), fills with the real progress (--progress, set by
+     assets/hero-slideshow.js) and fades out once the model is ready. It sits
+     beside the model-viewer, not in it, so it never moves. */
+  .hero-slideshow__loader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(8rem, 40%);
+    height: 3px;
+    overflow: hidden;
+    border-radius: 3px;
+    background: rgb(255 255 255 / 0.2);
+    translate: -50% -50%;
+    animation: fade-in 0.3s ease-out 0.25s both;
+    transition:
+      opacity 0.3s ease-out,
+      visibility 0s linear 0.3s;
+  }
+
+  .hero-slideshow__loader span {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: calc(max(var(--progress, 0), 0.15) * 100%);
+    border-radius: inherit;
+    background: #fff;
+    transition: width 0.2s ease-out;
+  }
+
+  /* A light sweeps across while it waits. */
+  .hero-slideshow__loader::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.6), transparent);
+    animation: hero-loader 1s ease-in-out infinite;
+  }
+
+  .hero-slideshow__model[data-loaded] .hero-slideshow__loader {
+    animation: none;
+    opacity: 0;
+    visibility: hidden;
   }
 
   .hero-slideshow__can-image {
@@ -476,6 +539,15 @@
   }
   to {
     transform: translateY(1.6%) rotate(1.5deg);
+  }
+}
+
+@keyframes hero-loader {
+  from {
+    translate: -100% 0;
+  }
+  to {
+    translate: 100% 0;
   }
 }
 

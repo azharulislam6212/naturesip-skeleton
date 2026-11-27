@@ -16,10 +16,9 @@
  * (CSS, `data-active`), the gradients cross-fade and the can spins once
  * while it cross-fades to the next one (CSS, once `data-changed` is set).
  *
- * 3D models are <model-viewer> elements: Shopify's model-viewer feature
- * defines the element, and Google's own build is the fallback when the
- * feature can't (see loadModelViewer). Their camera is fitted to the
- * model's bounding sphere so no turn ever clips it.
+ * 3D models are <model-viewer> elements (Google's build, loaded with the
+ * page by snippets/hero-can.liquid). Their camera is fitted to the model's
+ * bounding sphere so no turn ever clips it.
  */
 import { Component, defineElement } from '@theme/component';
 import { isDesignMode, prefersReducedMotion } from '@theme/utilities';
@@ -34,40 +33,25 @@ const HALF_FOV = (17.5 * Math.PI) / 180;
 /** Hydroflow's camera sits at [2, 0, 10] looking at the can: 11.31° to its right. */
 const CAMERA_THETA = (Math.atan2(2, 10) * 180) / Math.PI;
 
-/** Google's model-viewer, used when Shopify's feature doesn't define it. */
-const MODEL_VIEWER_FALLBACK = 'https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js';
-
-/** @type {Promise<unknown> | null} */
-let modelViewer = null;
+/** Google's model-viewer; snippets/hero-can.liquid loads it with the page. */
+const MODEL_VIEWER = 'https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js';
 
 /**
- * Defines <model-viewer> once per page: Shopify's model-viewer feature
- * first, Google's build if that hasn't defined it within a few seconds.
+ * Resolves once <model-viewer> is defined. The snippet already loads the
+ * script with the page; a slide added in the theme editor may not have.
  */
 function loadModelViewer() {
-  if (modelViewer) return modelViewer;
-  const defined = customElements.whenDefined('model-viewer');
-  if (customElements.get('model-viewer')) return (modelViewer = defined);
-
-  const fallback = () => {
-    if (customElements.get('model-viewer') || document.querySelector(`script[src="${MODEL_VIEWER_FALLBACK}"]`)) return;
+  if (!customElements.get('model-viewer') && !document.querySelector(`script[src="${MODEL_VIEWER}"]`)) {
     const script = document.createElement('script');
     script.type = 'module';
-    script.src = MODEL_VIEWER_FALLBACK;
+    script.src = MODEL_VIEWER;
     document.head.append(script);
-  };
-  const timer = window.setTimeout(fallback, 4000);
-  defined.then(() => clearTimeout(timer));
-
-  const shopify = /** @type {any} */ (window).Shopify;
-  if (shopify?.loadFeatures) {
-    shopify.loadFeatures([
-      { name: 'model-viewer-ui', version: '1.0', onLoad: (/** @type {unknown} */ error) => (error ? fallback() : undefined) },
-    ]);
-  } else {
-    fallback();
   }
-  return (modelViewer = defined);
+  return customElements.whenDefined('model-viewer').then((ModelViewer) => {
+    // model-viewer lowers its resolution (to half) when frames run long; the
+    // can is redrawn every frame while it floats, so keep it sharp.
+    /** @type {any} */ (ModelViewer).minimumRenderScale = 1;
+  });
 }
 
 /* ---------- Rotation: three.js on hydroflow, model-viewer here ----------
@@ -127,7 +111,7 @@ const IDENTITY = [1, 0, 0, 0, 1, 0, 0, 0, 1];
  * model-viewer turns a model about its origin (often its base), so the
  * camera follows the centre and the model turns in place, like the
  * centred can on hydroflow.
- * @type {WeakMap<Element, { centre?: { x: number, y: number, z: number }, matrix: number[] }>}
+ * @type {WeakMap<Element, { centre?: { x: number, y: number, z: number }, distance?: number, matrix: number[] }>}
  */
 const models = new WeakMap();
 
@@ -145,6 +129,10 @@ class HeroSlideshow extends Component {
   #autoplayTimer = 0;
   #spinStart = 0;
   #spin = 0;
+  /** When the float started: it bobs from rest, not from mid-swing. */
+  #floatStart = performance.now();
+  /** The can's size at this point of the scroll (end_scale). */
+  #scale = 1;
   #reduced = false;
   /** Document offsets, refreshed on resize. */
   #metrics = { start: 0, pinEnd: 0, turnEnd: 1, height: 1 };
@@ -274,7 +262,8 @@ class HeroSlideshow extends Component {
     // Pinned between start and pinEnd; before and after, it rides the page.
     const offset = scroll < start ? start - scroll : scroll > pinEnd ? pinEnd - scroll : 0;
     const away = Math.abs(offset) > window.innerHeight * 1.5;
-    this.style.setProperty('--stage-y', `${offset.toFixed(1)}px`);
+    this.style.setProperty('--stage-y', `${Math.round(offset)}px`);
+    this.setAttribute('data-staged', '');
     this.toggleAttribute('data-can-away', away);
 
     this.style.setProperty('--hero-scroll', clamp((scroll - start) / height).toFixed(4));
@@ -296,8 +285,9 @@ class HeroSlideshow extends Component {
       const travel = this.#reduced ? 0 : easeInOut(clamp((scroll - start) / (pinEnd - start || 1)));
       const endX = Number(this.dataset.endX ?? 0);
       const endScale = Number(this.dataset.endScale ?? 1);
-      this.style.setProperty('--can-x', `${(endX * travel).toFixed(2)}vw`);
-      this.style.setProperty('--can-scale', (1 + (endScale - 1) * travel).toFixed(4));
+      this.#scale = 1 + (endScale - 1) * travel;
+      this.style.setProperty('--can-x', `${Math.round((endX / 100) * travel * window.innerWidth)}px`);
+      this.style.setProperty('--can-scale', this.#scale.toFixed(4));
       this.#turn(this.dataset.spin === 'false' ? 0 : turn);
     }
 
@@ -321,14 +311,15 @@ class HeroSlideshow extends Component {
    */
   #turn(progress) {
     const spin = progress * 2 * Math.PI;
-    const time = performance.now() / 1000;
+    const time = (performance.now() - this.#floatStart) / 1000;
     const wave = (time / 4) * 2;
     const float = eulerXYZ((Math.cos(wave) / 8) * 0.5, (Math.sin(wave) / 8) * 0.5, (Math.sin(wave) / 20) * 0.5);
     const matrix = multiply(float, eulerXYZ(spin, spin + this.#spin, 0));
     const orientation = toOrientation(matrix);
 
-    // Bob: ±0.1 units of hydroflow's 6.43-unit-high view.
-    this.style.setProperty('--float-y', `${(-Math.sin(wave) * 1.555).toFixed(3)}vh`);
+    // Bob: ±0.1 units of hydroflow's 6.43-unit-high view, in whole pixels so
+    // the canvas never sits between pixels (and blurs).
+    this.style.setProperty('--float-y', `${Math.round(-Math.sin(wave) * 0.01555 * window.innerHeight)}px`);
     this.style.setProperty('--can-turn', `${((progress * 360) % 360).toFixed(2)}deg`);
 
     const viewers = this.querySelectorAll(':is(.hero-slide[data-active], .hero-slide[data-leaving]) model-viewer');
@@ -337,9 +328,11 @@ class HeroSlideshow extends Component {
       state.matrix = matrix;
       models.set(viewer, state);
       viewer.orientation = orientation;
-      if (!state.centre) continue;
+      if (!state.centre || !state.distance) continue;
       const { x, y, z } = apply(matrix, state.centre);
       viewer.cameraTarget = `${x}m ${y}m ${z}m`;
+      // Sized by the camera, not CSS (a scaled canvas blurs).
+      viewer.cameraOrbit = `${CAMERA_THETA.toFixed(2)}deg 90deg ${state.distance / this.#scale}m`;
       viewer.jumpCameraToGoal?.();
     }
   }
@@ -347,10 +340,23 @@ class HeroSlideshow extends Component {
   /* ---------- 3D ---------- */
 
   #loadModels() {
+    for (const viewer of /** @type {NodeListOf<any>} */ (this.querySelectorAll('model-viewer'))) {
+      const model = viewer.closest('.hero-slideshow__model');
+      // The loading bar's real progress (#fitCamera ends it).
+      viewer.addEventListener(
+        'progress',
+        (/** @type {CustomEvent} */ event) => model?.style.setProperty('--progress', String(event.detail?.totalProgress ?? 0)),
+        { signal: this.signal }
+      );
+    }
+
     loadModelViewer().then(() => {
       for (const viewer of /** @type {NodeListOf<any>} */ (this.querySelectorAll('model-viewer'))) {
-        if (viewer.loaded) this.#fitCamera(viewer);
-        else viewer.addEventListener('load', () => this.#fitCamera(viewer), { once: true, signal: this.signal });
+        if (viewer.loaded) {
+          this.#fitCamera(viewer);
+        } else {
+          viewer.addEventListener('load', () => this.#fitCamera(viewer), { once: true, signal: this.signal });
+        }
       }
     });
   }
@@ -368,8 +374,19 @@ class HeroSlideshow extends Component {
     const state = models.get(viewer) ?? { matrix: IDENTITY };
     state.centre = apply(state.matrix, center, true);
     models.set(viewer, state);
-    const radius = Math.hypot(size.x, size.y, size.z) / 2;
-    viewer.cameraOrbit = `${CAMERA_THETA.toFixed(2)}deg 90deg ${radius / Math.sin(HALF_FOV)}m`;
+    state.distance = Math.hypot(size.x, size.y, size.z) / 2 / Math.sin(HALF_FOV);
+
+    // Frame it as #turn will, then reveal it (reveal="manual"): it fades in
+    // already in place instead of showing first at model-viewer's own framing.
+    const { x, y, z } = apply(state.matrix, state.centre);
+    viewer.orientation = toOrientation(state.matrix);
+    viewer.cameraTarget = `${x}m ${y}m ${z}m`;
+    viewer.cameraOrbit = `${CAMERA_THETA.toFixed(2)}deg 90deg ${state.distance / this.#scale}m`;
+    viewer.jumpCameraToGoal?.();
+    requestAnimationFrame(() => {
+      viewer.dismissPoster?.();
+      viewer.closest('.hero-slideshow__model')?.setAttribute('data-loaded', '');
+    });
     this.#queue();
   }
 

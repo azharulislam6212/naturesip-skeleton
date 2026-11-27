@@ -3,6 +3,11 @@
   source), else the slide's can image (or the product's image), else a
   placeholder.
 
+  A 3D can never shows an image first: a slim loading bar stands in (from
+  the first paint) until the model is ready and framed, then the model
+  fades in (reveal="manual", see assets/hero-slideshow.js). The first
+  slide's GLB downloads alongside the model-viewer script.
+
   @param {object} block - The _hero-slide block.
   @param {number} index - The slide's position (the first loads its model at once).
 
@@ -22,9 +27,6 @@
             assign model_src = source.url
           endif
         endfor
-        if poster == blank
-          assign poster = media.preview_image
-        endif
         break
       endif
     endfor
@@ -36,10 +38,20 @@
 
 <div class="hero-slideshow__model">
   {%- if model_src != blank -%}
+    {%- comment -%}
+      The GLB is product media (not a theme asset, so no preload_tag) and
+      model-viewer isn't on the Shopify CDN.
+    {%- endcomment -%}
+    {% # theme-check-disable AssetPreload, RemoteAsset %}
+    {%- if index == 0 -%}
+      <link rel="preload" href="{{ model_src }}" as="fetch" crossorigin="anonymous" fetchpriority="high">
+    {%- endif -%}
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js" async></script>
+    {% # theme-check-enable AssetPreload, RemoteAsset %}
     <model-viewer
       src="{{ model_src }}"
       loading="{% if index == 0 %}eager{% else %}lazy{% endif %}"
-      reveal="auto"
+      reveal="manual"
       environment-image="neutral"
       exposure="1.05"
       shadow-intensity="0"
@@ -53,6 +65,7 @@
       max-camera-orbit="auto 180deg 1000m"
       orientation="0deg 0deg 0deg"
     ></model-viewer>
+    <div class="hero-slideshow__loader" aria-hidden="true"><span></span></div>
   {%- elsif poster != blank -%}
     {{
       poster

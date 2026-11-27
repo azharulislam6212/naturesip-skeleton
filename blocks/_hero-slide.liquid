@@ -1,7 +1,8 @@
 {% doc %}
-  One slide of the Slideshow (hero): the big word behind the can, the copy
-  and button, and its floating images. Its gradient and can are drawn by the
-  section (sections/hero-slideshow.liquid), from these same settings.
+  One slide of the Slideshow (hero): its gradient (with the section's wave
+  and grid), its can on a stage fixed to the viewport (snippets/hero-can.liquid,
+  moved by assets/hero-slideshow.js), the big word behind the can, the copy
+  and button, and its floating images.
 
   The word is split into letters here, so its entrance plays from the first
   paint (assets/section-hero-slideshow.css).
@@ -35,6 +36,8 @@
   {% endif %}
   {{ block.shopify_attributes }}
 >
+  <div class="hero-slide__backdrop" style="background: {{ s.gradient | default: 'linear-gradient(120deg, #342a5e, #6c4541)' }};" aria-hidden="true"></div>
+
   {%- if letters.size > 0 -%}
     <p class="hero-slide__word" aria-label="{{ s.word | escape }}">
       {%- for letter in letters -%}
@@ -44,6 +47,14 @@
       {%- endfor -%}
     </p>
   {%- endif -%}
+
+  <div class="hero-slideshow__stage" aria-hidden="true">
+    <div class="hero-slideshow__can">
+      <div class="hero-slideshow__float">
+        {% render 'hero-can', block: block, index: index %}
+      </div>
+    </div>
+  </div>
 
   <div class="hero-slide__floaters">
     {% content_for 'blocks' %}

@@ -18,6 +18,7 @@
             "gradient": "linear-gradient(120deg, rgba(52, 42, 94, 1) 0%, rgba(108, 69, 65, 1) 100%)",
             "product": "",
             "model_url": "",
+            "image": "shopify://shop_images/Can.png",
             "word": "Mango",
             "word_color": "#FFFFFF",
             "heading": "Made From Nature",

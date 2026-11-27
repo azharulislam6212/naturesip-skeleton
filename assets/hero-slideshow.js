@@ -2,7 +2,9 @@
  * @layer L3
  * Slideshow (hero), sections/hero-slideshow.liquid.
  *
- * The can sits on a stage fixed to the viewport. While the page scrolls from
+ * Each slide draws its own gradient and can (a section can't read its theme
+ * blocks' settings); the cans sit on stages fixed to the viewport, all moved
+ * by the custom properties set here on the hero. While the page scrolls from
  * the hero through the next `data-travel` sections, the stage stays put (the
  * can seems to travel down the page) and the can turns, as on
  * hydroflowdrink.com: a full turn forward and one and a half around, eased
@@ -12,7 +14,7 @@
  * Slides change with the arrows, a swipe, the arrow keys or autoplay: the
  * old one plays its exit (CSS, `data-leaving`), the new one its entrance
  * (CSS, `data-active`), the gradients cross-fade and the can spins once
- * while its model cross-fades to the next one.
+ * while it cross-fades to the next one (CSS, once `data-changed` is set).
  *
  * 3D models are <model-viewer> elements, loaded through Shopify's own
  * model-viewer feature; their camera is fitted to the model's bounding sphere
@@ -21,8 +23,9 @@
 import { Component, defineElement } from '@theme/component';
 import { isDesignMode, prefersReducedMotion } from '@theme/utilities';
 
-/** How long the outgoing slide keeps playing its exit (matches the CSS). */
-const LEAVE = 700;
+/** How long the outgoing slide stays shown: its gradient sits under the
+ * incoming one while that fades in (1s in the CSS). */
+const LEAVE = 1000;
 /** The can's full spin on a slide change. */
 const SPIN = 1000;
 /** Half the camera's vertical field of view, in radians (field-of-view="30deg"). */
@@ -47,18 +50,14 @@ class HeroSlideshow extends Component {
   #metrics = { start: 0, pinEnd: 0, turnEnd: 1, height: 1 };
   /** @type {ResizeObserver | null} */
   #resizeObserver = null;
+  /** @type {MutationObserver | null} */
+  #mutationObserver = null;
 
   /** @type {HTMLElement[]} */
   #slides = [];
-  /** @type {HTMLElement[]} */
-  #gradients = [];
-  /** @type {HTMLElement[]} */
-  #models = [];
 
   mount() {
     this.#slides = [...this.querySelectorAll('.hero-slide')];
-    this.#gradients = [...this.querySelectorAll('.hero-slideshow__gradient')];
-    this.#models = [...this.querySelectorAll('.hero-slideshow__model')];
     this.#reduced = prefersReducedMotion();
 
     const { previous, next } = this.refs;
@@ -80,6 +79,8 @@ class HeroSlideshow extends Component {
 
     this.#startAutoplay();
 
+    if (isDesignMode()) this.#syncEditor();
+
     // Theme editor: selecting a slide (or anything in it) shows it.
     this.listen(document, 'shopify:block:select', (event) => {
       const slide = /** @type {Element} */ (event.target).closest?.('.hero-slide');
@@ -95,6 +96,7 @@ class HeroSlideshow extends Component {
     clearTimeout(this.#leaveTimer);
     clearInterval(this.#autoplayTimer);
     this.#resizeObserver?.disconnect();
+    this.#mutationObserver?.disconnect();
   }
 
   /**
@@ -122,17 +124,13 @@ class HeroSlideshow extends Component {
     old.setAttribute('aria-hidden', 'true');
     this.#leaveTimer = window.setTimeout(() => old.removeAttribute('data-leaving'), LEAVE);
 
-    // The new slide waits for the old one's letters to clear.
+    // From now on slides cross-fade, and the new one waits for the old
+    // one's letters to clear.
+    this.setAttribute('data-changed', '');
     this.style.setProperty('--enter-delay', '0.35s');
     const current = this.#slides[index];
     current.setAttribute('data-active', '');
     current.removeAttribute('aria-hidden');
-
-    this.#gradients.forEach((gradient, i) => gradient.toggleAttribute('data-active', i === index));
-    this.#models.forEach((model, i) => {
-      model.toggleAttribute('data-active', i === index);
-      model.toggleAttribute('data-spin', i === index && !this.#reduced);
-    });
 
     if (!this.#reduced) {
       this.#spinStart = performance.now();
@@ -170,17 +168,14 @@ class HeroSlideshow extends Component {
 
   #render() {
     this.#frame = 0;
-    const { stage, can } = this.refs;
-    if (!stage || !can) return;
-
     const scroll = window.scrollY;
     const { start, pinEnd, turnEnd, height } = this.#metrics;
 
     // Pinned between start and pinEnd; before and after, it rides the page.
     const offset = scroll < start ? start - scroll : scroll > pinEnd ? pinEnd - scroll : 0;
     const away = Math.abs(offset) > window.innerHeight * 1.5;
-    stage.style.setProperty('--stage-y', `${offset.toFixed(1)}px`);
-    stage.style.visibility = away ? 'hidden' : '';
+    this.style.setProperty('--stage-y', `${offset.toFixed(1)}px`);
+    this.toggleAttribute('data-can-away', away);
 
     this.style.setProperty('--hero-scroll', clamp((scroll - start) / height).toFixed(4));
 
@@ -193,7 +188,6 @@ class HeroSlideshow extends Component {
       if (!spinning) {
         this.#spinStart = 0;
         this.#spin = 0;
-        for (const model of this.#models) model.removeAttribute('data-spin');
       }
     }
 
@@ -202,8 +196,8 @@ class HeroSlideshow extends Component {
       const travel = this.#reduced ? 0 : easeInOut(clamp((scroll - start) / (pinEnd - start || 1)));
       const endX = Number(this.dataset.endX ?? 0);
       const endScale = Number(this.dataset.endScale ?? 1);
-      can.style.setProperty('--can-x', `${(endX * travel).toFixed(2)}vw`);
-      can.style.setProperty('--can-scale', (1 + (endScale - 1) * travel).toFixed(4));
+      this.style.setProperty('--can-x', `${(endX * travel).toFixed(2)}vw`);
+      this.style.setProperty('--can-scale', (1 + (endScale - 1) * travel).toFixed(4));
       this.#turn(this.dataset.spin === 'false' ? 0 : turn);
     }
 
@@ -211,18 +205,18 @@ class HeroSlideshow extends Component {
   }
 
   /**
-   * Turns the visible cans: pitch 360° and yaw 540° over the scroll.
+   * Turns the shown cans (the current slide's and the outgoing one's):
+   * pitch 360° and yaw 540° over the scroll.
    * @param {number} progress 0–1
    */
   #turn(progress) {
     const pitch = progress * 360;
     const yaw = progress * 540 + this.#spin;
     const orientation = `0deg ${pitch.toFixed(2)}deg ${yaw.toFixed(2)}deg`;
-    this.refs.can.style.setProperty('--can-turn', `${pitch.toFixed(2)}deg`);
-    for (const model of this.#models) {
-      if (!model.hasAttribute('data-active') && !model.hasAttribute('data-spin')) continue;
-      const viewer = /** @type {any} */ (model.querySelector('model-viewer'));
-      if (viewer && viewer.orientation !== orientation) viewer.orientation = orientation;
+    this.style.setProperty('--can-turn', `${pitch.toFixed(2)}deg`);
+    const viewers = this.querySelectorAll(':is(.hero-slide[data-active], .hero-slide[data-leaving]) model-viewer');
+    for (const viewer of /** @type {NodeListOf<any>} */ (viewers)) {
+      if (viewer.orientation !== orientation) viewer.orientation = orientation;
     }
   }
 
@@ -261,6 +255,33 @@ class HeroSlideshow extends Component {
     viewer.cameraOrbit = `0deg 90deg ${distance}m`;
     viewer.jumpCameraToGoal?.();
     this.#queue();
+  }
+
+  /* ---------- Theme editor ---------- */
+
+  /**
+   * A slide whose settings change is re-rendered on its own, back in its
+   * first-render state: keep the one shown shown, and fit its new can.
+   */
+  #syncEditor() {
+    const list = this.querySelector('.hero-slideshow__slides');
+    if (!list) return;
+    this.#mutationObserver = new MutationObserver((records) => {
+      const changed = records.some((record) =>
+        [...record.addedNodes].some((node) => node instanceof HTMLElement && node.matches('.hero-slide, .hero-slide *'))
+      );
+      if (!changed) return;
+
+      this.#slides = [...this.querySelectorAll('.hero-slide')];
+      this.#slides.forEach((slide, i) => {
+        slide.toggleAttribute('data-active', i === this.#index);
+        if (i === this.#index) slide.removeAttribute('aria-hidden');
+        else slide.setAttribute('aria-hidden', 'true');
+      });
+      if (this.querySelector('model-viewer')) this.#loadModels();
+      this.#queue();
+    });
+    this.#mutationObserver.observe(list, { childList: true, subtree: true });
   }
 
   /* ---------- Input ---------- */

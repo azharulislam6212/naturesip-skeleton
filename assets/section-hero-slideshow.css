@@ -3,8 +3,9 @@
    follow its width (vw) or height (--hero-h).
 
    Stacking: nothing between the hero and its pieces makes a stacking
-   context, so the word and "behind" images (z 1), the fixed can stage (z 2)
-   and the copy, buttons and "in front" images (z 3) layer together. */
+   context, so every slide's layers interleave: the outgoing backdrop (z 1)
+   under the incoming one (z 2), the word and "behind" images (z 3), the
+   fixed can stages (z 4), then the copy, buttons and "in front" images (z 5). */
 @layer sections {
   hero-slideshow {
     --hero-h: max(var(--hero-height, 100svh), 36rem);
@@ -18,14 +19,31 @@
     overflow-x: clip;
   }
 
-  /* ---------- Backdrop: gradients, grid, wavy edge ---------- */
-  .hero-slideshow__backdrop {
+  /* ---------- Backdrop: the slide's gradient, the grid, the wavy edge ---------- */
+  .hero-slide__backdrop {
     position: absolute;
     inset: 0;
-    overflow: hidden;
+    z-index: 1;
   }
 
-  .hero-slideshow__backdrop--wave {
+  .hero-slide[data-active] .hero-slide__backdrop {
+    z-index: 2;
+  }
+
+  /* After a change the incoming gradient fades in over the outgoing one. */
+  hero-slideshow[data-changed] .hero-slide[data-active] .hero-slide__backdrop {
+    animation: fade-in 1s var(--ease-in-out) both;
+  }
+
+  .hero-slide__backdrop::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.4;
+    background: var(--hero-grid, none) 0 0 / 27.15vw 32.43vw repeat;
+  }
+
+  hero-slideshow[data-wave] .hero-slide__backdrop {
     --wave: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%20740%201440%20160'%20preserveAspectRatio='none'%3E%3Cpath%20d='M1440%200H0V753.718C0%20829.641%2073.7639%20883.691%20146.158%20860.816C168.183%20853.856%20191.817%20853.856%20213.842%20860.816L299.739%20887.958C338.957%20900.351%20381.043%20900.351%20420.261%20887.958L479.739%20869.164C518.957%20856.771%20561.043%20856.771%20600.261%20869.164L659.739%20887.958C698.957%20900.351%20741.043%20900.351%20780.261%20887.958L839.739%20869.164C878.957%20856.771%20921.043%20856.771%20960.261%20869.164L1019.74%20887.958C1058.96%20900.351%201101.04%20900.351%201140.26%20887.958L1226.16%20860.816C1248.18%20853.856%201271.82%20853.856%201293.84%20860.816C1366.24%20883.691%201440%20829.641%201440%20753.718V0Z'/%3E%3C/svg%3E");
     -webkit-mask:
       linear-gradient(#000 0 0) top / 100% calc(100% - var(--wave-h) + 1px) no-repeat,
@@ -35,33 +53,19 @@
       var(--wave) bottom / 100% var(--wave-h) no-repeat;
   }
 
-  .hero-slideshow__gradient {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 1s var(--ease-in-out);
-  }
-
-  .hero-slideshow__gradient[data-active] {
-    opacity: 1;
-  }
-
-  .hero-slideshow__grid {
-    position: absolute;
-    inset: 0;
-    opacity: 0.4;
-    background-repeat: repeat;
-    background-size: 27.15vw 32.43vw;
-  }
-
-  /* ---------- Can stage (fixed; assets/hero-slideshow.js moves it) ---------- */
+  /* ---------- Can stage: fixed; assets/hero-slideshow.js sets --stage-y,
+     --can-x, --can-scale and --can-turn on the hero ---------- */
   .hero-slideshow__stage {
     position: fixed;
     inset: 0 0 auto;
-    z-index: 2;
+    z-index: 4;
     height: 100lvh;
     pointer-events: none;
     transform: translate3d(0, var(--stage-y, 0px), 0);
+  }
+
+  hero-slideshow[data-can-away] .hero-slideshow__stage {
+    visibility: hidden;
   }
 
   .hero-slideshow__can {
@@ -85,17 +89,15 @@
   .hero-slideshow__model {
     position: absolute;
     inset: 0;
-    opacity: 0;
-    visibility: hidden;
-    transition:
-      opacity 0.6s var(--ease-out),
-      visibility 0s linear 0.6s;
   }
 
-  .hero-slideshow__model[data-active] {
-    opacity: 1;
-    visibility: visible;
-    transition-delay: 0s;
+  /* On a change the cans cross-fade while the new one spins in. */
+  hero-slideshow[data-changed] .hero-slide[data-active] .hero-slideshow__model {
+    animation: fade-in 0.6s var(--ease-out) both;
+  }
+
+  .hero-slide[data-leaving] .hero-slideshow__model {
+    animation: fade-out 0.6s var(--ease-out) both;
   }
 
   .hero-slideshow__model model-viewer {
@@ -113,7 +115,7 @@
     rotate: var(--can-turn, 0deg);
   }
 
-  .hero-slideshow__model[data-spin] .hero-slideshow__can-image {
+  hero-slideshow[data-changed] .hero-slide[data-active] .hero-slideshow__can-image {
     animation: hero-can-flip 1s var(--ease-in-out);
   }
 
@@ -146,7 +148,7 @@
     position: absolute;
     inset-inline: 0;
     top: 36.9%;
-    z-index: 1;
+    z-index: 3;
     margin: 0;
     color: var(--word-color, #fff);
     font-family: var(--font-heading--family);
@@ -188,12 +190,12 @@
     position: absolute;
     left: var(--x);
     top: var(--y);
-    z-index: 3;
+    z-index: 5;
     width: calc(var(--w) * 1%);
   }
 
   .hero-floater--back {
-    z-index: 1;
+    z-index: 3;
   }
 
   .hero-floater__drift {
@@ -239,7 +241,7 @@
     position: absolute;
     left: 6.8%;
     top: 58.4%;
-    z-index: 3;
+    z-index: 5;
     display: grid;
     justify-items: start;
     width: min(20rem, 21%);
@@ -291,7 +293,7 @@
     position: absolute;
     left: 87.2%;
     top: 66.9%;
-    z-index: 3;
+    z-index: 5;
     display: flex;
     gap: 0.625rem;
   }
@@ -372,7 +374,9 @@
     .hero-slide .hero-slide__letter,
     .hero-slide .hero-floater img,
     .hero-slide .hero-slide__copy > *,
-    .hero-slideshow__model[data-spin] .hero-slideshow__can-image {
+    .hero-slide .hero-slideshow__model,
+    .hero-slide .hero-slideshow__can-image,
+    .hero-slide .hero-slide__backdrop {
       animation: none;
     }
 

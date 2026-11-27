@@ -3,9 +3,11 @@
   slide brings its own gradient, can (a product's 3D model, a GLB link or a
   flat image), big word behind the can, copy and floating images.
 
-  The can lives on a fixed stage (assets/hero-slideshow.js): it stays in
-  view and turns while the page scrolls through the next sections, then
-  scrolls away with the last of them.
+  Gradient, can and the rest are drawn by each slide (blocks/_hero-slide.liquid):
+  a section can't read its theme blocks' settings. Each can sits on a stage
+  fixed to the viewport (assets/hero-slideshow.js): it stays in view and
+  turns while the page scrolls through the next sections, then scrolls away
+  with the last of them.
 {%- endcomment -%}
 
 {{ 'section-hero-slideshow.css' | asset_url | stylesheet_tag }}
@@ -21,94 +23,13 @@
   {% if s.autoplay %}
     data-autoplay="{{ s.autoplay_speed | times: 1000 }}"
   {% endif %}
-  style="--hero-height: {{ s.height }}svh; --hero-can: {{ s.can_size }}; --hero-word-scale: {{ s.word_size | divided_by: 100.0 }}; --hero-below: {{ s.below_color }};"
+  {% if s.wave %}
+    data-wave
+  {% endif %}
+  style="--hero-height: {{ s.height }}svh; --hero-can: {{ s.can_size }}; --hero-word-scale: {{ s.word_size | divided_by: 100.0 }}; --hero-below: {{ s.below_color }};{% if s.grid %} --hero-grid: url('{{ 'hero-grid.png' | asset_url }}');{% endif %}"
   aria-roledescription="{{ 'accessibility.carousel' | t }}"
   aria-label="{{ s.accessible_name | escape }}"
 >
-  <div class="hero-slideshow__backdrop{% if s.wave %} hero-slideshow__backdrop--wave{% endif %}" aria-hidden="true">
-    {%- for block in section.blocks -%}
-      <div
-        class="hero-slideshow__gradient"
-        data-index="{{ forloop.index0 }}"
-        style="background: {{ block.settings.gradient | default: 'linear-gradient(120deg, #342a5e, #6c4541)' }};"
-        {% if forloop.first %}
-          data-active
-        {% endif %}
-      ></div>
-    {%- endfor -%}
-    {%- if s.grid -%}
-      <div class="hero-slideshow__grid" style="background-image: url('{{ 'hero-grid.png' | asset_url }}');"></div>
-    {%- endif -%}
-  </div>
-
-
-  {%- comment -%} The can: one per slide, on a stage fixed to the viewport. {%- endcomment -%}
-  <div class="hero-slideshow__stage" ref="stage" aria-hidden="true">
-    <div class="hero-slideshow__can" ref="can">
-      <div class="hero-slideshow__float">
-        {%- for block in section.blocks -%}
-          {%- liquid
-            assign b = block.settings
-            assign model_src = b.model_url
-            assign poster = b.image
-            if b.product != blank
-              for media in b.product.media
-                if media.media_type == 'model'
-                  for source in media.sources
-                    if source.format == 'glb'
-                      assign model_src = source.url
-                    endif
-                  endfor
-                  if poster == blank
-                    assign poster = media.preview_image
-                  endif
-                  break
-                endif
-              endfor
-              if poster == blank
-                assign poster = b.product.featured_image
-              endif
-            endif
-          -%}
-          <div class="hero-slideshow__model" data-index="{{ forloop.index0 }}" {% if forloop.first %}data-active{% endif %}>
-            {%- if model_src != blank -%}
-              <model-viewer
-                src="{{ model_src }}"
-                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-                reveal="auto"
-                environment-image="neutral"
-                exposure="1.05"
-                shadow-intensity="0"
-                interaction-prompt="none"
-                disable-tap
-                disable-zoom
-                disable-pan
-                field-of-view="30deg"
-                camera-orbit="0deg 90deg auto"
-                min-camera-orbit="auto 0deg 0m"
-                max-camera-orbit="auto 180deg 1000m"
-                orientation="0deg 0deg 0deg"
-              ></model-viewer>
-            {%- elsif poster != blank -%}
-              {{
-                poster
-                | image_url: width: 1200
-                | image_tag:
-                  class: 'hero-slideshow__can-image',
-                  alt: '',
-                  loading: 'eager',
-                  sizes: '(min-width: 750px) 40vw, 70vw',
-                  widths: '400, 600, 800, 1000, 1200'
-              }}
-            {%- else -%}
-              {{ 'product-1' | placeholder_svg_tag: 'hero-slideshow__can-image hero-slideshow__can-image--placeholder' }}
-            {%- endif -%}
-          </div>
-        {%- endfor -%}
-      </div>
-    </div>
-  </div>
-
   <ul class="hero-slideshow__slides" role="list">
     {% content_for 'blocks' %}
   </ul>

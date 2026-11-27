@@ -208,6 +208,9 @@
         "spin": "Spin",
         "still": "Still"
       }
+    },
+    "product_media_gallery": {
+      "name": "Media gallery"
     }
   },
   "categories": {
@@ -655,6 +658,11 @@
       "click": "Lightbox on click",
       "hover": "Magnify on hover",
       "none": "None"
+    },
+    "gallery_layout": {
+      "slider": "Slider",
+      "grid": "Grid",
+      "stacked": "Stacked"
     }
   },
   "sections": {
@@ -1124,7 +1132,8 @@
     "show_item_count": "Show item count",
     "show_title": "Show title",
     "sticky_summary": "Stick to the top while scrolling (desktop)",
-    "summary_width": "Summary width"
+    "summary_width": "Summary width",
+    "show_thumbnails": "Show thumbnails"
   },
   "settings_schema": {
     "animations": {

@@ -21,26 +21,30 @@
   if link == blank and s.product != blank
     assign link = s.product.url
   endif
+  assign position = index | plus: 1
   assign letters = s.word | strip | split: ''
 -%}
 
-<li
+<div
   class="hero-slide"
   data-index="{{ index }}"
   style="--word-color: {{ s.word_color }}; --copy-color: {{ s.text_color }};"
   data-scroll-turn="{{ s.scroll_turn }}"
+  role="group"
   aria-roledescription="{{ 'accessibility.slide' | t }}"
+  aria-label="{{ 'accessibility.slide_position' | t: index: position, count: section.blocks.size | escape }}"
   {% if index == 0 %}
     data-active
   {% else %}
-    aria-hidden="true"
+    inert
   {% endif %}
   {{ block.shopify_attributes }}
 >
   <div class="hero-slide__backdrop" style="background: {{ s.gradient | default: 'linear-gradient(120deg, #342a5e, #6c4541)' }};" aria-hidden="true"></div>
 
   {%- if letters.size > 0 -%}
-    <p class="hero-slide__word" aria-label="{{ s.word | escape }}">
+    <p class="hero-slide__word">
+      <span class="visually-hidden">{{ s.word | escape }}</span>
       {%- for letter in letters -%}
         <span class="hero-slide__letter" style="--i: {{ forloop.index0 }};" aria-hidden="true">
           {%- if letter == ' ' -%}&nbsp;{%- else -%}{{ letter | escape }}{%- endif -%}
@@ -57,7 +61,7 @@
     </div>
   </div>
 
-  <div class="hero-slide__floaters">
+  <div class="hero-slide__floaters" aria-hidden="true">
     {% content_for 'blocks' %}
   </div>
 
@@ -72,7 +76,7 @@
       {% render 'button', label: s.button_label, url: link, icon: 'bag', class: 'hero-slide__button' %}
     {%- endif -%}
   </div>
-</li>
+</div>
 
 {% schema %}
 {

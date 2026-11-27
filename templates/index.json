@@ -15,14 +15,14 @@
         "hero_slide_LMHcdM": {
           "type": "_hero-slide",
           "settings": {
-            "gradient": "linear-gradient(120deg, rgba(92, 107, 85, 1) 0%, rgba(63, 74, 58, 1) 100%)",
+            "gradient": "linear-gradient(120deg, rgba(92, 107, 85, 1), rgba(63, 74, 58, 1) 100%)",
             "product": "",
-            "image": "shopify://shop_images/Can.png",
+            "scroll_turn": true,
             "word": "Mango",
-            "word_color": "#FFFFFF",
+            "word_color": "#ffffff",
             "heading": "Real Fruit. Real Energy",
             "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>",
-            "text_color": "#FFFFFF",
+            "text_color": "#ffffff",
             "button_label": "Shop mango",
             "button_link": ""
           },
@@ -119,16 +119,16 @@
         "hero_slide_MkWPtW": {
           "type": "_hero-slide",
           "settings": {
-            "gradient": "linear-gradient(120deg, rgba(52, 42, 94, 1) 0%, rgba(108, 69, 65, 1) 100%)",
+            "gradient": "linear-gradient(120deg, rgba(52, 42, 94, 1), rgba(108, 69, 65, 1) 100%)",
             "product": "",
+            "scroll_turn": true,
             "word": "Guava",
-            "word_color": "#FFFFFF",
+            "word_color": "#ffffff",
             "heading": "Made From Nature",
             "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>",
-            "text_color": "#FFFFFF",
+            "text_color": "#ffffff",
             "button_label": "Shop guava",
-            "button_link": "",
-            "image": "shopify://shop_images/Can.png"
+            "button_link": ""
           },
           "blocks": {
             "hero_floater_BAP9TB": {
@@ -206,16 +206,16 @@
         "hero_slide_LemnQx": {
           "type": "_hero-slide",
           "settings": {
-            "gradient": "linear-gradient(120deg, rgba(71, 135, 152, 1) 0%, rgba(11, 48, 51, 1) 100%)",
+            "gradient": "linear-gradient(120deg, rgba(71, 135, 152, 1), rgba(11, 48, 51, 1) 100%)",
             "product": "",
+            "scroll_turn": true,
             "word": "Lemon",
-            "word_color": "#FFFFFF",
+            "word_color": "#ffffff",
             "heading": "Clean Ingredients Only",
             "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>",
-            "text_color": "#FFFFFF",
+            "text_color": "#ffffff",
             "button_label": "Shop lemon",
-            "button_link": "",
-            "image": "shopify://shop_images/Can.png"
+            "button_link": ""
           },
           "blocks": {
             "hero_floater_lem0": {
@@ -302,8 +302,9 @@
         "height": 100,
         "word_size": 100,
         "wave": true,
-        "below_color": "#FEF6F2",
+        "below_color": "#fef6f2",
         "grid": true,
+        "grid_size": 27,
         "can_size": 72,
         "travel": "2",
         "end_offset": 0,

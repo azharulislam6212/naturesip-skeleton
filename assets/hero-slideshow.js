@@ -202,11 +202,14 @@ class HeroSlideshow extends Component {
   step(direction, byUser = false) {
     if (byUser) this.#stopAutoplay();
     const count = this.#slides.length;
-    if (count > 1) this.go((this.#index + direction + count) % count);
+    if (count > 1) this.go((this.#index + direction + count) % count, byUser);
   }
 
-  /** @param {number} index */
-  go(index) {
+  /**
+   * @param {number} index
+   * @param {boolean} [announce] tell screen readers (not on autoplay, which would talk over the page)
+   */
+  go(index, announce = false) {
     const from = this.#index;
     if (index === from || !this.#slides[index]) return;
     this.#index = index;
@@ -217,7 +220,8 @@ class HeroSlideshow extends Component {
     const old = this.#slides[from];
     old.removeAttribute('data-active');
     old.setAttribute('data-leaving', '');
-    old.setAttribute('aria-hidden', 'true');
+    // Hidden from screen readers and the keyboard while it plays its exit.
+    old.inert = true;
     this.#leaveTimer = window.setTimeout(() => old.removeAttribute('data-leaving'), LEAVE);
 
     // From now on slides cross-fade, and the new one waits for the old
@@ -226,13 +230,13 @@ class HeroSlideshow extends Component {
     this.style.setProperty('--enter-delay', '0.35s');
     const current = this.#slides[index];
     current.setAttribute('data-active', '');
-    current.removeAttribute('aria-hidden');
+    current.inert = false;
 
     if (!this.#reduced) {
       this.#spinStart = performance.now();
       this.#queue();
     }
-    this.#announce();
+    if (announce) this.#announce();
   }
 
   /* ---------- Scroll ---------- */
@@ -435,8 +439,7 @@ class HeroSlideshow extends Component {
       this.#slides = [...this.querySelectorAll('.hero-slide')];
       this.#slides.forEach((slide, i) => {
         slide.toggleAttribute('data-active', i === this.#index);
-        if (i === this.#index) slide.removeAttribute('aria-hidden');
-        else slide.setAttribute('aria-hidden', 'true');
+        slide.inert = i !== this.#index;
       });
       if (this.querySelector('model-viewer')) this.#loadModels();
       this.#queue();

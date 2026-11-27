@@ -7,7 +7,13 @@
   {% content_for 'block', type: '_hero-floater', id: 'floater' %}
 {% enddoc %}
 
-{%- assign s = block.settings -%}
+{%- liquid
+  assign s = block.settings
+  assign mobile_width = s.width | times: 1.7 | ceil
+  capture sizes
+    echo '(min-width: 750px) ' | append: s.width | append: 'vw, ' | append: mobile_width | append: 'vw'
+  endcapture
+-%}
 
 <div
   class="hero-floater hero-floater--{{ s.layer }} hero-floater--{{ s.motion }}{% if s.hide_mobile %} hero-floater--desktop{% endif %}"
@@ -20,7 +26,7 @@
         {{
           s.image
           | image_url: width: 600
-          | image_tag: alt: s.image.alt, loading: 'lazy', sizes: '(min-width: 750px) 12vw, 20vw', widths: '150, 300, 450, 600'
+          | image_tag: alt: '', loading: 'lazy', sizes: sizes, widths: '150, 300, 450, 600'
         }}
       {%- else -%}
         {{ 'image' | placeholder_svg_tag: 'hero-floater__placeholder' }}

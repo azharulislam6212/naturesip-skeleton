@@ -67,14 +67,28 @@
     ></model-viewer>
     <div class="hero-slideshow__loader" aria-hidden="true"><span></span></div>
   {%- elsif poster != blank -%}
+    {%- comment -%}
+      The first slide's can is the hero's LCP candidate: fetched first, at
+      high priority. The rest wait until the page is idle.
+    {%- endcomment -%}
+    {%- liquid
+      if index == 0
+        assign loading = 'eager'
+        assign priority = 'high'
+      else
+        assign loading = 'lazy'
+        assign priority = 'low'
+      endif
+    -%}
     {{
       poster
       | image_url: width: 1200
       | image_tag:
         class: 'hero-slideshow__can-image',
         alt: '',
-        loading: 'eager',
-        sizes: '(min-width: 750px) 40vw, 70vw',
+        loading: loading,
+        fetchpriority: priority,
+        sizes: '(min-width: 750px) 45vw, 92vw',
         widths: '400, 600, 800, 1000, 1200'
     }}
   {%- else -%}

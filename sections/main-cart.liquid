@@ -6,6 +6,8 @@
   (data-cart-section, assets/cart.js). Same structure as sections/main-product.
 {%- endcomment -%}
 
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+
 {%- liquid
   assign s = section.settings
 -%}

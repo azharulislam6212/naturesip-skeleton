@@ -4,6 +4,8 @@
   country/language selectors.
 {%- endcomment -%}
 
+{{ 'section-footer.css' | asset_url | stylesheet_tag }}
+
 {%- assign s = section.settings -%}
 <footer
   class="footer section-surface color-{{ s.color_scheme.id }} spacing-style"

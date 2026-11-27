@@ -3,6 +3,8 @@
   carousel (optionally a carousel on mobile only).
 {%- endcomment -%}
 
+{{ 'section-featured-collection.css' | asset_url | stylesheet_tag }}
+
 {%- liquid
   assign s = section.settings
   assign products = s.collection.products

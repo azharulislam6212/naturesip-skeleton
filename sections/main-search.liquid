@@ -1,5 +1,9 @@
 {%- comment -%} Search results with filters, sorting and mixed result types. {%- endcomment -%}
 
+{{ 'component-search.css' | asset_url | stylesheet_tag }}
+{{ 'component-facets.css' | asset_url | stylesheet_tag }}
+{{ 'section-main-search.css' | asset_url | stylesheet_tag }}
+
 {%- assign s = section.settings -%}
 <section class="section section-surface color-{{ s.color_scheme.id }} spacing-style" style="{%- render 'spacing-style', settings: s -%}">
   {% render 'background' %}

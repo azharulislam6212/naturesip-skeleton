@@ -1,0 +1,12 @@
+/* Section: featured collection. */
+@layer sections {
+  /* ---------- Featured collection ---------- */
+  .featured-collection__footer {
+    display: flex;
+    justify-content: center;
+  }
+
+  .featured-collection .slider__track {
+    padding-block: var(--space-3xs) var(--space-sm);
+  }
+}

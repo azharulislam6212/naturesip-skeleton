@@ -3,6 +3,8 @@
   content blocks. A carousel with the shared loop, autoplay, arrows and pagination settings.
 {%- endcomment -%}
 
+{{ 'section-slideshow.css' | asset_url | stylesheet_tag }}
+
 {%- assign s = section.settings -%}
 <section
   class="section section--full-width slideshow color-{{ s.color_scheme.id }}"

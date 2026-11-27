@@ -1,19 +1,20 @@
 {% doc %}
-  The theme's stylesheets, rendered once in <head> after `theme-styles`.
-  Sections never load their own CSS: every file below is linked here so the
-  browser fetches them in parallel at the start, instead of discovering
-  render-blocking stylesheets one by one while it parses the body.
+  Global stylesheets, rendered once in <head> after `theme-styles`.
 
-  base.css          reset, tokens, layout, shared components, section styles
-  header.css        header, announcement bar, mobile menu
-  footer.css        footer
-  product-card.css  product cards
-  carousel.css      slider component and slideshow
-  search.css        search modal, predictive search, search page
-  rtl.css           right-to-left languages only
+  CSS is split the way Horizon does it:
+  - base.css            reset, tokens, layout, core components (button,
+                        media, price, dialog, animations), utilities
+  - component-*.css     shared components. The ones used across pages load
+                        here; the rest are loaded by the snippet or section
+                        that renders them (cart, facets, pagination, search,
+                        scroll to top).
+  - section-*.css       one file per section, loaded by the section itself.
+  - {% stylesheet %}    public blocks keep their own CSS inside the block file.
+  - rtl.css             right-to-left languages only.
 
   The layer order is declared inline at the top of <head> in each layout:
-  reset, tokens, base, layout, components, sections, utilities.
+  reset, tokens, base, layout, components, sections, utilities. Files can
+  load in any order: the layer decides which rule wins.
 
   @param {string} [context] - 'minimal' for pages without header and footer (password, gift card).
 
@@ -24,12 +25,14 @@
 {%- capture direction -%}{% render 'text-direction' %}{%- endcapture -%}
 
 {{ 'base.css' | asset_url | stylesheet_tag }}
+{{ 'component-accordion.css' | asset_url | stylesheet_tag }}
 {%- unless context == 'minimal' %}
-  {{ 'header.css' | asset_url | stylesheet_tag }}
-  {{ 'footer.css' | asset_url | stylesheet_tag }}
-  {{ 'product-card.css' | asset_url | stylesheet_tag }}
-  {{ 'carousel.css' | asset_url | stylesheet_tag }}
-  {{ 'search.css' | asset_url | stylesheet_tag }}
+  {{ 'component-product-card.css' | asset_url | stylesheet_tag }}
+  {{ 'component-carousel.css' | asset_url | stylesheet_tag }}
+  {{ 'component-swatch.css' | asset_url | stylesheet_tag }}
+  {{ 'component-custom-select.css' | asset_url | stylesheet_tag }}
+  {{ 'component-quantity.css' | asset_url | stylesheet_tag }}
+  {{ 'component-collection-card.css' | asset_url | stylesheet_tag }}
 {%- endunless %}
 {%- if direction == 'rtl' %}
   {{ 'rtl.css' | asset_url | stylesheet_tag }}

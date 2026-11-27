@@ -12,6 +12,16 @@
   >
 </div>
 
+{% stylesheet %}
+@layer components {
+  .divider {
+    width: var(--divider-width, 100%);
+    border: 0;
+    border-block-start: var(--divider-thickness, 1px) var(--divider-style, solid) var(--color-border);
+  }
+}
+{% endstylesheet %}
+
 {% schema %}
 {
   "name": "t:blocks.divider.name",

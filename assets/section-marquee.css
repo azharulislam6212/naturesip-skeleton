@@ -1,0 +1,101 @@
+/* Section: marquee. */
+@layer sections {
+  /* ---------- Marquee ---------- */
+  /* Only clip sideways, so a tilted ribbon can poke into its neighbours. */
+  .marquee-section {
+    overflow-x: clip;
+    overflow-y: visible;
+  }
+
+  /* The ribbon sits above a neighbour's shape divider (which is z-index: 1),
+     so it overlaps the previous / next section instead of hiding under it. */
+  .marquee {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    rotate: var(--marquee-tilt, 0deg);
+    margin-inline: -1rem;
+    background-color: var(--color-background);
+  }
+
+  .marquee--bordered {
+    border-block: 1px solid var(--color-border);
+    box-shadow: 0 6px 18px -14px var(--color-shadow);
+  }
+
+  .marquee__track {
+    display: flex;
+    width: max-content;
+    animation: marquee var(--marquee-duration, 35s) linear infinite;
+  }
+
+  .marquee--reverse .marquee__track {
+    animation-direction: reverse;
+  }
+
+  .marquee:hover .marquee__track,
+  .marquee:focus-within .marquee__track,
+  .marquee[data-paused] .marquee__track {
+    animation-play-state: paused;
+  }
+
+  .marquee__list {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    margin: 0;
+    padding: var(--space-sm) 0;
+    list-style: none;
+    white-space: nowrap;
+  }
+
+  .marquee__item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-lg);
+    padding-inline-end: var(--space-lg);
+  }
+
+  .marquee__separator {
+    display: inline-grid;
+    color: var(--color-highlight);
+    --icon-size: 1.25em;
+  }
+
+  .marquee__toggle {
+    position: absolute;
+    inset-inline-end: var(--space-md);
+    width: 2.25rem;
+    height: 2.25rem;
+    --icon-size: 1rem;
+  }
+
+  .marquee__toggle-play,
+  .marquee[data-paused] .marquee__toggle-pause {
+    display: none;
+  }
+
+  .marquee[data-paused] .marquee__toggle-play {
+    display: inline;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee__track {
+      animation: none;
+      width: auto;
+      flex-wrap: wrap;
+    }
+
+    .marquee__list[aria-hidden='true'],
+    .marquee__toggle {
+      display: none;
+    }
+
+    .marquee__list {
+      flex-wrap: wrap;
+      white-space: normal;
+    }
+  }
+}

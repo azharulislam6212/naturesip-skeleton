@@ -1,5 +1,7 @@
 {%- comment -%} Collection list: image cards for chosen collections, as a grid or carousel. {%- endcomment -%}
 
+{{ 'section-collection-list.css' | asset_url | stylesheet_tag }}
+
 {%- assign s = section.settings -%}
 <section
   class="section section-surface collection-list color-{{ s.color_scheme.id }} spacing-style"

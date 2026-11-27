@@ -4,6 +4,8 @@
   appear when there is more than one.
 {%- endcomment -%}
 
+{{ 'section-announcement-bar.css' | asset_url | stylesheet_tag }}
+
 {%- liquid
   assign s = section.settings
   # The label only makes sense next to icons, so both hide when no profile links are set.

@@ -1,0 +1,51 @@
+/* Section: feature highlights. */
+@layer sections {
+  /* ---------- Feature highlights ---------- */
+  .feature-highlights__grid {
+    display: grid;
+    gap: var(--space-xl) var(--space-lg);
+  }
+
+  .feature-highlights__image {
+    max-width: 24rem;
+    margin-inline: auto;
+  }
+
+  .feature-highlights__image img {
+    width: 100%;
+    height: auto;
+  }
+
+  @media (min-width: 750px) {
+    .feature-highlights__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .feature-highlights__image {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 990px) {
+    .feature-highlights__grid {
+      grid-template-columns: 1fr minmax(16rem, 1.1fr) 1fr;
+      grid-template-rows: repeat(var(--highlight-rows, 3), auto);
+      grid-auto-flow: dense;
+      align-items: center;
+    }
+
+    .feature-highlights__image {
+      grid-column: 2;
+      grid-row: 1 / span var(--highlight-rows, 3);
+      max-width: none;
+    }
+
+    .feature-highlights__grid > :nth-child(even) {
+      grid-column: 1;
+    }
+
+    .feature-highlights__grid > :nth-child(odd):not(.feature-highlights__image) {
+      grid-column: 3;
+    }
+  }
+}

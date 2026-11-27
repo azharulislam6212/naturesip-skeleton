@@ -1,5 +1,7 @@
 {%- comment -%} Customer addresses: list, edit and add. Forms open in native <details>. {%- endcomment -%}
 
+{{ 'section-customer.css' | asset_url | stylesheet_tag }}
+
 <section class="section customer color-{{ section.settings.color_scheme.id }} spacing-style" style="{%- render 'spacing-style', settings: section.settings -%}">
   <div class="customer__account">
     <a class="link" href="{{ routes.account_url }}">{% render 'icon', name: 'arrow-left' %}{{ 'customer.account.back' | t }}</a>

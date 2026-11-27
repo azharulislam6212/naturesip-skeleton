@@ -3,6 +3,8 @@
   A real <table> with header cells, so screen readers announce each cell.
 {%- endcomment -%}
 
+{{ 'section-comparison-table.css' | asset_url | stylesheet_tag }}
+
 {%- assign s = section.settings -%}
 <section
   class="section section-surface comparison color-{{ s.color_scheme.id }} spacing-style"

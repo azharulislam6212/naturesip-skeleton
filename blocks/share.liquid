@@ -28,6 +28,35 @@
   {% render 'share-buttons', url: share_url, title: share_title, image: share_image, label: block.settings.label %}
 </div>
 
+{% stylesheet %}
+@layer components {
+  .share-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .share-buttons__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  share-copy {
+    display: contents;
+  }
+
+  share-copy[data-copied] .icon-button {
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+  }
+}
+{% endstylesheet %}
+
 {% schema %}
 {
   "name": "t:blocks.share.name",

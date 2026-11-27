@@ -5,6 +5,9 @@
   and turns solid once the page scrolls.
 {%- endcomment -%}
 
+{{ 'section-header.css' | asset_url | stylesheet_tag }}
+{{ 'component-search.css' | asset_url | stylesheet_tag }}
+
 {%- liquid
   assign s = section.settings
   assign menu = s.menu

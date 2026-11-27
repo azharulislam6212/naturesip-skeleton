@@ -1,0 +1,381 @@
+/* Filters and sorting: snippets/facets.liquid, used by the collection and search pages. */
+@layer sections {
+  .collection-layout {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  @media (min-width: 990px) {
+    .collection-layout--sidebar {
+      grid-template-columns: 16rem minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .collection-layout--sidebar .facets {
+      display: contents;
+    }
+
+    .collection-layout--sidebar .facets__bar,
+    .collection-layout--sidebar .facets__active {
+      grid-column: 2;
+    }
+
+    .collection-layout--sidebar .facets__panel {
+      grid-column: 1;
+      grid-row: 1 / span 3;
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-md));
+    }
+
+    /* The filter dialog becomes a static sidebar on desktop. */
+    .collection-layout--sidebar .facets__dialog:not([open]) {
+      position: static;
+      display: block;
+      width: auto;
+      height: auto;
+      background: none;
+      animation: none;
+    }
+
+    .collection-layout--sidebar .facets__dialog:not([open]) .drawer__header {
+      padding-inline: 0;
+      padding-block-start: 0;
+    }
+
+    .collection-layout--sidebar .facets__dialog:not([open]) .drawer__body {
+      padding-inline: 0;
+      overflow: visible;
+    }
+
+    .collection-layout--sidebar .facets__dialog:not([open]) [data-dialog-close],
+    .collection-layout--sidebar .facets__open {
+      display: none;
+    }
+
+    .collection-layout--sidebar .collection-results {
+      grid-column: 2;
+    }
+  }
+
+  .facets__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .facets__count {
+    margin-inline-end: auto;
+    color: var(--color-subtext);
+    font-size: 0.875rem;
+  }
+
+  .facets__sort .select {
+    min-height: 2.75rem;
+    border-radius: 999px;
+  }
+
+  .facets__pills {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .facets__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    min-height: 2.25rem;
+    padding: 0 var(--space-xs);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    text-decoration: none;
+    --icon-size: 0.875rem;
+  }
+
+  .facets__values {
+    display: grid;
+    gap: var(--space-2xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .facets__values .checkbox {
+    font-size: 0.9375rem;
+  }
+
+  .facets__value-count {
+    color: var(--color-subtext);
+  }
+
+  /* Colour filter: round swatches side by side. */
+  .facets__swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    margin: 0;
+    /* Room for the last row's tooltip inside the clipping accordion. */
+    padding: 0 0 0.875rem;
+    list-style: none;
+  }
+
+  .facets__swatch {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    padding: 3px;
+    border: 1.5px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: border-color var(--duration-fast);
+  }
+
+  .facets__swatch .swatch {
+    --swatch-size: 2rem;
+    border-radius: 50%;
+    transition: scale var(--duration-fast) var(--ease-out);
+  }
+
+  /* Value with no matching colour: a blank neutral circle; the name is in the tooltip. */
+  .facets__swatch .swatch--blank {
+    background: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+  }
+
+  /* Colour name on hover / keyboard focus. Shown below the swatch: the
+     accordion clips its content, and there is no room above the first row. */
+  .facets__swatch-tooltip {
+    position: absolute;
+    inset-block-start: calc(100% + 6px);
+    inset-inline-start: 50%;
+    z-index: 3;
+    translate: -50% -4px;
+    padding: 0.3em 0.6em;
+    border-radius: var(--radius-input, 6px);
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+    font-size: 0.75rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      translate var(--duration-fast) var(--ease-out),
+      visibility var(--duration-fast);
+  }
+
+  .facets__swatch-tooltip::after {
+    content: '';
+    position: absolute;
+    inset-block-end: 100%;
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    border: 5px solid transparent;
+    border-block-end-color: var(--color-foreground);
+  }
+
+  .facets__swatch-count {
+    opacity: 0.7;
+  }
+
+  .facets__swatch:hover .facets__swatch-tooltip,
+  .facets__swatch:has(input:focus-visible) .facets__swatch-tooltip {
+    opacity: 1;
+    visibility: visible;
+    translate: -50% 0;
+  }
+
+  /* Placed by assets/facets.js: fixed, so no clipping container cuts it. */
+  .facets__swatch-tooltip.is-floating {
+    position: fixed;
+    inset: auto;
+    z-index: 100;
+    translate: none;
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      visibility var(--duration-fast);
+  }
+
+  .facets__swatch:is(:hover, :has(input:focus-visible)) .facets__swatch-tooltip.is-floating {
+    translate: none;
+  }
+
+  .facets__swatch-tooltip.is-floating::after {
+    inset-inline-start: var(--arrow-x, 50%);
+  }
+
+  .facets__swatch:hover .swatch {
+    scale: 1.08;
+  }
+
+  .facets__swatch:has(input:checked) {
+    border-color: var(--color-foreground);
+  }
+
+  .facets__swatch:has(input:focus-visible) {
+    outline: 2px solid var(--color-foreground);
+    outline-offset: 2px;
+  }
+
+  .facets__swatch:has(input:disabled) {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .facets__image {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+
+  .facets__price {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xs);
+  }
+
+  /* Price filter: two range thumbs over one track, above the From / To inputs. */
+  .price-range {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .price-range__slider {
+    position: relative;
+    height: 1.5rem;
+    margin-inline: 0.625rem;
+  }
+
+  .price-range__slider::before,
+  .price-range__slider::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    height: 4px;
+    border-radius: 999px;
+    translate: 0 -50%;
+  }
+
+  .price-range__slider::before {
+    inset-inline: 0;
+    background-color: color-mix(in srgb, var(--color-foreground) 15%, transparent);
+  }
+
+  .price-range__slider::after {
+    inset-inline: var(--range-start, 0%) calc(100% - var(--range-end, 100%));
+    background-color: var(--color-foreground);
+    background-image: var(--gradient-accent);
+  }
+
+  .price-range__thumb {
+    position: absolute;
+    inset: 0 -0.625rem;
+    z-index: 1;
+    width: calc(100% + 1.25rem);
+    height: 100%;
+    margin: 0;
+    background: none;
+    pointer-events: none;
+    appearance: none;
+  }
+
+  .price-range__thumb::-webkit-slider-runnable-track {
+    background: none;
+  }
+
+  .price-range__thumb::-moz-range-track {
+    background: none;
+  }
+
+  .price-range__thumb::-webkit-slider-thumb {
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid var(--color-foreground);
+    border-radius: 50%;
+    background-color: var(--color-background);
+    box-shadow: 0 2px 6px -2px rgb(0 0 0 / 0.35);
+    cursor: grab;
+    pointer-events: auto;
+    appearance: none;
+    transition: scale var(--duration-fast) var(--ease-out);
+  }
+
+  .price-range__thumb::-moz-range-thumb {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--color-foreground);
+    border-radius: 50%;
+    background-color: var(--color-background);
+    box-shadow: 0 2px 6px -2px rgb(0 0 0 / 0.35);
+    cursor: grab;
+    pointer-events: auto;
+  }
+
+  .price-range__thumb:active::-webkit-slider-thumb {
+    scale: 1.15;
+    cursor: grabbing;
+  }
+
+  .price-range__thumb:focus-visible::-webkit-slider-thumb {
+    outline: 2px solid var(--color-foreground);
+    outline-offset: 2px;
+  }
+
+  .price-range__thumb:focus-visible::-moz-range-thumb {
+    outline: 2px solid var(--color-foreground);
+    outline-offset: 2px;
+  }
+
+  .price-range__input {
+    position: relative;
+  }
+
+  .price-range__currency {
+    position: absolute;
+    inset-inline-start: var(--space-sm);
+    top: 50%;
+    translate: 0 -50%;
+    color: var(--color-subtext);
+    pointer-events: none;
+  }
+
+  .price-range__input .input {
+    padding-inline-start: calc(var(--space-sm) + 1.25ch);
+  }
+
+  .facets__form-footer {
+    position: sticky;
+    bottom: calc(var(--space-md) * -1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding-block: var(--space-md);
+    background-color: var(--color-background);
+  }
+
+  @media (min-width: 990px) {
+    .collection-layout--sidebar .facets__dialog:not([open]) .facets__form-footer {
+      position: static;
+      background: none;
+    }
+
+    .collection-layout--sidebar .facets__dialog:not([open]) .facets__form-footer .button {
+      display: none;
+    }
+  }
+
+  .collection-results[aria-busy='true'] {
+    opacity: 0.45;
+    pointer-events: none;
+    transition: opacity var(--duration-fast);
+  }
+}

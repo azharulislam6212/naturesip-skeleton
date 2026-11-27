@@ -1,0 +1,35 @@
+/* Section: collection page banner. */
+@layer sections {
+  .collection-banner {
+    display: grid;
+    gap: var(--space-lg);
+    align-items: center;
+    margin-block-end: var(--space-xl);
+    text-align: center;
+  }
+
+  .collection-banner--image {
+    text-align: start;
+  }
+
+  @media (min-width: 990px) {
+    .collection-banner--image {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .collection-banner__text {
+    display: grid;
+    gap: var(--space-sm);
+    justify-items: center;
+  }
+
+  .collection-banner--image .collection-banner__text {
+    justify-items: start;
+  }
+
+  .collection-banner__description {
+    max-width: 60ch;
+    color: var(--color-subtext);
+  }
+}

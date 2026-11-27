@@ -10,6 +10,7 @@
 {% enddoc %}
 
 {%- if settings.scroll_to_top -%}
+  {{ 'component-scroll-top.css' | asset_url | stylesheet_tag }}
   <scroll-to-top class="scroll-top">
     <button class="scroll-top__button" type="button" ref="button" tabindex="-1">
       {%- render 'icon', name: 'arrow-up', class: 'scroll-top__icon' -%}

@@ -5,6 +5,8 @@
   The URL never changes here when a variant is picked (data-update-url).
 {%- endcomment -%}
 
+{{ 'section-main-product.css' | asset_url | stylesheet_tag }}
+
 {%- liquid
   assign s = section.settings
 -%}

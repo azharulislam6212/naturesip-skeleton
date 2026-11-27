@@ -61,6 +61,96 @@
   </div>
 </div>
 
+{% stylesheet %}
+@layer components {
+  .icon-text {
+    display: flex;
+    flex-direction: var(--icon-direction, column);
+    align-items: var(--icon-align, center);
+    gap: var(--space-sm);
+    text-align: var(--icon-text-align, center);
+  }
+
+  .icon-text__media {
+    --frame-size: var(--icon-frame-size, 5.5rem);
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: var(--frame-size);
+    height: var(--frame-size);
+    color: var(--icon-color, var(--color-accent));
+  }
+
+  .icon-text__media > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .icon-text__media .icon {
+    --icon-size: calc(var(--frame-size) * 0.42);
+  }
+
+  @media (max-width: 749px) {
+    .icon-text__media {
+      --frame-size: calc(var(--icon-frame-size, 5.5rem) * 0.75);
+    }
+  }
+
+  .icon-text__media img {
+    width: 62%;
+    height: 62%;
+    object-fit: contain;
+  }
+
+  .icon-text__media::before,
+  .icon-text__media::after {
+    content: '';
+    position: absolute;
+    border-radius: inherit;
+  }
+
+  .icon-text[data-frame='sketch'] .icon-text__media {
+    border-radius: 34%;
+  }
+
+  .icon-text[data-frame='sketch'] .icon-text__media::before {
+    inset: -0.4rem;
+    z-index: -1;
+    border: 1.5px solid var(--color-heading-stroke);
+    background-image: var(--gradient-heading);
+    rotate: -7deg;
+  }
+
+  .icon-text[data-frame='sketch'] .icon-text__media::after,
+  .icon-text[data-frame='circle'] .icon-text__media::after,
+  .icon-text[data-frame='square'] .icon-text__media::after {
+    inset: 0;
+    z-index: 0;
+    border: 2px solid var(--color-heading-stroke);
+    background-color: var(--color-background);
+  }
+
+  .icon-text[data-frame='circle'] .icon-text__media {
+    border-radius: 50%;
+  }
+
+  .icon-text[data-frame='square'] .icon-text__media {
+    border-radius: var(--radius-card);
+  }
+
+  .icon-text__title {
+    color: var(--icon-title-color, var(--color-accent));
+  }
+
+  .icon-text__body {
+    display: grid;
+    gap: var(--space-2xs);
+  }
+}
+{% endstylesheet %}
+
 {% schema %}
 {
   "name": "t:blocks.icon_text.name",

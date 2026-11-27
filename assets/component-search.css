@@ -1,4 +1,4 @@
-/* Search: the header search modal with predictive results, and the search page. */
+/* Search: the header search modal, predictive results and the search form (header and search page). */
 @layer sections {
   /* Search modal */
   .search-modal {
@@ -208,24 +208,6 @@
   .predictive-search__title {
     display: block;
     font-weight: var(--font-body--weight-bold);
-  }
-
-  .result-card {
-    position: relative;
-    display: grid;
-    gap: var(--space-2xs);
-  }
-
-  .search-header {
-    display: grid;
-    justify-items: center;
-    gap: var(--space-md);
-    margin-block-end: var(--space-xl);
-    text-align: center;
-  }
-
-  .search-header .search-form {
-    width: min(40rem, 100%);
   }
 
   .search-form__input {

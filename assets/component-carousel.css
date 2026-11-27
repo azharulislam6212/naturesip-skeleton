@@ -1,6 +1,6 @@
 /*
  * Carousel: the shared <slider-component> track, arrows and pagination
- * (snippets/carousel-controls.liquid), plus the slideshow section built on it.
+ * (snippets/carousel-controls.liquid). The slideshow section is in section-slideshow.css.
  */
 @layer components {
   /* ---------- Slider ---------- */
@@ -386,72 +386,5 @@
 
   to {
     rotate: var(--spin, -360deg);
-  }
-}
-
-@layer sections {
-  /* ---------- Slideshow ---------- */
-  .slideshow__slider {
-    --slides-in-view: 1;
-    position: relative;
-  }
-
-  .slideshow__track {
-    grid-auto-columns: 100%;
-    gap: 0;
-    padding: 0;
-  }
-
-  @media (min-width: 750px) {
-    .slideshow__track {
-      grid-auto-columns: 100%;
-    }
-  }
-
-  .slide {
-    position: relative;
-    display: flex;
-    align-items: var(--slide-align, center);
-    min-height: var(--slide-height-mobile, 70svh);
-    padding-block: var(--space-2xl) calc(var(--space-2xl) + 3rem);
-  }
-
-  @media (min-width: 750px) {
-    .slide {
-      min-height: var(--slide-height, 85svh);
-    }
-  }
-
-  .slide__media::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-color: rgb(0 0 0 / var(--overlay, 0));
-  }
-
-  .slide__media picture,
-  .slide__media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .slide__content {
-    position: relative;
-    display: flex;
-    justify-content: var(--slide-justify, flex-start);
-  }
-
-  .slide__inner {
-    max-width: 44rem;
-  }
-
-  /* The bar floats over the bottom of the slides. */
-  .slideshow__controls {
-    position: absolute;
-    inset-block-end: var(--space-lg);
-    inset-inline: 0;
-    z-index: 1;
-    margin-block-start: 0;
   }
 }

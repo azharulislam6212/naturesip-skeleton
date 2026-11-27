@@ -9,6 +9,27 @@
   {% render 'social-links' %}
 </div>
 
+{% stylesheet %}
+@layer components {
+  .social-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    padding: 0;
+    list-style: none;
+  }
+
+  .social-links a {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+  }
+}
+{% endstylesheet %}
+
 {% schema %}
 {
   "name": "t:blocks.social_links.name",

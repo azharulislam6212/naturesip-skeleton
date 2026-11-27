@@ -93,7 +93,7 @@ class HeaderMenu extends Component {
   #mutationObserver = null;
 
   mount() {
-    // From here on the script decides what is open (base.css opens on hover
+    // From here on the script decides what is open (section-header.css opens on hover
     // and focus without it).
     this.setAttribute('data-ready', '');
     this.#attachMegaMenus();

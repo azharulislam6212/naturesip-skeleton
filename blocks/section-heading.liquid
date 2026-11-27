@@ -102,6 +102,58 @@
   {%- endif -%}
 </div>
 
+{% stylesheet %}
+@layer components {
+  .section-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: var(--heading-align, center);
+    gap: var(--space-md);
+    width: 100%;
+  }
+
+  .section-heading__content {
+    max-width: var(--heading-width, none);
+  }
+
+  .section-heading__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .section-heading__arrows {
+    display: flex;
+    gap: var(--space-2xs);
+  }
+
+  .section-heading__arrows[hidden] {
+    display: none;
+  }
+
+  /* Diagonal: next points up-end, previous mirrors it. */
+  .section-heading__arrows--diagonal [data-slider-step='-1'] svg {
+    transform: rotate(180deg);
+  }
+
+  .section-heading--horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: var(--heading-actions-align, flex-end);
+  }
+
+  .section-heading--horizontal .section-heading__content {
+    flex: 1 1 20rem;
+  }
+
+  [dir='rtl'] .section-heading__arrows:not(.section-heading__arrows--diagonal) svg {
+    transform: scaleX(-1);
+  }
+}
+{% endstylesheet %}
+
 {% schema %}
 {
   "name": "t:blocks.section_heading.name",

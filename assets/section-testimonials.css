@@ -1,0 +1,60 @@
+/* Section: testimonials. */
+@layer sections {
+  /* ---------- Testimonials ---------- */
+  .testimonials__track {
+    padding-block: var(--space-md);
+  }
+
+  .testimonial__card {
+    display: grid;
+    gap: var(--space-sm);
+    height: 100%;
+    margin: 0;
+    padding: var(--space-lg);
+    border: 2px dashed var(--color-heading-stroke);
+    border-radius: var(--radius-card);
+    background-color: var(--color-background);
+    background-image: var(--gradient-background);
+    box-shadow: 4px 4px 0 var(--color-shadow);
+    text-align: center;
+  }
+
+  .testimonials[data-tilt] .testimonial:nth-child(odd) .testimonial__card {
+    rotate: -2deg;
+  }
+
+  .testimonials[data-tilt] .testimonial:nth-child(even) .testimonial__card {
+    rotate: 2deg;
+  }
+
+  .testimonial__quote {
+    margin: 0;
+    font-size: 1.0625rem;
+    font-weight: var(--font-body--weight-bold);
+  }
+
+  .testimonial__author {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    text-align: start;
+  }
+
+  .testimonial__author > span {
+    display: grid;
+  }
+
+  .testimonial__avatar {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .testimonial__role,
+  .testimonial__product {
+    color: var(--color-subtext);
+    font-size: 0.875rem;
+  }
+}

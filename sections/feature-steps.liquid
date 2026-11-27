@@ -3,6 +3,8 @@
   by hand-drawn connectors, with an optional stagger and wavy bottom edge.
 {%- endcomment -%}
 
+{{ 'section-feature-steps.css' | asset_url | stylesheet_tag }}
+
 {%- assign s = section.settings -%}
 <section
   class="section section-surface feature-steps color-{{ s.color_scheme.id }} spacing-style"

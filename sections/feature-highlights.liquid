@@ -3,6 +3,8 @@
   split into a left and right column on desktop.
 {%- endcomment -%}
 
+{{ 'section-feature-highlights.css' | asset_url | stylesheet_tag }}
+
 {%- liquid
   assign s = section.settings
   assign rows = section.blocks.size | plus: 1 | divided_by: 2 | at_least: 1

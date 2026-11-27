@@ -6,6 +6,8 @@
   (assets/variant-picker.js). Same structure as sections/featured-product.
 {%- endcomment -%}
 
+{{ 'section-main-product.css' | asset_url | stylesheet_tag }}
+
 {%- liquid
   assign s = section.settings
 -%}

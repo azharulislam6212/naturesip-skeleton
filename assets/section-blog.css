@@ -1,0 +1,44 @@
+/* Blog and article: sections/blog-posts, sections/main-blog, sections/main-article. */
+@layer sections {
+  /* ---------- Blog & article ---------- */
+  /* Article card (Theme settings > Blog cards). */
+  .article-card {
+    position: relative;
+    display: grid;
+    gap: var(--space-2xs);
+    text-align: var(--card-align, start);
+  }
+
+  .article-card__media {
+    border: 1px solid var(--card-border, transparent);
+    border-radius: var(--card-radius, var(--radius-media));
+    background-color: var(--card-background, transparent);
+    --media-radius: var(--card-radius, var(--radius-media));
+  }
+
+  .article__header {
+    display: grid;
+    gap: var(--space-sm);
+    text-align: center;
+  }
+
+  .article__comments {
+    display: grid;
+    gap: var(--space-lg);
+    padding-block-start: var(--space-xl);
+    border-block-start: 1px solid var(--color-border);
+  }
+
+  .article__comment-list {
+    display: grid;
+    gap: var(--space-md);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .article__comment {
+    padding-block-end: var(--space-md);
+    border-block-end: 1px solid var(--color-border);
+  }
+}

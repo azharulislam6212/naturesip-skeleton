@@ -16,6 +16,8 @@
   {% render 'pagination', paginate: paginate, type: 'load_more' %}
 {% enddoc %}
 
+{{ 'component-pagination.css' | asset_url | stylesheet_tag }}
+
 {%- assign type = type | default: 'numbered' -%}
 
 {%- if paginate.pages > 1 -%}

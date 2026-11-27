@@ -1,5 +1,7 @@
 {%- comment -%} Testimonials: review cards in a slider or grid, optionally tilted like sticky notes. {%- endcomment -%}
 
+{{ 'section-testimonials.css' | asset_url | stylesheet_tag }}
+
 {%- assign s = section.settings -%}
 <section
   class="section section-surface testimonials color-{{ s.color_scheme.id }} spacing-style"

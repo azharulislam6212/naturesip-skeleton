@@ -9,6 +9,8 @@
     {% render 'meta-tags' %}
     {% render 'theme-styles' %}
     {% render 'stylesheets', context: 'minimal' %}
+    {{ 'template-gift-card.css' | asset_url | stylesheet_tag }}
+    {{ 'template-gift-card.css' | asset_url | stylesheet_tag }}
     <script src="{{ 'vendor/qrcode.js' | shopify_asset_url }}" defer></script>
     {{ content_for_header }}
   </head>

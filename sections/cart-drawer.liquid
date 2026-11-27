@@ -4,6 +4,7 @@
 {%- endcomment -%}
 
 {%- if settings.cart_type == 'drawer' -%}
+  {{ 'component-cart.css' | asset_url | stylesheet_tag }}
   <cart-drawer data-cart-section="{{ section.id }}">
     <dialog
       class="drawer cart-drawer color-{{ section.settings.color_scheme.id }}"

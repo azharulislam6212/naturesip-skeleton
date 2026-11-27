@@ -1,0 +1,42 @@
+/* Gift card page: templates/gift_card.liquid. */
+@layer sections {
+  /* ---------- Gift card ---------- */
+  .gift-card {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-lg);
+    padding-block: var(--space-2xl);
+    text-align: center;
+  }
+
+  .gift-card__card {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-sm);
+    width: min(28rem, 100%);
+    padding: var(--space-xl);
+    border: 2px solid var(--color-heading-stroke);
+    border-radius: var(--radius-card);
+    background-image: var(--gradient-heading);
+    color: var(--color-heading-stroke);
+    box-shadow: 6px 6px 0 var(--color-shadow);
+  }
+
+  .gift-card__code {
+    width: 100%;
+  }
+
+  .gift-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+  }
+
+  @media print {
+    .gift-card__actions {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,70 @@
+/* Section: comparison table. */
+@layer sections {
+  /* ---------- Comparison ---------- */
+  .comparison__card {
+    padding: clamp(1rem, 3vw, 2.5rem);
+    border: 2px solid var(--color-heading-stroke);
+    border-radius: var(--radius-card);
+    background-image: var(--gradient-background);
+    box-shadow: 6px 6px 0 var(--color-shadow);
+    overflow-x: auto;
+  }
+
+  .comparison__table {
+    width: 100%;
+    min-width: 30rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: center;
+  }
+
+  .comparison__table :is(th, td) {
+    padding: var(--space-sm) var(--space-xs);
+    border-block-end: 1px dashed var(--color-border);
+  }
+
+  .comparison__table tbody th {
+    text-align: start;
+    font-size: 0.875rem;
+    font-weight: var(--font-body--weight-bold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .comparison__us {
+    width: 28%;
+    background-image: var(--gradient-accent);
+    color: var(--color-on-accent);
+  }
+
+  .comparison__them {
+    width: 28%;
+  }
+
+  thead .comparison__us {
+    border-start-start-radius: var(--radius-card);
+    border-start-end-radius: var(--radius-card);
+    font-family: var(--font-accent--family);
+    font-size: 1.25rem;
+  }
+
+  tbody tr:last-child .comparison__us {
+    border-end-start-radius: var(--radius-card);
+    border-end-end-radius: var(--radius-card);
+  }
+
+  .comparison__logo {
+    margin-inline: auto;
+    height: auto;
+  }
+
+  .comparison__mark {
+    display: inline-grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 1.5px solid currentColor;
+    border-radius: 50%;
+    --icon-size: 1rem;
+  }
+}

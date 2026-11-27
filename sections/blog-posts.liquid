@@ -1,5 +1,7 @@
 {%- comment -%} Blog posts: latest articles from a chosen blog. {%- endcomment -%}
 
+{{ 'section-blog.css' | asset_url | stylesheet_tag }}
+
 {%- assign s = section.settings -%}
 <section
   class="section section-surface color-{{ s.color_scheme.id }} spacing-style"

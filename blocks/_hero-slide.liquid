@@ -28,6 +28,7 @@
   class="hero-slide"
   data-index="{{ index }}"
   style="--word-color: {{ s.word_color }}; --copy-color: {{ s.text_color }};"
+  data-scroll-turn="{{ s.scroll_turn }}"
   aria-roledescription="{{ 'accessibility.slide' | t }}"
   {% if index == 0 %}
     data-active
@@ -104,6 +105,13 @@
       "id": "image",
       "label": "t:blocks.hero_slide.settings.image",
       "info": "t:blocks.hero_slide.settings.image_info"
+    },
+    {
+      "type": "checkbox",
+      "id": "scroll_turn",
+      "label": "t:blocks.hero_slide.settings.scroll_turn",
+      "info": "t:blocks.hero_slide.settings.scroll_turn_info",
+      "default": true
     },
     {
       "type": "header",

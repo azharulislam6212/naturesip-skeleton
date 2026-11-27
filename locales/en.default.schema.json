@@ -180,6 +180,8 @@
         "product_info": "Its 3D model (add a .glb file to the product's media) is used for the can, and its page for the button when no link is set.",
         "image": "Can image",
         "image_info": "Shown when the product has no 3D model.",
+        "scroll_turn": "Rotate on scroll",
+        "scroll_turn_info": "The can flips and turns as the page scrolls. Off, it only floats (and can still be dragged).",
         "word": "Word behind the can",
         "word_color": "Word color",
         "link_info": "Defaults to the product."
@@ -845,7 +847,6 @@
         "can_size": "Can size",
         "travel": "Can travels with the scroll",
         "travel_info": "The can stays in view and turns while the page scrolls through this many sections, then scrolls away with the last one.",
-        "spin": "Turn the can while scrolling",
         "end_offset": "Horizontal position at the end",
         "end_offset_info": "Moves the can to the side as it reaches its last section.",
         "end_scale": "Size at the end",

@@ -17,7 +17,6 @@
 <hero-slideshow
   class="hero-slideshow"
   data-travel="{{ s.travel }}"
-  data-spin="{{ s.spin }}"
   data-end-x="{{ s.end_offset }}"
   data-end-scale="{{ s.end_scale | divided_by: 100.0 }}"
   {% if s.autoplay %}
@@ -162,12 +161,6 @@
         }
       ],
       "default": "2"
-    },
-    {
-      "type": "checkbox",
-      "id": "spin",
-      "label": "t:sections.hero_slideshow.settings.spin",
-      "default": true
     },
     {
       "type": "range",

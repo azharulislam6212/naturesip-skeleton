@@ -99,6 +99,19 @@
     animation: hero-can-float 3.2s ease-in-out infinite alternate;
   }
 
+  /* A 3D can turns when dragged (assets/hero-slideshow.js), while the hero
+     is in view; up-and-down touch still scrolls the page. */
+  hero-slideshow[data-can-drag] .hero-slideshow__can:has(model-viewer) {
+    pointer-events: auto;
+    cursor: grab;
+    touch-action: pan-y;
+    user-select: none;
+  }
+
+  hero-slideshow[data-dragging] .hero-slideshow__can {
+    cursor: grabbing;
+  }
+
   /* A 3D can is sized by its camera instead (a scaled canvas blurs). */
   .hero-slideshow__can:has(model-viewer) {
     transform: translate3d(var(--can-x, 0px), 0, 0);
@@ -188,6 +201,11 @@
     height: 100%;
     object-fit: contain;
     rotate: var(--can-turn, 0deg);
+  }
+
+  /* The slide's "Rotate on scroll" is off. */
+  .hero-slide[data-scroll-turn='false'] .hero-slideshow__can-image {
+    rotate: none;
   }
 
   hero-slideshow[data-changed] .hero-slide[data-active] .hero-slideshow__can-image {

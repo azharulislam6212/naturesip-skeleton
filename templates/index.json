@@ -15,12 +15,12 @@
         "hero_slide_LMHcdM": {
           "type": "_hero-slide",
           "settings": {
-            "gradient": "linear-gradient(120deg, rgba(52, 42, 94, 1) 0%, rgba(108, 69, 65, 1) 100%)",
+            "gradient": "linear-gradient(120deg, rgba(92, 107, 85, 1) 0%, rgba(63, 74, 58, 1) 100%)",
             "product": "",
             "image": "shopify://shop_images/Can.png",
             "word": "Mango",
             "word_color": "#FFFFFF",
-            "heading": "Made From Nature",
+            "heading": "Real Fruit. Real Energy",
             "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>",
             "text_color": "#FFFFFF",
             "button_label": "Shop mango",
@@ -30,9 +30,9 @@
             "hero_floater_maNMjP": {
               "type": "_hero-floater",
               "settings": {
-                "x": 11,
-                "y": 10,
-                "width": 6,
+                "x": 5,
+                "y": 5,
+                "width": 8,
                 "rotation": 0,
                 "layer": "front",
                 "hide_mobile": false,
@@ -46,9 +46,9 @@
             "hero_floater_PTYwmM": {
               "type": "_hero-floater",
               "settings": {
-                "x": 45,
-                "y": 6,
-                "width": 7,
+                "x": 35,
+                "y": 5,
+                "width": 5,
                 "rotation": 0,
                 "layer": "front",
                 "hide_mobile": false,
@@ -62,9 +62,9 @@
             "hero_floater_wDBxiF": {
               "type": "_hero-floater",
               "settings": {
-                "x": 80,
-                "y": 14,
-                "width": 7,
+                "x": 75,
+                "y": 5,
+                "width": 8,
                 "rotation": 0,
                 "layer": "front",
                 "hide_mobile": false,
@@ -76,6 +76,110 @@
               "blocks": {}
             },
             "hero_floater_pY38fq": {
+              "type": "_hero-floater",
+              "settings": {
+                "x": 32,
+                "y": 56,
+                "width": 5,
+                "rotation": 0,
+                "layer": "front",
+                "hide_mobile": false,
+                "motion": "float",
+                "speed": 6,
+                "delay": 3,
+                "depth": 70
+              },
+              "blocks": {}
+            },
+            "hero_floater_man4": {
+              "type": "_hero-floater",
+              "settings": {
+                "x": 71,
+                "y": 67,
+                "width": 8,
+                "rotation": 0,
+                "layer": "front",
+                "hide_mobile": false,
+                "motion": "float",
+                "speed": 6,
+                "delay": 4,
+                "depth": 60
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "hero_floater_maNMjP",
+            "hero_floater_PTYwmM",
+            "hero_floater_wDBxiF",
+            "hero_floater_pY38fq",
+            "hero_floater_man4"
+          ]
+        },
+        "hero_slide_MkWPtW": {
+          "type": "_hero-slide",
+          "settings": {
+            "gradient": "linear-gradient(120deg, rgba(52, 42, 94, 1) 0%, rgba(108, 69, 65, 1) 100%)",
+            "product": "",
+            "word": "Guava",
+            "word_color": "#FFFFFF",
+            "heading": "Made From Nature",
+            "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>",
+            "text_color": "#FFFFFF",
+            "button_label": "Shop guava",
+            "button_link": "",
+            "image": "shopify://shop_images/Can.png"
+          },
+          "blocks": {
+            "hero_floater_BAP9TB": {
+              "type": "_hero-floater",
+              "settings": {
+                "x": 11,
+                "y": 9,
+                "width": 6,
+                "rotation": 0,
+                "layer": "front",
+                "hide_mobile": false,
+                "motion": "float",
+                "speed": 6,
+                "delay": 0,
+                "depth": 40
+              },
+              "blocks": {}
+            },
+            "hero_floater_dQWpin": {
+              "type": "_hero-floater",
+              "settings": {
+                "x": 45,
+                "y": 4,
+                "width": 7,
+                "rotation": 0,
+                "layer": "front",
+                "hide_mobile": false,
+                "motion": "float",
+                "speed": 6,
+                "delay": 1,
+                "depth": 25
+              },
+              "blocks": {}
+            },
+            "hero_floater_7HhPKF": {
+              "type": "_hero-floater",
+              "settings": {
+                "x": 80,
+                "y": 12,
+                "width": 7,
+                "rotation": 0,
+                "layer": "front",
+                "hide_mobile": false,
+                "motion": "float",
+                "speed": 6,
+                "delay": 2,
+                "depth": 55
+              },
+              "blocks": {}
+            },
+            "hero_floater_k7twVm": {
               "type": "_hero-floater",
               "settings": {
                 "x": 68,
@@ -93,33 +197,34 @@
             }
           },
           "block_order": [
-            "hero_floater_maNMjP",
-            "hero_floater_PTYwmM",
-            "hero_floater_wDBxiF",
-            "hero_floater_pY38fq"
+            "hero_floater_BAP9TB",
+            "hero_floater_dQWpin",
+            "hero_floater_7HhPKF",
+            "hero_floater_k7twVm"
           ]
         },
-        "hero_slide_MkWPtW": {
+        "hero_slide_LemnQx": {
           "type": "_hero-slide",
           "settings": {
-            "gradient": "linear-gradient(120deg, rgba(92, 107, 85, 1) 0%, rgba(63, 74, 58, 1) 100%)",
+            "gradient": "linear-gradient(120deg, rgba(71, 135, 152, 1) 0%, rgba(11, 48, 51, 1) 100%)",
             "product": "",
-            "word": "Guava",
+            "word": "Lemon",
             "word_color": "#FFFFFF",
-            "heading": "Made From Nature",
+            "heading": "Clean Ingredients Only",
             "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>",
             "text_color": "#FFFFFF",
-            "button_label": "Shop guava",
-            "button_link": ""
+            "button_label": "Shop lemon",
+            "button_link": "",
+            "image": "shopify://shop_images/Can.png"
           },
           "blocks": {
-            "hero_floater_BAP9TB": {
+            "hero_floater_lem0": {
               "type": "_hero-floater",
               "settings": {
-                "x": 9,
-                "y": 9,
-                "width": 7,
-                "rotation": -10,
+                "x": 19,
+                "y": 10,
+                "width": 5,
+                "rotation": 0,
                 "layer": "front",
                 "hide_mobile": false,
                 "motion": "float",
@@ -129,13 +234,13 @@
               },
               "blocks": {}
             },
-            "hero_floater_dQWpin": {
+            "hero_floater_lem1": {
               "type": "_hero-floater",
               "settings": {
-                "x": 46,
-                "y": 7,
+                "x": 43,
+                "y": 4,
                 "width": 7,
-                "rotation": 10,
+                "rotation": 0,
                 "layer": "front",
                 "hide_mobile": false,
                 "motion": "float",
@@ -145,13 +250,13 @@
               },
               "blocks": {}
             },
-            "hero_floater_7HhPKF": {
+            "hero_floater_lem2": {
               "type": "_hero-floater",
               "settings": {
-                "x": 81,
-                "y": 16,
-                "width": 7,
-                "rotation": -5,
+                "x": 73,
+                "y": 6,
+                "width": 5,
+                "rotation": 0,
                 "layer": "front",
                 "hide_mobile": false,
                 "motion": "float",
@@ -161,13 +266,13 @@
               },
               "blocks": {}
             },
-            "hero_floater_k7twVm": {
+            "hero_floater_lem3": {
               "type": "_hero-floater",
               "settings": {
-                "x": 69,
-                "y": 59,
-                "width": 7,
-                "rotation": 15,
+                "x": 70,
+                "y": 65,
+                "width": 5,
+                "rotation": 0,
                 "layer": "front",
                 "hide_mobile": false,
                 "motion": "float",
@@ -179,16 +284,17 @@
             }
           },
           "block_order": [
-            "hero_floater_BAP9TB",
-            "hero_floater_dQWpin",
-            "hero_floater_7HhPKF",
-            "hero_floater_k7twVm"
+            "hero_floater_lem0",
+            "hero_floater_lem1",
+            "hero_floater_lem2",
+            "hero_floater_lem3"
           ]
         }
       },
       "block_order": [
         "hero_slide_LMHcdM",
-        "hero_slide_MkWPtW"
+        "hero_slide_MkWPtW",
+        "hero_slide_LemnQx"
       ],
       "name": "t:sections.hero_slideshow.name",
       "settings": {
@@ -200,7 +306,6 @@
         "grid": true,
         "can_size": 72,
         "travel": "2",
-        "spin": true,
         "end_offset": 0,
         "end_scale": 85,
         "autoplay": false,

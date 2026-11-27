@@ -30,6 +30,11 @@ const LEAVE = 1000;
 const SPIN = 1000;
 /** Half the camera's vertical field of view (field-of-view="35deg", as hydroflow). */
 const HALF_FOV = (17.5 * Math.PI) / 180;
+/** Drag: radians of turn per pixel, the fastest a flung can turns (radians
+ * per frame) and how fast it slows (per frame). */
+const DRAG_SPEED = 0.006;
+const DRAG_MAX_SPIN = 0.05;
+const DRAG_FRICTION = 0.86;
 /** Hydroflow's camera sits at [2, 0, 10] looking at the can: 11.31° to its right. */
 const CAMERA_THETA = (Math.atan2(2, 10) * 180) / Math.PI;
 
@@ -129,6 +134,8 @@ class HeroSlideshow extends Component {
   #autoplayTimer = 0;
   #spinStart = 0;
   #spin = 0;
+  /** The visitor's own turn of the can (drag), on top of everything else. */
+  #drag = { matrix: IDENTITY, vx: 0, vy: 0, active: false };
   /** When the float started: it bobs from rest, not from mid-swing. */
   #floatStart = performance.now();
   /** The can's size at this point of the scroll (end_scale). */
@@ -156,6 +163,7 @@ class HeroSlideshow extends Component {
     });
     this.#bindSwipe();
     this.#bindPointer();
+    this.#bindDrag();
 
     if (this.querySelector('model-viewer')) this.#loadModels();
 
@@ -265,6 +273,9 @@ class HeroSlideshow extends Component {
     this.style.setProperty('--stage-y', `${Math.round(offset)}px`);
     this.setAttribute('data-staged', '');
     this.toggleAttribute('data-can-away', away);
+    // The can takes drags only over the hero; further down it lets clicks
+    // through to the sections it travels over.
+    this.toggleAttribute('data-can-drag', !away && scroll < start + height * 0.6);
 
     this.style.setProperty('--hero-scroll', clamp((scroll - start) / height).toFixed(4));
 
@@ -288,10 +299,18 @@ class HeroSlideshow extends Component {
       this.#scale = 1 + (endScale - 1) * travel;
       this.style.setProperty('--can-x', `${Math.round((endX / 100) * travel * window.innerWidth)}px`);
       this.style.setProperty('--can-scale', this.#scale.toFixed(4));
-      this.#turn(this.dataset.spin === 'false' ? 0 : turn);
+      this.#turn(turn);
     }
 
     // 3D cans float all the time (as drei's <Float>), so keep drawing while in view.
+    // A flung can keeps turning and slows down.
+    const drag = this.#drag;
+    if (!drag.active && (Math.abs(drag.vx) > 1e-4 || Math.abs(drag.vy) > 1e-4)) {
+      this.#turnBy(drag.vx, drag.vy);
+      drag.vx *= DRAG_FRICTION;
+      drag.vy *= DRAG_FRICTION;
+    }
+
     const floating = !away && !this.#reduced && this.querySelector('model-viewer');
     if (spinning || floating) this.#queue();
   }
@@ -300,22 +319,28 @@ class HeroSlideshow extends Component {
    * Turns the shown cans (the current slide's and the outgoing one's)
    * exactly as hydroflowdrink.com does:
    *   - the scroll turns the can x 0 → 2π (a vertical flip, top coming
-   *     forward) and y +2π, scrubbed with power1.out (`progress`);
+   *     forward) and y +2π, scrubbed with power1.out (`progress`), unless
+   *     its slide's "Rotate on scroll" is off;
    *   - a slide change adds y +2π over a second (power1.out);
    *   - drei's <Float speed={2} rotationIntensity={0.5} floatIntensity={2}
-   *     floatingRange={[-0.05, 0.05]}> tilts and bobs it around that.
+   *     floatingRange={[-0.05, 0.05]}> tilts and bobs it around that;
+   *   - the visitor can turn it further by dragging (#bindDrag).
    * Both rotations are three.js XYZ Eulers, combined and handed to
    * model-viewer as its YXZ `orientation`; the camera follows the model's
    * centre so it turns in place.
    * @param {number} progress 0–1
    */
   #turn(progress) {
-    const spin = progress * 2 * Math.PI;
     const time = (performance.now() - this.#floatStart) / 1000;
     const wave = (time / 4) * 2;
     const float = eulerXYZ((Math.cos(wave) / 8) * 0.5, (Math.sin(wave) / 8) * 0.5, (Math.sin(wave) / 20) * 0.5);
-    const matrix = multiply(float, eulerXYZ(spin, spin + this.#spin, 0));
-    const orientation = toOrientation(matrix);
+    /** The whole turn, with or without the scroll's part. @param {number} amount */
+    const turned = (amount) => {
+      const spin = amount * 2 * Math.PI;
+      return multiply(float, multiply(this.#drag.matrix, eulerXYZ(spin, spin + this.#spin, 0)));
+    };
+    const scrolled = turned(progress);
+    const still = turned(0);
 
     // Bob: ±0.1 units of hydroflow's 6.43-unit-high view, in whole pixels so
     // the canvas never sits between pixels (and blurs).
@@ -324,10 +349,12 @@ class HeroSlideshow extends Component {
 
     const viewers = this.querySelectorAll(':is(.hero-slide[data-active], .hero-slide[data-leaving]) model-viewer');
     for (const viewer of /** @type {NodeListOf<any>} */ (viewers)) {
+      // Each slide chooses whether its can turns with the scroll.
+      const matrix = viewer.closest('.hero-slide')?.dataset.scrollTurn === 'false' ? still : scrolled;
       const state = models.get(viewer) ?? { matrix: IDENTITY };
       state.matrix = matrix;
       models.set(viewer, state);
-      viewer.orientation = orientation;
+      viewer.orientation = toOrientation(matrix);
       if (!state.centre || !state.distance) continue;
       const { x, y, z } = apply(matrix, state.centre);
       viewer.cameraTarget = `${x}m ${y}m ${z}m`;
@@ -422,16 +449,87 @@ class HeroSlideshow extends Component {
   #bindSwipe() {
     let startX = 0;
     let startY = 0;
+    let onCan = false;
     this.listen(this, 'pointerdown', (event) => {
       if (event.pointerType === 'mouse') return;
+      onCan = Boolean(/** @type {Element} */ (event.target).closest('.hero-slideshow__can'));
       startX = event.clientX;
       startY = event.clientY;
     });
     this.listen(this, 'pointerup', (event) => {
-      if (event.pointerType === 'mouse') return;
+      // A drag on the can turns it; it doesn't change the slide.
+      if (event.pointerType === 'mouse' || onCan) return;
       const dx = event.clientX - startX;
       if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(event.clientY - startY)) this.step(dx < 0 ? 1 : -1, true);
     });
+  }
+
+  /**
+   * Drag the 3D can to turn it: it follows the pointer on the screen's own
+   * axes (sideways spins it, up and down tips it; on touch only sideways,
+   * so up and down still scroll the page), however far it has turned.
+   * Let go mid-drag and it spins on briefly, slowing down; held still first,
+   * it stays put.
+   */
+  #bindDrag() {
+    if (!this.querySelector('model-viewer')) return;
+    const drag = this.#drag;
+    let lastX = 0;
+    let lastY = 0;
+    let lastMove = 0;
+
+    this.listen(this, 'pointerdown', (event) => {
+      const can = /** @type {Element} */ (event.target).closest('.hero-slideshow__can');
+      if (!can?.querySelector('model-viewer') || event.button > 0) return;
+      if (event.pointerType === 'mouse') event.preventDefault();
+      can.setPointerCapture(event.pointerId);
+      drag.active = true;
+      drag.vx = 0;
+      drag.vy = 0;
+      lastX = event.clientX;
+      lastY = event.clientY;
+      lastMove = performance.now();
+      this.setAttribute('data-dragging', '');
+    });
+
+    this.listen(this, 'pointermove', (event) => {
+      if (!drag.active) return;
+      const x = (event.clientX - lastX) * DRAG_SPEED;
+      const y = event.pointerType === 'mouse' ? (event.clientY - lastY) * DRAG_SPEED : 0;
+      lastX = event.clientX;
+      lastY = event.clientY;
+      lastMove = performance.now();
+      this.#turnBy(x, y);
+      // Smoothed, so one jerk of the mouse doesn't fling it away.
+      drag.vx = drag.vx * 0.6 + x * 0.4;
+      drag.vy = drag.vy * 0.6 + y * 0.4;
+      this.#queue();
+    });
+
+    const release = () => {
+      if (!drag.active) return;
+      drag.active = false;
+      // Held still before letting go: no fling.
+      if (performance.now() - lastMove > 60) drag.vx = drag.vy = 0;
+      const cap = (/** @type {number} */ v) => Math.max(-DRAG_MAX_SPIN, Math.min(DRAG_MAX_SPIN, v));
+      drag.vx = cap(drag.vx);
+      drag.vy = cap(drag.vy);
+      this.removeAttribute('data-dragging');
+      this.#queue();
+    };
+    this.listen(this, 'pointerup', release);
+    this.listen(this, 'pointercancel', release);
+    this.listen(this, 'lostpointercapture', release);
+  }
+
+  /**
+   * Turns the dragged can by x (about the screen's vertical) and y (about
+   * its horizontal), on top of where it already is.
+   * @param {number} x radians
+   * @param {number} y radians
+   */
+  #turnBy(x, y) {
+    this.#drag.matrix = multiply(multiply(rotY(x), rotX(y)), this.#drag.matrix);
   }
 
   /** Floating images drift with a mouse pointer, by their depth. */

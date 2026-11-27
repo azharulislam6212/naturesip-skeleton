@@ -7,15 +7,7 @@
   {% content_for 'block', type: '_hero-floater', id: 'floater' %}
 {% enddoc %}
 
-{%- liquid
-  assign s = block.settings
-  case s.sample
-    when 'pair'
-      assign sample = 'hero-guava-pair.webp'
-    else
-      assign sample = 'hero-guava-whole.webp'
-  endcase
--%}
+{%- assign s = block.settings -%}
 
 <div
   class="hero-floater hero-floater--{{ s.layer }} hero-floater--{{ s.motion }}{% if s.hide_mobile %} hero-floater--desktop{% endif %}"
@@ -31,7 +23,7 @@
           | image_tag: alt: s.image.alt, loading: 'lazy', sizes: '(min-width: 750px) 12vw, 20vw', widths: '150, 300, 450, 600'
         }}
       {%- else -%}
-        <img src="{{ sample | asset_url }}" alt="" width="600" height="400" loading="lazy">
+        {{ 'image' | placeholder_svg_tag: 'hero-floater__placeholder' }}
       {%- endif -%}
     </div>
   </div>
@@ -46,24 +38,6 @@
       "type": "image_picker",
       "id": "image",
       "label": "t:settings.image"
-    },
-    {
-      "type": "select",
-      "id": "sample",
-      "label": "t:blocks.hero_floater.settings.sample",
-      "info": "t:blocks.hero_floater.settings.sample_info",
-      "options": [
-        {
-          "value": "whole",
-          "label": "t:blocks.hero_floater.options.whole"
-        },
-        {
-          "value": "pair",
-          "label": "t:blocks.hero_floater.options.pair"
-        }
-      ],
-      "default": "whole",
-      "visible_if": "{{ block.settings.image == blank }}"
     },
     {
       "type": "header",

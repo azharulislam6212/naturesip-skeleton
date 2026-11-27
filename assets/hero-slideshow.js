@@ -16,9 +16,10 @@
  * (CSS, `data-active`), the gradients cross-fade and the can spins once
  * while it cross-fades to the next one (CSS, once `data-changed` is set).
  *
- * 3D models are <model-viewer> elements, loaded through Shopify's own
- * model-viewer feature; their camera is fitted to the model's bounding sphere
- * so no turn ever clips it.
+ * 3D models are <model-viewer> elements: Shopify's model-viewer feature
+ * defines the element, and Google's own build is the fallback when the
+ * feature can't (see loadModelViewer). Their camera is fitted to the
+ * model's bounding sphere so no turn ever clips it.
  */
 import { Component, defineElement } from '@theme/component';
 import { isDesignMode, prefersReducedMotion } from '@theme/utilities';
@@ -26,10 +27,109 @@ import { isDesignMode, prefersReducedMotion } from '@theme/utilities';
 /** How long the outgoing slide stays shown: its gradient sits under the
  * incoming one while that fades in (1s in the CSS). */
 const LEAVE = 1000;
-/** The can's full spin on a slide change. */
+/** The can's extra turn on a slide change (hydroflow's "Rotate": y + 2π in 1s). */
 const SPIN = 1000;
-/** Half the camera's vertical field of view, in radians (field-of-view="30deg"). */
-const HALF_FOV = (15 * Math.PI) / 180;
+/** Half the camera's vertical field of view (field-of-view="35deg", as hydroflow). */
+const HALF_FOV = (17.5 * Math.PI) / 180;
+/** Hydroflow's camera sits at [2, 0, 10] looking at the can: 11.31° to its right. */
+const CAMERA_THETA = (Math.atan2(2, 10) * 180) / Math.PI;
+
+/** Google's model-viewer, used when Shopify's feature doesn't define it. */
+const MODEL_VIEWER_FALLBACK = 'https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js';
+
+/** @type {Promise<unknown> | null} */
+let modelViewer = null;
+
+/**
+ * Defines <model-viewer> once per page: Shopify's model-viewer feature
+ * first, Google's build if that hasn't defined it within a few seconds.
+ */
+function loadModelViewer() {
+  if (modelViewer) return modelViewer;
+  const defined = customElements.whenDefined('model-viewer');
+  if (customElements.get('model-viewer')) return (modelViewer = defined);
+
+  const fallback = () => {
+    if (customElements.get('model-viewer') || document.querySelector(`script[src="${MODEL_VIEWER_FALLBACK}"]`)) return;
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = MODEL_VIEWER_FALLBACK;
+    document.head.append(script);
+  };
+  const timer = window.setTimeout(fallback, 4000);
+  defined.then(() => clearTimeout(timer));
+
+  const shopify = /** @type {any} */ (window).Shopify;
+  if (shopify?.loadFeatures) {
+    shopify.loadFeatures([
+      { name: 'model-viewer-ui', version: '1.0', onLoad: (/** @type {unknown} */ error) => (error ? fallback() : undefined) },
+    ]);
+  } else {
+    fallback();
+  }
+  return (modelViewer = defined);
+}
+
+/* ---------- Rotation: three.js on hydroflow, model-viewer here ----------
+   Matrices are row-major arrays of 9. */
+
+/** @param {number} t */
+const rotX = (t) => [1, 0, 0, 0, Math.cos(t), -Math.sin(t), 0, Math.sin(t), Math.cos(t)];
+/** @param {number} t */
+const rotY = (t) => [Math.cos(t), 0, Math.sin(t), 0, 1, 0, -Math.sin(t), 0, Math.cos(t)];
+/** @param {number} t */
+const rotZ = (t) => [Math.cos(t), -Math.sin(t), 0, Math.sin(t), Math.cos(t), 0, 0, 0, 1];
+
+/**
+ * @param {number[]} a
+ * @param {number[]} b
+ */
+function multiply(a, b) {
+  const out = [];
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 3; col++) {
+      out.push(a[row * 3] * b[col] + a[row * 3 + 1] * b[3 + col] + a[row * 3 + 2] * b[6 + col]);
+    }
+  }
+  return out;
+}
+
+/** A three.js Euler rotation in its default XYZ order. @param {number} x @param {number} y @param {number} z */
+const eulerXYZ = (x, y, z) => multiply(multiply(rotX(x), rotY(y)), rotZ(z));
+
+/**
+ * The same rotation as model-viewer's `orientation` ("roll pitch yaw", an
+ * Euler in YXZ order), decomposed as three.js does.
+ * @param {number[]} m
+ */
+function toOrientation(m) {
+  const pitch = Math.asin(-Math.min(1, Math.max(-1, m[5])));
+  const upright = Math.abs(m[5]) < 0.9999999;
+  const yaw = upright ? Math.atan2(m[2], m[8]) : Math.atan2(-m[6], m[0]);
+  const roll = upright ? Math.atan2(m[3], m[4]) : 0;
+  return `${roll.toFixed(5)}rad ${pitch.toFixed(5)}rad ${yaw.toFixed(5)}rad`;
+}
+
+/**
+ * @param {number[]} m
+ * @param {{ x: number, y: number, z: number }} v
+ * @param {boolean} [inverse] apply the transpose (the inverse of a rotation)
+ */
+function apply(m, { x, y, z }, inverse = false) {
+  const t = inverse ? [m[0], m[3], m[6], m[1], m[4], m[7], m[2], m[5], m[8]] : m;
+  return { x: t[0] * x + t[1] * y + t[2] * z, y: t[3] * x + t[4] * y + t[5] * z, z: t[6] * x + t[7] * y + t[8] * z };
+}
+
+const IDENTITY = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+
+/**
+ * Per model: its centre in its own space and the rotation last applied.
+ * model-viewer turns a model about its origin (often its base), so the
+ * camera follows the centre and the model turns in place, like the
+ * centred can on hydroflow.
+ * @type {WeakMap<Element, { centre?: { x: number, y: number, z: number }, matrix: number[] }>}
+ */
+const models = new WeakMap();
 
 /** @param {number} value */
 const clamp = (value) => Math.min(1, Math.max(0, value));
@@ -183,7 +283,7 @@ class HeroSlideshow extends Component {
     let spinning = false;
     if (this.#spinStart) {
       const t = clamp((performance.now() - this.#spinStart) / SPIN);
-      this.#spin = easeInOut(t) * 360;
+      this.#spin = power1Out(t) * 2 * Math.PI;
       spinning = t < 1;
       if (!spinning) {
         this.#spinStart = 0;
@@ -201,59 +301,75 @@ class HeroSlideshow extends Component {
       this.#turn(this.dataset.spin === 'false' ? 0 : turn);
     }
 
-    if (spinning) this.#queue();
+    // 3D cans float all the time (as drei's <Float>), so keep drawing while in view.
+    const floating = !away && !this.#reduced && this.querySelector('model-viewer');
+    if (spinning || floating) this.#queue();
   }
 
   /**
-   * Turns the shown cans (the current slide's and the outgoing one's):
-   * pitch 360° and yaw 540° over the scroll.
+   * Turns the shown cans (the current slide's and the outgoing one's)
+   * exactly as hydroflowdrink.com does:
+   *   - the scroll turns the can x 0 → 2π (a vertical flip, top coming
+   *     forward) and y +2π, scrubbed with power1.out (`progress`);
+   *   - a slide change adds y +2π over a second (power1.out);
+   *   - drei's <Float speed={2} rotationIntensity={0.5} floatIntensity={2}
+   *     floatingRange={[-0.05, 0.05]}> tilts and bobs it around that.
+   * Both rotations are three.js XYZ Eulers, combined and handed to
+   * model-viewer as its YXZ `orientation`; the camera follows the model's
+   * centre so it turns in place.
    * @param {number} progress 0–1
    */
   #turn(progress) {
-    const pitch = progress * 360;
-    const yaw = progress * 540 + this.#spin;
-    const orientation = `0deg ${pitch.toFixed(2)}deg ${yaw.toFixed(2)}deg`;
-    this.style.setProperty('--can-turn', `${pitch.toFixed(2)}deg`);
+    const spin = progress * 2 * Math.PI;
+    const time = performance.now() / 1000;
+    const wave = (time / 4) * 2;
+    const float = eulerXYZ((Math.cos(wave) / 8) * 0.5, (Math.sin(wave) / 8) * 0.5, (Math.sin(wave) / 20) * 0.5);
+    const matrix = multiply(float, eulerXYZ(spin, spin + this.#spin, 0));
+    const orientation = toOrientation(matrix);
+
+    // Bob: ±0.1 units of hydroflow's 6.43-unit-high view.
+    this.style.setProperty('--float-y', `${(-Math.sin(wave) * 1.555).toFixed(3)}vh`);
+    this.style.setProperty('--can-turn', `${((progress * 360) % 360).toFixed(2)}deg`);
+
     const viewers = this.querySelectorAll(':is(.hero-slide[data-active], .hero-slide[data-leaving]) model-viewer');
     for (const viewer of /** @type {NodeListOf<any>} */ (viewers)) {
-      if (viewer.orientation !== orientation) viewer.orientation = orientation;
+      const state = models.get(viewer) ?? { matrix: IDENTITY };
+      state.matrix = matrix;
+      models.set(viewer, state);
+      viewer.orientation = orientation;
+      if (!state.centre) continue;
+      const { x, y, z } = apply(matrix, state.centre);
+      viewer.cameraTarget = `${x}m ${y}m ${z}m`;
+      viewer.jumpCameraToGoal?.();
     }
   }
 
   /* ---------- 3D ---------- */
 
   #loadModels() {
-    const shopify = /** @type {any} */ (window).Shopify;
-    const fit = () => {
+    loadModelViewer().then(() => {
       for (const viewer of /** @type {NodeListOf<any>} */ (this.querySelectorAll('model-viewer'))) {
         if (viewer.loaded) this.#fitCamera(viewer);
         else viewer.addEventListener('load', () => this.#fitCamera(viewer), { once: true, signal: this.signal });
       }
-    };
-    if (customElements.get('model-viewer')) {
-      fit();
-      return;
-    }
-    shopify?.loadFeatures?.([{ name: 'model-viewer-ui', version: '1.0' }], (/** @type {Error|undefined} */ error) => {
-      if (error) return;
-      customElements.whenDefined('model-viewer').then(fit);
     });
   }
 
   /**
-   * Camera far enough to hold the model's bounding sphere, aimed at its
-   * centre, so any orientation stays whole and the same size.
+   * Camera far enough to hold the model's bounding sphere, so any
+   * orientation stays whole and the same size; #turn aims it at the centre.
    * @param {any} viewer
    */
   #fitCamera(viewer) {
     const size = viewer.getDimensions?.();
     const center = viewer.getBoundingBoxCenter?.();
     if (!size || !center) return;
+    // Measured as the model stands now; keep it in the model's own space.
+    const state = models.get(viewer) ?? { matrix: IDENTITY };
+    state.centre = apply(state.matrix, center, true);
+    models.set(viewer, state);
     const radius = Math.hypot(size.x, size.y, size.z) / 2;
-    const distance = radius / Math.sin(HALF_FOV);
-    viewer.cameraTarget = `${center.x}m ${center.y}m ${center.z}m`;
-    viewer.cameraOrbit = `0deg 90deg ${distance}m`;
-    viewer.jumpCameraToGoal?.();
+    viewer.cameraOrbit = `${CAMERA_THETA.toFixed(2)}deg 90deg ${radius / Math.sin(HALF_FOV)}m`;
     this.#queue();
   }
 

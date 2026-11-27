@@ -177,11 +177,9 @@
         "can": "Can"
       },
       "settings": {
-        "product_info": "Its 3D model is used for the can, and its page for the button when no link is set.",
-        "model_url": "3D model link (GLB)",
-        "model_url_info": "Used when the product has no 3D model. Upload the .glb file in Content > Files and paste its link.",
+        "product_info": "Its 3D model (add a .glb file to the product's media) is used for the can, and its page for the button when no link is set.",
         "image": "Can image",
-        "image_info": "Shown when there is no 3D model.",
+        "image_info": "Shown when the product has no 3D model.",
         "word": "Word behind the can",
         "word_color": "Word color",
         "link_info": "Defaults to the product."
@@ -193,8 +191,6 @@
         "position": "Position"
       },
       "settings": {
-        "sample": "Sample image",
-        "sample_info": "Shown until you choose an image.",
         "x": "From the left",
         "y": "From the top",
         "rotation": "Rotation",
@@ -208,8 +204,6 @@
         "depth_info": "Deeper images drift more with the pointer and the scroll."
       },
       "options": {
-        "whole": "Guava",
-        "pair": "Guava halves",
         "front": "In front of the can",
         "back": "Behind the can",
         "float": "Float",
@@ -845,6 +839,9 @@
         "below_color": "Color below the wave",
         "below_color_info": "Match the background of the next section.",
         "grid": "Show grid pattern",
+        "grid_image": "Grid image",
+        "grid_image_info": "A tile that repeats over the gradient. Without one, a dashed grid is drawn.",
+        "grid_size": "Grid tile width",
         "can_size": "Can size",
         "travel": "Can travels with the scroll",
         "travel_info": "The can stays in view and turns while the page scrolls through this many sections, then scrolls away with the last one.",

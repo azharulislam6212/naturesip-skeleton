@@ -1,6 +1,6 @@
 {% doc %}
-  The can of one Slideshow (hero) slide: the product's 3D model, else the
-  slide's GLB link, else its can image (or the product's image), else a
+  The can of one Slideshow (hero) slide: the product's 3D model (its GLB
+  source), else the slide's can image (or the product's image), else a
   placeholder.
 
   @param {object} block - The _hero-slide block.
@@ -12,7 +12,7 @@
 
 {%- liquid
   assign b = block.settings
-  assign model_src = b.model_url
+  assign model_src = blank
   assign poster = b.image
   if b.product != blank
     for media in b.product.media
@@ -47,8 +47,8 @@
       disable-tap
       disable-zoom
       disable-pan
-      field-of-view="30deg"
-      camera-orbit="0deg 90deg auto"
+      field-of-view="35deg"
+      camera-orbit="11.31deg 90deg auto"
       min-camera-orbit="auto 0deg 0m"
       max-camera-orbit="auto 180deg 1000m"
       orientation="0deg 0deg 0deg"

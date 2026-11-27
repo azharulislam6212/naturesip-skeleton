@@ -26,7 +26,10 @@
   {% if s.wave %}
     data-wave
   {% endif %}
-  style="--hero-height: {{ s.height }}svh; --hero-can: {{ s.can_size }}; --hero-word-scale: {{ s.word_size | divided_by: 100.0 }}; --hero-below: {{ s.below_color }};{% if s.grid %} --hero-grid: url('{{ 'hero-grid.png' | asset_url }}');{% endif %}"
+  {% if s.grid %}
+    data-grid
+  {% endif %}
+  style="--hero-height: {{ s.height }}svh; --hero-can: {{ s.can_size }}; --hero-word-scale: {{ s.word_size | divided_by: 100.0 }}; --hero-below: {{ s.below_color }};{% if s.grid and s.grid_image != blank %} --hero-grid-image: url('{{ s.grid_image | image_url: width: 800 }}'); --hero-grid-size: {{ s.grid_size }}vw auto;{% endif %}"
   aria-roledescription="{{ 'accessibility.carousel' | t }}"
   aria-label="{{ s.accessible_name | escape }}"
 >
@@ -102,6 +105,24 @@
       "id": "grid",
       "label": "t:sections.hero_slideshow.settings.grid",
       "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "grid_image",
+      "label": "t:sections.hero_slideshow.settings.grid_image",
+      "info": "t:sections.hero_slideshow.settings.grid_image_info",
+      "visible_if": "{{ section.settings.grid }}"
+    },
+    {
+      "type": "range",
+      "id": "grid_size",
+      "label": "t:sections.hero_slideshow.settings.grid_size",
+      "min": 5,
+      "max": 60,
+      "step": 1,
+      "unit": "%",
+      "default": 27,
+      "visible_if": "{{ section.settings.grid and section.settings.grid_image != blank }}"
     },
     {
       "type": "header",
@@ -206,19 +227,19 @@
           "blocks": {
             "pair_left": {
               "type": "_hero-floater",
-              "settings": { "sample": "pair", "x": 11, "y": 10, "width": 6, "rotation": 0, "depth": 40, "delay": 0 }
+              "settings": { "x": 11, "y": 10, "width": 6, "rotation": 0, "depth": 40, "delay": 0 }
             },
             "whole_top": {
               "type": "_hero-floater",
-              "settings": { "sample": "whole", "x": 45, "y": 6, "width": 7, "rotation": 0, "depth": 25, "delay": 1 }
+              "settings": { "x": 45, "y": 6, "width": 7, "rotation": 0, "depth": 25, "delay": 1 }
             },
             "whole_right": {
               "type": "_hero-floater",
-              "settings": { "sample": "whole", "x": 80, "y": 14, "width": 7, "rotation": 0, "depth": 55, "delay": 2 }
+              "settings": { "x": 80, "y": 14, "width": 7, "rotation": 0, "depth": 55, "delay": 2 }
             },
             "pair_bottom": {
               "type": "_hero-floater",
-              "settings": { "sample": "pair", "x": 68, "y": 60, "width": 8, "rotation": 0, "depth": 70, "delay": 3 }
+              "settings": { "x": 68, "y": 60, "width": 8, "rotation": 0, "depth": 70, "delay": 3 }
             }
           },
           "block_order": ["pair_left", "whole_top", "whole_right", "pair_bottom"]
@@ -233,19 +254,19 @@
           "blocks": {
             "whole_left": {
               "type": "_hero-floater",
-              "settings": { "sample": "whole", "x": 9, "y": 9, "width": 7, "rotation": -10, "depth": 40, "delay": 0 }
+              "settings": { "x": 9, "y": 9, "width": 7, "rotation": -10, "depth": 40, "delay": 0 }
             },
             "pair_top": {
               "type": "_hero-floater",
-              "settings": { "sample": "pair", "x": 46, "y": 7, "width": 7, "rotation": 10, "depth": 25, "delay": 1 }
+              "settings": { "x": 46, "y": 7, "width": 7, "rotation": 10, "depth": 25, "delay": 1 }
             },
             "pair_right": {
               "type": "_hero-floater",
-              "settings": { "sample": "pair", "x": 81, "y": 16, "width": 7, "rotation": -5, "depth": 55, "delay": 2 }
+              "settings": { "x": 81, "y": 16, "width": 7, "rotation": -5, "depth": 55, "delay": 2 }
             },
             "whole_bottom": {
               "type": "_hero-floater",
-              "settings": { "sample": "whole", "x": 69, "y": 59, "width": 7, "rotation": 15, "depth": 70, "delay": 3 }
+              "settings": { "x": 69, "y": 59, "width": 7, "rotation": 15, "depth": 70, "delay": 3 }
             }
           },
           "block_order": ["whole_left", "pair_top", "pair_right", "whole_bottom"]

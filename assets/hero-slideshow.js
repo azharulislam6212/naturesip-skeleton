@@ -449,22 +449,38 @@ class HeroSlideshow extends Component {
 
   /* ---------- Input ---------- */
 
+  /**
+   * Drag to change slides, along the slides' own vertical motion: up for
+   * the next, down for the previous (sideways works too). Touch swipes
+   * only sideways: up and down there scroll the page past the hero.
+   * A drag on the 3D can turns it instead, and links and buttons keep their
+   * clicks. The release is caught on the window, so a drag let go outside
+   * still counts.
+   */
   #bindSwipe() {
-    let startX = 0;
-    let startY = 0;
-    let onCan = false;
+    /** @type {{ x: number, y: number, id: number, mouse: boolean } | null} */
+    let start = null;
+
     this.listen(this, 'pointerdown', (event) => {
-      if (event.pointerType === 'mouse') return;
-      onCan = Boolean(/** @type {Element} */ (event.target).closest('.hero-slideshow__can'));
-      startX = event.clientX;
-      startY = event.clientY;
+      const target = /** @type {Element} */ (event.target);
+      if (event.button > 0 || target.closest('.hero-slideshow__can, a, button, input, select, textarea')) return;
+      const mouse = event.pointerType === 'mouse';
+      start = { x: event.clientX, y: event.clientY, id: event.pointerId, mouse };
+      // No text selection while dragging with a mouse.
+      if (mouse) event.preventDefault();
     });
-    this.listen(this, 'pointerup', (event) => {
-      // A drag on the can turns it; it doesn't change the slide.
-      if (event.pointerType === 'mouse' || onCan) return;
-      const dx = event.clientX - startX;
-      if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(event.clientY - startY)) this.step(dx < 0 ? 1 : -1, true);
+
+    this.listen(window, 'pointerup', (event) => {
+      if (!start || event.pointerId !== start.id) return;
+      const dx = event.clientX - start.x;
+      const dy = event.clientY - start.y;
+      const { mouse } = start;
+      start = null;
+      if (mouse && Math.abs(dy) > 48 && Math.abs(dy) >= Math.abs(dx)) this.step(dy < 0 ? 1 : -1, true);
+      else if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy)) this.step(dx < 0 ? 1 : -1, true);
     });
+
+    this.listen(window, 'pointercancel', () => (start = null));
   }
 
   /**

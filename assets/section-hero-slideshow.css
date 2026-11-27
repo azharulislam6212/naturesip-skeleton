@@ -19,6 +19,8 @@
     background-color: var(--hero-below, transparent);
     color: #fff;
     overflow-x: clip;
+    /* Sideways swipes change slides (assets/hero-slideshow.js); up and down still scroll. */
+    touch-action: pan-y;
   }
 
   /* LCP: Chrome ignores text and images painted at opacity 0, so the first

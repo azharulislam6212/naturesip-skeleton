@@ -1896,61 +1896,6 @@
     "comparison": {
       "type": "comparison-table",
       "blocks": {
-        "r_1": {
-          "type": "_comparison-row",
-          "settings": {
-            "label": "Probiotic-rich digestive support",
-            "us_value": "yes",
-            "us_text": "",
-            "them_value": "no",
-            "them_text": ""
-          },
-          "blocks": {}
-        },
-        "r_2": {
-          "type": "_comparison-row",
-          "settings": {
-            "label": "Antioxidant properties",
-            "us_value": "yes",
-            "us_text": "",
-            "them_value": "no",
-            "them_text": ""
-          },
-          "blocks": {}
-        },
-        "r_3": {
-          "type": "_comparison-row",
-          "settings": {
-            "label": "Lower caffeine content",
-            "us_value": "yes",
-            "us_text": "",
-            "them_value": "no",
-            "them_text": ""
-          },
-          "blocks": {}
-        },
-        "r_4": {
-          "type": "_comparison-row",
-          "settings": {
-            "label": "No artificial additives",
-            "us_value": "yes",
-            "us_text": "",
-            "them_value": "no",
-            "them_text": ""
-          },
-          "blocks": {}
-        },
-        "r_5": {
-          "type": "_comparison-row",
-          "settings": {
-            "label": "Clean label ingredients",
-            "us_value": "yes",
-            "us_text": "",
-            "them_value": "no",
-            "them_text": ""
-          },
-          "blocks": {}
-        },
         "heading": {
           "type": "section-heading",
           "static": true,
@@ -2028,21 +1973,86 @@
           "block_order": [
             "heading"
           ]
+        },
+        "card": {
+          "type": "_comparison-card",
+          "static": true,
+          "settings": {
+            "us_label": "NatureSip",
+            "logo_width": 120,
+            "them_label": "Other energy drinks",
+            "caption": "How we compare",
+            "background_gradient": "linear-gradient(110deg, rgba(251, 199, 228, 1), rgba(251, 153, 207, 1) 100%)",
+            "us_gradient": "linear-gradient(270deg, rgba(100, 13, 95, 1), rgba(103, 25, 111, 1) 46%, rgba(105, 36, 124, 1) 100%)"
+          },
+          "blocks": {
+            "r_1": {
+              "type": "_comparison-row",
+              "settings": {
+                "label": "Probiotic-rich digestive support",
+                "us_value": "yes",
+                "us_text": "",
+                "them_value": "no",
+                "them_text": ""
+              },
+              "blocks": {}
+            },
+            "r_2": {
+              "type": "_comparison-row",
+              "settings": {
+                "label": "Antioxidant properties",
+                "us_value": "yes",
+                "us_text": "",
+                "them_value": "no",
+                "them_text": ""
+              },
+              "blocks": {}
+            },
+            "r_3": {
+              "type": "_comparison-row",
+              "settings": {
+                "label": "Lower caffeine content",
+                "us_value": "yes",
+                "us_text": "",
+                "them_value": "no",
+                "them_text": ""
+              },
+              "blocks": {}
+            },
+            "r_4": {
+              "type": "_comparison-row",
+              "settings": {
+                "label": "No artificial additives",
+                "us_value": "yes",
+                "us_text": "",
+                "them_value": "no",
+                "them_text": ""
+              },
+              "blocks": {}
+            },
+            "r_5": {
+              "type": "_comparison-row",
+              "settings": {
+                "label": "Clean label ingredients",
+                "us_value": "yes",
+                "us_text": "",
+                "them_value": "no",
+                "them_text": ""
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "r_1",
+            "r_2",
+            "r_3",
+            "r_4",
+            "r_5"
+          ]
         }
       },
-      "block_order": [
-        "r_1",
-        "r_2",
-        "r_3",
-        "r_4",
-        "r_5"
-      ],
+      "block_order": [],
       "settings": {
-        "us_label": "NatureSip",
-        "logo_width": 120,
-        "them_label": "Other energy drinks",
-        "caption": "How we compare",
-        "table_color_scheme": "",
         "color_scheme": "scheme-1",
         "background_image_opacity": 100,
         "shape_top": "none",

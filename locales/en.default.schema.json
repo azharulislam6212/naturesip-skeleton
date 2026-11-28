@@ -220,6 +220,9 @@
     },
     "highlight": {
       "name": "Highlight"
+    },
+    "comparison_card": {
+      "name": "Comparison card"
     }
   },
   "categories": {
@@ -307,7 +310,11 @@
     "position": "Position",
     "image": "Image",
     "waves": "Background wave",
-    "icon_tile": "Tile"
+    "icon_tile": "Tile",
+    "columns": "Columns",
+    "decoration": "Decoration",
+    "card": "Card",
+    "table": "Table"
   },
   "options": {
     "alignment": {
@@ -728,6 +735,14 @@
     },
     "sequence_digits": {
       "none": "1, 2, 3"
+    },
+    "blend": {
+      "normal": "Normal",
+      "multiply": "Multiply",
+      "color_burn": "Color burn",
+      "luminosity": "Luminosity",
+      "overlay": "Overlay",
+      "soft_light": "Soft light"
     }
   },
   "sections": {
@@ -1249,7 +1264,19 @@
     "tile_background_info": "Empty uses the heading gradient.",
     "tile_size": "Tile size",
     "tile_border": "Outline",
-    "tile_shadow": "Offset shadow"
+    "tile_shadow": "Offset shadow",
+    "decor_image": "Decoration image",
+    "decor_width": "Decoration width",
+    "pattern_image": "Pattern image",
+    "pattern_image_info": "Repeats over the background. Leave empty for a plain background.",
+    "pattern_size": "Pattern size",
+    "pattern_blend": "Pattern blend",
+    "pattern_opacity": "Pattern opacity",
+    "us_column": "Your column",
+    "us_column_gradient": "Your column gradient",
+    "them_column": "Others column",
+    "them_icon_color": "Others icon color",
+    "line_color": "Divider color"
   },
   "settings_schema": {
     "animations": {

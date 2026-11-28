@@ -1,0 +1,390 @@
+{% doc %}
+  The comparison card: a solid or gradient background with an optional
+  pattern image blended on top (nothing is drawn without one), a border and
+  its own inner padding. Inside, a table: feature labels on the card, your
+  brand's column and the "others" column on a raised panel. Rows are
+  `_comparison-row` blocks.
+
+  Built as a CSS grid with table roles (rows are subgrids), so screen
+  readers still announce each cell with its row and column.
+
+  Static block of sections/comparison-table.
+
+  @example
+  {% content_for 'block', type: '_comparison-card', id: 'card' %}
+{% enddoc %}
+
+{%- liquid
+  assign s = block.settings
+  assign us_label = s.us_label | escape
+-%}
+
+<div
+  class="comparison-card spacing-style{% if s.pattern != blank %} comparison-card--pattern{% endif %}"
+  style="
+    {%- render 'spacing-style', settings: s -%}
+    --card-background: {% if s.background_gradient != blank %}{{ s.background_gradient }}{% else %}{{ s.background_color }}{% endif %};
+    --card-border-color: {{ s.border_color }};
+    --card-border-width: {{ s.border_width }}px;
+    --card-radius: {{ s.radius | divided_by: 16.0 }}rem;
+    --us-background: {% if s.us_gradient != blank %}{{ s.us_gradient }}{% else %}{{ s.us_color }}{% endif %};
+    --decor-width: {{ s.decor_width | divided_by: 16.0 }}rem;
+    --them-background: {{ s.them_color }};
+    --comparison-line: {{ s.line_color }};
+    --comparison-label: {{ s.label_color }};
+    --comparison-them-text: {{ s.them_text_color }};
+    {%- if s.pattern != blank %}
+      --pattern: url('{{ s.pattern | image_url: width: 1200 }}');
+      --pattern-size: {{ s.pattern_size }}px;
+      --pattern-blend: {{ s.pattern_blend }};
+      --pattern-opacity: {{ s.pattern_opacity | divided_by: 100.0 }};
+    {%- endif -%}
+  "
+  {% render 'animation-attributes' %}
+  {{ block.shopify_attributes }}
+>
+  <div class="comparison__scroll">
+    <div class="comparison__table" role="table" aria-label="{{ s.caption | escape }}">
+      <span class="comparison__panel" aria-hidden="true"></span>
+      <span class="comparison__panel-us" aria-hidden="true"></span>
+
+      <div class="comparison__row comparison__row--head" role="row">
+        <div class="comparison__label comparison__decor" role="columnheader">
+          {%- if s.decor_image != blank -%}
+            {{ s.decor_image | image_url: width: 480 | image_tag: alt: '', loading: 'lazy', class: 'comparison__decor-image', style: 'width: var(--decor-width)', widths: '160, 240, 360, 480' }}
+          {%- endif -%}
+          <span class="visually-hidden">{{ 'sections.comparison.feature' | t }}</span>
+        </div>
+        <div class="comparison__cell comparison__cell--us" role="columnheader">
+          {%- if s.logo != blank -%}
+            {{ s.logo | image_url: width: 480 | image_tag: alt: us_label, width: s.logo_width, loading: 'lazy', class: 'comparison__logo' }}
+          {%- else -%}
+            <span class="comparison__brand">{{ us_label }}</span>
+          {%- endif -%}
+        </div>
+        <div class="comparison__cell comparison__cell--them comparison__them-label" role="columnheader">{{ s.them_label | escape }}</div>
+      </div>
+
+      {% content_for 'blocks' %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.comparison_card.name",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "_comparison-row"
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:headers.columns"
+    },
+    {
+      "type": "text",
+      "id": "us_label",
+      "label": "t:settings.us_label",
+      "default": "t:defaults.us_label"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "t:settings.us_logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "t:settings.logo_width",
+      "min": 60,
+      "max": 240,
+      "step": 5,
+      "unit": "px",
+      "default": 120
+    },
+    {
+      "type": "text",
+      "id": "them_label",
+      "label": "t:settings.them_label",
+      "default": "t:defaults.them_label"
+    },
+    {
+      "type": "text",
+      "id": "caption",
+      "label": "t:settings.table_caption",
+      "default": "t:defaults.table_caption"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.decoration"
+    },
+    {
+      "type": "image_picker",
+      "id": "decor_image",
+      "label": "t:settings.decor_image"
+    },
+    {
+      "type": "range",
+      "id": "decor_width",
+      "label": "t:settings.decor_width",
+      "min": 40,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "default": 120
+    },
+    {
+      "type": "header",
+      "content": "t:headers.card"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background",
+      "default": "#fbc7e4"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "t:settings.background_gradient"
+    },
+    {
+      "type": "image_picker",
+      "id": "pattern",
+      "label": "t:settings.pattern_image",
+      "info": "t:settings.pattern_image_info"
+    },
+    {
+      "visible_if": "{{ block.settings.pattern != blank }}",
+      "type": "range",
+      "id": "pattern_size",
+      "label": "t:settings.pattern_size",
+      "min": 100,
+      "max": 2000,
+      "step": 20,
+      "unit": "px",
+      "default": 1300
+    },
+    {
+      "visible_if": "{{ block.settings.pattern != blank }}",
+      "type": "select",
+      "id": "pattern_blend",
+      "label": "t:settings.pattern_blend",
+      "options": [
+        {
+          "value": "normal",
+          "label": "t:options.blend.normal"
+        },
+        {
+          "value": "multiply",
+          "label": "t:options.blend.multiply"
+        },
+        {
+          "value": "color-burn",
+          "label": "t:options.blend.color_burn"
+        },
+        {
+          "value": "luminosity",
+          "label": "t:options.blend.luminosity"
+        },
+        {
+          "value": "overlay",
+          "label": "t:options.blend.overlay"
+        },
+        {
+          "value": "soft-light",
+          "label": "t:options.blend.soft_light"
+        }
+      ],
+      "default": "color-burn"
+    },
+    {
+      "visible_if": "{{ block.settings.pattern != blank }}",
+      "type": "range",
+      "id": "pattern_opacity",
+      "label": "t:settings.pattern_opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "t:settings.border_color",
+      "default": "#da498d"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "t:settings.border_width",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "radius",
+      "label": "t:settings.border_radius",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "t:headers.table"
+    },
+    {
+      "type": "color",
+      "id": "us_color",
+      "label": "t:settings.us_column",
+      "default": "#69247c"
+    },
+    {
+      "type": "color_background",
+      "id": "us_gradient",
+      "label": "t:settings.us_column_gradient"
+    },
+    {
+      "type": "color",
+      "id": "them_color",
+      "label": "t:settings.them_column",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "them_text_color",
+      "label": "t:settings.them_icon_color",
+      "default": "#646464"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "t:settings.label_color",
+      "default": "#010507"
+    },
+    {
+      "type": "color",
+      "id": "line_color",
+      "label": "t:settings.line_color",
+      "default": "#da498d"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 40,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 40,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 40,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 40,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 16,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 16,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 12,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 12,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    }
+  ]
+}
+{% endschema %}

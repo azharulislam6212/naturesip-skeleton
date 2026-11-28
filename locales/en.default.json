@@ -376,7 +376,8 @@
     },
     "comparison": {
       "yes": "Yes",
-      "no": "No"
+      "no": "No",
+      "feature": "Feature"
     }
   },
   "templates": {

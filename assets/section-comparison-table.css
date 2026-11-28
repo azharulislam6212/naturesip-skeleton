@@ -1,70 +1,205 @@
-/* Section: comparison table. */
+/* Section: comparison table (sections/comparison-table.liquid,
+   blocks/_comparison-card.liquid, blocks/_comparison-row.liquid). */
 @layer sections {
-  /* ---------- Comparison ---------- */
-  .comparison__card {
-    padding: clamp(1rem, 3vw, 2.5rem);
-    border: 2px solid var(--color-heading-stroke);
-    border-radius: var(--radius-card);
-    background-image: var(--gradient-background);
-    box-shadow: 6px 6px 0 var(--color-shadow);
-    overflow-x: auto;
+  /* ---------- Card ---------- */
+  .comparison-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border: var(--card-border-width, 2px) solid var(--card-border-color, #da498d);
+    border-radius: var(--card-radius, 2.5rem);
+    background: var(--card-background, #fbc7e4);
   }
 
+  /* The pattern, only when one is chosen: blended into the card colour. */
+  .comparison-card--pattern::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: var(--pattern);
+    background-size: var(--pattern-size, 640px) auto;
+    background-repeat: repeat;
+    mix-blend-mode: var(--pattern-blend, color-burn);
+    opacity: var(--pattern-opacity, 1);
+    pointer-events: none;
+  }
+
+  .comparison__scroll {
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  /* ---------- Table: a grid, rows are subgrids ---------- */
   .comparison__table {
-    width: 100%;
-    min-width: 30rem;
-    border-collapse: separate;
-    border-spacing: 0;
+    --label-column: minmax(8rem, 1.47fr);
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--label-column) minmax(4.5rem, 1fr) minmax(4.5rem, 1fr);
+    min-width: 18rem;
+  }
+
+  .comparison__row {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    min-height: 5rem;
+  }
+
+  .comparison__row--head {
+    min-height: 7rem;
+  }
+
+  /* Raised panel behind your column and the others column. Absolutely
+     positioned in the grid: it takes no cells, and with no row lines given
+     it runs the table's full height. */
+  .comparison__panel,
+  .comparison__panel-us {
+    position: absolute;
+    inset: 0;
+    border-radius: 2rem;
+  }
+
+  .comparison__panel {
+    grid-column: 2 / 4;
+    background: var(--them-background, #fff);
+    box-shadow: 0 0 18px rgb(1 5 7 / 0.22);
+  }
+
+  .comparison__panel-us {
+    grid-column: 2 / 3;
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+    background: var(--us-background, #69247c);
+    box-shadow: 0 0 4px rgb(1 5 7 / 0.2);
+  }
+
+  /* ---------- Cells ---------- */
+  .comparison__label,
+  .comparison__cell {
+    display: grid;
+    place-items: center;
+    padding: var(--space-xs) var(--space-sm);
     text-align: center;
   }
 
-  .comparison__table :is(th, td) {
-    padding: var(--space-sm) var(--space-xs);
-    border-block-end: 1px dashed var(--color-border);
-  }
-
-  .comparison__table tbody th {
-    text-align: start;
-    font-size: 0.875rem;
-    font-weight: var(--font-body--weight-bold);
-    letter-spacing: 0.04em;
+  .comparison__label {
+    color: var(--comparison-label, #010507);
+    font-family: var(--font-heading--family);
+    font-weight: var(--font-heading--weight-bold);
+    font-size: clamp(0.875rem, 1.4vw, 1.25rem);
+    line-height: 1.2;
     text-transform: uppercase;
+    text-shadow: 0 2px 4px rgb(1 5 7 / 0.25);
   }
 
-  .comparison__us {
-    width: 28%;
-    background-image: var(--gradient-accent);
-    color: var(--color-on-accent);
+  .comparison__decor {
+    place-items: start;
+    text-shadow: none;
   }
 
-  .comparison__them {
-    width: 28%;
-  }
-
-  thead .comparison__us {
-    border-start-start-radius: var(--radius-card);
-    border-start-end-radius: var(--radius-card);
-    font-family: var(--font-accent--family);
-    font-size: 1.25rem;
-  }
-
-  tbody tr:last-child .comparison__us {
-    border-end-start-radius: var(--radius-card);
-    border-end-end-radius: var(--radius-card);
-  }
-
-  .comparison__logo {
-    margin-inline: auto;
+  .comparison__decor-image {
+    display: block;
     height: auto;
   }
 
+  .comparison__cell--us {
+    color: #fff;
+  }
+
+  .comparison__cell--them {
+    color: var(--comparison-them-text, #646464);
+  }
+
+  .comparison__them-label {
+    color: var(--comparison-label, #010507);
+    font-family: var(--font-heading--family);
+    font-size: clamp(0.875rem, 1.4vw, 1.25rem);
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .comparison__brand {
+    font-family: var(--font-heading--family);
+    font-weight: var(--font-heading--weight-bold);
+    font-size: clamp(1.25rem, 2.4vw, 2rem);
+  }
+
+  .comparison__logo {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .comparison__text {
+    font-weight: var(--font-body--weight-bold);
+  }
+
+  /* Separators between rows: dashed on the card and in the others column,
+     a soft white line in your column. */
+  .comparison__row:not(.comparison__row--head) > * {
+    border-block-start: 1px dashed var(--comparison-line, #da498d);
+  }
+
+  .comparison__row:not(.comparison__row--head) > .comparison__cell--us {
+    border-block-start: 1px solid rgb(255 255 255 / 0.4);
+  }
+
   .comparison__mark {
-    display: inline-grid;
-    place-items: center;
     width: 1.75rem;
     height: 1.75rem;
-    border: 1.5px solid currentColor;
-    border-radius: 50%;
-    --icon-size: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  @media (max-width: 749px) {
+    .comparison__table {
+      --label-column: minmax(0, 1.25fr);
+    }
+
+    .comparison__label,
+    .comparison__cell {
+      padding: var(--space-xs) 0.375rem;
+    }
+
+    .comparison__label,
+    .comparison__them-label {
+      font-size: 0.75rem;
+    }
+
+    .comparison__decor-image {
+      display: none;
+    }
+
+    .comparison__brand {
+      font-size: 1rem;
+    }
+
+    .comparison__mark {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    .comparison__row {
+      min-height: 4rem;
+    }
+
+    .comparison__row--head {
+      min-height: 4.5rem;
+    }
+
+    .comparison__panel,
+    .comparison__panel-us {
+      border-radius: 1.25rem;
+    }
+
+    .comparison__panel-us {
+      border-start-end-radius: 0;
+      border-end-end-radius: 0;
+    }
   }
 }

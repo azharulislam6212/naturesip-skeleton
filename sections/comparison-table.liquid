@@ -1,6 +1,7 @@
 {%- comment -%}
-  Comparison table: your brand against "others", one row per block.
-  A real <table> with header cells, so screen readers announce each cell.
+  Comparison table: a heading group, then a card (static `_comparison-card`
+  block) holding the comparison: your brand against "others", one
+  `_comparison-row` block per feature. App blocks render under the card.
 {%- endcomment -%}
 
 {{ 'section-comparison-table.css' | asset_url | stylesheet_tag }}
@@ -15,27 +16,8 @@
 
   <div class="layout-stack" style="--gap: var(--space-2xl);">
     {% content_for 'block', type: 'section-heading', id: 'heading' %}
-    <div class="comparison__card color-{{ s.table_color_scheme.id }}" {% render 'animation-attributes' %}>
-      <table class="comparison__table">
-        <caption class="visually-hidden">{{ s.caption | escape }}</caption>
-        <thead>
-          <tr>
-            <td></td>
-            <th scope="col" class="comparison__us">
-              {%- if s.logo != blank -%}
-                {{ s.logo | image_url: width: 320 | image_tag: alt: s.us_label, width: s.logo_width, loading: 'lazy', class: 'comparison__logo' }}
-              {%- else -%}
-                {{ s.us_label | escape }}
-              {%- endif -%}
-            </th>
-            <th scope="col" class="comparison__them">{{ s.them_label | escape }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% content_for 'blocks' %}
-        </tbody>
-      </table>
-    </div>
+    {% content_for 'block', type: '_comparison-card', id: 'card' %}
+    {% content_for 'blocks' %}
   </div>
 </section>
 
@@ -43,52 +25,12 @@
 {
   "name": "t:sections.comparison.name",
   "class": "section-wrapper",
-  "max_blocks": 15,
   "blocks": [
     {
-      "type": "_comparison-row"
+      "type": "@app"
     }
   ],
   "settings": [
-    {
-      "type": "text",
-      "id": "us_label",
-      "label": "t:settings.us_label",
-      "default": "t:defaults.us_label"
-    },
-    {
-      "type": "image_picker",
-      "id": "logo",
-      "label": "t:settings.us_logo"
-    },
-    {
-      "type": "range",
-      "id": "logo_width",
-      "label": "t:settings.logo_width",
-      "min": 60,
-      "max": 240,
-      "step": 5,
-      "unit": "px",
-      "default": 120
-    },
-    {
-      "type": "text",
-      "id": "them_label",
-      "label": "t:settings.them_label",
-      "default": "t:defaults.them_label"
-    },
-    {
-      "type": "text",
-      "id": "caption",
-      "label": "t:settings.table_caption",
-      "default": "t:defaults.table_caption"
-    },
-    {
-      "type": "color_scheme",
-      "id": "table_color_scheme",
-      "label": "t:settings.table_color_scheme",
-      "default": "scheme-5"
-    },
     {
       "type": "header",
       "content": "t:headers.appearance"
@@ -376,25 +318,54 @@
             "text"
           ]
         },
-        "row_1": {
-          "type": "_comparison-row"
-        },
-        "row_2": {
-          "type": "_comparison-row"
-        },
-        "row_3": {
-          "type": "_comparison-row"
-        },
-        "row_4": {
-          "type": "_comparison-row"
+        "card": {
+          "type": "_comparison-card",
+          "static": true,
+          "settings": {
+            "background_gradient": "linear-gradient(110deg, rgba(251, 199, 228, 1), rgba(251, 153, 207, 1) 100%)",
+            "us_gradient": "linear-gradient(270deg, rgba(100, 13, 95, 1), rgba(103, 25, 111, 1) 46%, rgba(105, 36, 124, 1) 100%)"
+          },
+          "blocks": {
+            "row_1": {
+              "type": "_comparison-row",
+              "settings": {
+                "label": "Probiotic-rich digestive support"
+              }
+            },
+            "row_2": {
+              "type": "_comparison-row",
+              "settings": {
+                "label": "Antioxidant properties"
+              }
+            },
+            "row_3": {
+              "type": "_comparison-row",
+              "settings": {
+                "label": "Lower caffeine content"
+              }
+            },
+            "row_4": {
+              "type": "_comparison-row",
+              "settings": {
+                "label": "No artificial additives"
+              }
+            },
+            "row_5": {
+              "type": "_comparison-row",
+              "settings": {
+                "label": "Clean label ingredients"
+              }
+            }
+          },
+          "block_order": [
+            "row_1",
+            "row_2",
+            "row_3",
+            "row_4",
+            "row_5"
+          ]
         }
-      },
-      "block_order": [
-        "row_1",
-        "row_2",
-        "row_3",
-        "row_4"
-      ]
+      }
     }
   ]
 }

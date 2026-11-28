@@ -1,17 +1,64 @@
-/* Section: feature highlights. */
+/* Section: featured highlights (sections/feature-highlights.liquid). */
 @layer sections {
-  /* ---------- Feature highlights ---------- */
+  .feature-highlights {
+    --wave-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 400' preserveAspectRatio='none'%3E%3Cpath d='M-480 200 q120 -110 240 0 t 240 0 t 240 0 t 240 0 t 240 0 t 240 0 t 240 0 t 240 0 t 240 0 t 240 0 t 240 0 t 240 0' fill='none' stroke='%23000' stroke-width='150' stroke-dasharray='1.5 3'/%3E%3C/svg%3E");
+    overflow-x: clip;
+  }
+
+  .feature-highlights__inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---------- Drifting hatched waves (decoration) ---------- */
+  .feature-highlights__waves {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    opacity: var(--wave-opacity, 0.12);
+    pointer-events: none;
+  }
+
+  /* Each band is 1440px wider than the section and slides left by exactly
+     one tile (1440px) per loop, so the loop never shows a seam. */
+  .feature-highlights__wave {
+    position: absolute;
+    inset-inline-start: -25%;
+    width: calc(150% + 1440px);
+    height: clamp(12rem, 26vw, 24rem);
+    background-image: var(--gradient-heading);
+    -webkit-mask: var(--wave-mask) 0 0 / 1440px 100% repeat-x;
+    mask: var(--wave-mask) 0 0 / 1440px 100% repeat-x;
+    animation: feature-highlights-wave var(--wave-duration, 40s) linear infinite;
+    will-change: transform;
+  }
+
+  .feature-highlights__wave--1 {
+    inset-block-start: 26%;
+    rotate: 7deg;
+  }
+
+  .feature-highlights__wave--2 {
+    inset-block-start: 40%;
+    rotate: 4deg;
+    animation-duration: calc(var(--wave-duration, 40s) * 1.35);
+    animation-direction: reverse;
+  }
+
+  /* ---------- Layout ---------- */
   .feature-highlights__grid {
     display: grid;
     gap: var(--space-xl) var(--space-lg);
   }
 
   .feature-highlights__image {
-    max-width: 24rem;
+    width: min(100%, var(--highlight-image-width, 24rem));
     margin-inline: auto;
   }
 
   .feature-highlights__image img {
+    display: block;
     width: 100%;
     height: auto;
   }
@@ -28,18 +75,22 @@
 
   @media (min-width: 990px) {
     .feature-highlights__grid {
-      grid-template-columns: 1fr minmax(16rem, 1.1fr) 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(16rem, var(--highlight-image-width, 30rem)) minmax(0, 1fr);
+      column-gap: var(--space-lg);
       grid-template-rows: repeat(var(--highlight-rows, 3), auto);
       grid-auto-flow: dense;
-      align-items: center;
+      align-items: start;
+      row-gap: clamp(2rem, 4vw, 3.5rem);
     }
 
     .feature-highlights__image {
       grid-column: 2;
       grid-row: 1 / span var(--highlight-rows, 3);
-      max-width: none;
+      align-self: center;
+      width: 100%;
     }
 
+    /* Highlights alternate: odd ones in the left column, even ones right. */
     .feature-highlights__grid > :nth-child(even) {
       grid-column: 1;
     }
@@ -47,5 +98,85 @@
     .feature-highlights__grid > :nth-child(odd):not(.feature-highlights__image) {
       grid-column: 3;
     }
+
+    /* Zigzag: every other row steps in. Children 4n and 4n + 1 are the
+       highlights of rows 2, 4… (the image is child 1). */
+    .feature-highlights--zigzag .feature-highlights__grid > :is(:nth-child(4n), :nth-child(4n + 1)):not(.feature-highlights__image) {
+      margin-inline-start: var(--highlight-offset, 7rem);
+    }
+
+    /* The image stands on the section's bottom edge. */
+    .feature-highlights--bleed .feature-highlights__image {
+      align-self: end;
+      margin-block-end: calc(var(--fh-padding-bottom, 0px) * -1);
+    }
   }
+
+  @media (max-width: 989px) {
+    .feature-highlights--bleed .feature-highlights__image {
+      margin-block-end: calc(var(--fh-padding-bottom-mobile, 0px) * -1);
+      order: 99;
+    }
+  }
+
+  /* ---------- Highlight (blocks/_highlight.liquid) ---------- */
+  .highlight {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-sm);
+    max-width: 21rem;
+  }
+
+  .highlight__tile {
+    display: grid;
+    place-items: center;
+    width: 3.75rem;
+    aspect-ratio: 1;
+    margin-block-end: var(--space-2xs);
+    border: 1px solid var(--color-shadow, #010507);
+    border-radius: 1rem;
+    background: var(--highlight-tile, var(--gradient-heading));
+    box-shadow: 3px 3px 0 var(--color-shadow, #010507);
+    color: var(--color-heading-stroke, #1a1020);
+  }
+
+  .highlight__tile--plain {
+    width: auto;
+    border: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .highlight__tile .icon-block {
+    display: grid;
+    place-items: center;
+  }
+
+  .highlight__title {
+    max-width: 12em;
+    margin: 0;
+  }
+
+  .highlight__text {
+    font-size: 0.875rem;
+    line-height: var(--line-height-relaxed, 1.6);
+  }
+
+  .highlight__text > :first-child {
+    margin-block-start: 0;
+  }
+
+  .feature-highlights--uppercase :is(.highlight__title, .highlight__text) {
+    text-transform: uppercase;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .feature-highlights__wave {
+      animation: none;
+    }
+  }
+}
+
+@keyframes feature-highlights-wave {
+  to { transform: translateX(-1440px); }
 }

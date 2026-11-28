@@ -1533,198 +1533,6 @@
     "highlights": {
       "type": "feature-highlights",
       "blocks": {
-        "f_1": {
-          "type": "icon-text",
-          "settings": {
-            "icon": "bolt",
-            "frame": "square",
-            "frame_size": 56,
-            "use_custom_color": false,
-            "icon_color": "#69247c",
-            "title": "Natural energy boost",
-            "title_size": "h6",
-            "text": "<p>A clean, sustained lift without the jitters.</p>",
-            "text_style": "subheading",
-            "link": "",
-            "layout": "vertical",
-            "alignment": "left",
-            "width": "fit",
-            "custom_width": 100,
-            "custom_width_mobile": 100,
-            "padding_device": "desktop",
-            "padding_top": 0,
-            "padding_bottom": 0,
-            "padding_left": 0,
-            "padding_right": 0,
-            "padding_top_mobile": 0,
-            "padding_bottom_mobile": 0,
-            "padding_left_mobile": 0,
-            "padding_right_mobile": 0,
-            "animation": "theme",
-            "animation_delay": 0
-          },
-          "blocks": {}
-        },
-        "f_2": {
-          "type": "icon-text",
-          "settings": {
-            "icon": "heart",
-            "frame": "square",
-            "frame_size": 56,
-            "use_custom_color": false,
-            "icon_color": "#69247c",
-            "title": "Probiotic gut health",
-            "title_size": "h6",
-            "text": "<p>Live cultures that support healthy digestion.</p>",
-            "text_style": "subheading",
-            "link": "",
-            "layout": "vertical",
-            "alignment": "left",
-            "width": "fit",
-            "custom_width": 100,
-            "custom_width_mobile": 100,
-            "padding_device": "desktop",
-            "padding_top": 0,
-            "padding_bottom": 0,
-            "padding_left": 0,
-            "padding_right": 0,
-            "padding_top_mobile": 0,
-            "padding_bottom_mobile": 0,
-            "padding_left_mobile": 0,
-            "padding_right_mobile": 0,
-            "animation": "theme",
-            "animation_delay": 0
-          },
-          "blocks": {}
-        },
-        "f_3": {
-          "type": "icon-text",
-          "settings": {
-            "icon": "sparkle",
-            "frame": "square",
-            "frame_size": 56,
-            "use_custom_color": false,
-            "icon_color": "#69247c",
-            "title": "Antioxidant-rich",
-            "title_size": "h6",
-            "text": "<p>Helps protect your body from free radicals.</p>",
-            "text_style": "subheading",
-            "link": "",
-            "layout": "vertical",
-            "alignment": "left",
-            "width": "fit",
-            "custom_width": 100,
-            "custom_width_mobile": 100,
-            "padding_device": "desktop",
-            "padding_top": 0,
-            "padding_bottom": 0,
-            "padding_left": 0,
-            "padding_right": 0,
-            "padding_top_mobile": 0,
-            "padding_bottom_mobile": 0,
-            "padding_left_mobile": 0,
-            "padding_right_mobile": 0,
-            "animation": "theme",
-            "animation_delay": 0
-          },
-          "blocks": {}
-        },
-        "f_4": {
-          "type": "icon-text",
-          "settings": {
-            "icon": "drop",
-            "frame": "square",
-            "frame_size": 56,
-            "use_custom_color": false,
-            "icon_color": "#69247c",
-            "title": "Low-calorie refreshment",
-            "title_size": "h6",
-            "text": "<p>Crisp taste without worrying about calories.</p>",
-            "text_style": "subheading",
-            "link": "",
-            "layout": "vertical",
-            "alignment": "left",
-            "width": "fit",
-            "custom_width": 100,
-            "custom_width_mobile": 100,
-            "padding_device": "desktop",
-            "padding_top": 0,
-            "padding_bottom": 0,
-            "padding_left": 0,
-            "padding_right": 0,
-            "padding_top_mobile": 0,
-            "padding_bottom_mobile": 0,
-            "padding_left_mobile": 0,
-            "padding_right_mobile": 0,
-            "animation": "theme",
-            "animation_delay": 0
-          },
-          "blocks": {}
-        },
-        "f_5": {
-          "type": "icon-text",
-          "settings": {
-            "icon": "leaf",
-            "frame": "square",
-            "frame_size": 56,
-            "use_custom_color": false,
-            "icon_color": "#69247c",
-            "title": "Vegan-friendly",
-            "title_size": "h6",
-            "text": "<p>Made to support an ethical lifestyle.</p>",
-            "text_style": "subheading",
-            "link": "",
-            "layout": "vertical",
-            "alignment": "left",
-            "width": "fit",
-            "custom_width": 100,
-            "custom_width_mobile": 100,
-            "padding_device": "desktop",
-            "padding_top": 0,
-            "padding_bottom": 0,
-            "padding_left": 0,
-            "padding_right": 0,
-            "padding_top_mobile": 0,
-            "padding_bottom_mobile": 0,
-            "padding_left_mobile": 0,
-            "padding_right_mobile": 0,
-            "animation": "theme",
-            "animation_delay": 0
-          },
-          "blocks": {}
-        },
-        "f_6": {
-          "type": "icon-text",
-          "settings": {
-            "icon": "ban",
-            "frame": "square",
-            "frame_size": 56,
-            "use_custom_color": false,
-            "icon_color": "#69247c",
-            "title": "No artificial additives",
-            "title_size": "h6",
-            "text": "<p>No artificial preservatives, colors or flavors.</p>",
-            "text_style": "subheading",
-            "link": "",
-            "layout": "vertical",
-            "alignment": "left",
-            "width": "fit",
-            "custom_width": 100,
-            "custom_width_mobile": 100,
-            "padding_device": "desktop",
-            "padding_top": 0,
-            "padding_bottom": 0,
-            "padding_left": 0,
-            "padding_right": 0,
-            "padding_top_mobile": 0,
-            "padding_bottom_mobile": 0,
-            "padding_left_mobile": 0,
-            "padding_right_mobile": 0,
-            "animation": "theme",
-            "animation_delay": 0
-          },
-          "blocks": {}
-        },
         "heading": {
           "type": "section-heading",
           "static": true,
@@ -1765,7 +1573,7 @@
                 "custom_line_height": "normal",
                 "custom_letter_spacing": 0,
                 "custom_case": "none",
-                "text_color": "gradient",
+                "text_color": "scheme",
                 "custom_color": "#1a1020",
                 "gradient": "",
                 "highlight_style": "gradient",
@@ -1841,6 +1649,132 @@
             "heading",
             "text"
           ]
+        },
+        "f_1": {
+          "type": "_highlight",
+          "settings": {
+            "title": "Natural energy boost",
+            "text": "<p>Kombucha offers a clean, sustained energy boost without the jitters making it the perfect everyday drink.</p>",
+            "title_size": "h6",
+            "tile_background": "linear-gradient(180deg, rgba(250, 198, 122, 1), rgba(254, 138, 128, 1) 100%)",
+            "show_tile": true
+          },
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "static": true,
+              "settings": {
+                "icon": "bolt",
+                "size_preset": "custom",
+                "size": 36
+              }
+            }
+          }
+        },
+        "f_2": {
+          "type": "_highlight",
+          "settings": {
+            "title": "Probiotic gut health",
+            "text": "<p>Rich in live probiotics, kombucha supports a healthy digestive system and promotes better gut balance.</p>",
+            "title_size": "h6",
+            "tile_background": "linear-gradient(180deg, rgba(250, 198, 122, 1), rgba(254, 138, 128, 1) 100%)",
+            "show_tile": true
+          },
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "static": true,
+              "settings": {
+                "icon": "heart",
+                "size_preset": "custom",
+                "size": 36
+              }
+            }
+          }
+        },
+        "f_3": {
+          "type": "_highlight",
+          "settings": {
+            "title": "Antioxidant-rich formula",
+            "text": "<p>Packed with antioxidants, kombucha helps protect your body from free radicals naturally.</p>",
+            "title_size": "h6",
+            "tile_background": "linear-gradient(270deg, rgba(218, 73, 141, 1), rgba(242, 40, 135, 1) 100%)",
+            "show_tile": true
+          },
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "static": true,
+              "settings": {
+                "icon": "sparkle",
+                "size_preset": "custom",
+                "size": 36
+              }
+            }
+          }
+        },
+        "f_4": {
+          "type": "_highlight",
+          "settings": {
+            "title": "Low-calorie refreshment",
+            "text": "<p>Indulge in the crisp, refreshing taste of kombucha without worrying about the calories.</p>",
+            "title_size": "h6",
+            "tile_background": "linear-gradient(270deg, rgba(218, 73, 141, 1), rgba(242, 40, 135, 1) 100%)",
+            "show_tile": true
+          },
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "static": true,
+              "settings": {
+                "icon": "drop",
+                "size_preset": "custom",
+                "size": 36
+              }
+            }
+          }
+        },
+        "f_5": {
+          "type": "_highlight",
+          "settings": {
+            "title": "Vegan-friendly drink",
+            "text": "<p>Kombucha is a proudly vegan-friendly option, made to support your ethical and health-conscious lifestyle.</p>",
+            "title_size": "h6",
+            "tile_background": "linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
+            "show_tile": true
+          },
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "static": true,
+              "settings": {
+                "icon": "leaf",
+                "size_preset": "custom",
+                "size": 36
+              }
+            }
+          }
+        },
+        "f_6": {
+          "type": "_highlight",
+          "settings": {
+            "title": "No artificial additives",
+            "text": "<p>With only pure, organic ingredients, kombucha contains no artificial preservatives, colors, or flavors.</p>",
+            "title_size": "h6",
+            "tile_background": "linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
+            "show_tile": true
+          },
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "static": true,
+              "settings": {
+                "icon": "ban",
+                "size_preset": "custom",
+                "size": 36
+              }
+            }
+          }
         }
       },
       "block_order": [
@@ -1854,8 +1788,8 @@
       "settings": {
         "color_scheme": "scheme-2",
         "background_image_opacity": 100,
-        "shape_top": "none",
-        "shape_bottom": "wave",
+        "shape_top": "wave",
+        "shape_bottom": "none",
         "shape_size": "medium",
         "section_width": "inherit",
         "section_custom_width": 1280,
@@ -1863,7 +1797,15 @@
         "padding_top": 80,
         "padding_bottom": 80,
         "padding_top_mobile": 48,
-        "padding_bottom_mobile": 48
+        "padding_bottom_mobile": 48,
+        "image_bleed": true,
+        "zigzag": true,
+        "zigzag_offset": 112,
+        "uppercase": true,
+        "show_waves": true,
+        "wave_opacity": 12,
+        "wave_speed": 40,
+        "image_width": 540
       }
     },
     "comparison": {

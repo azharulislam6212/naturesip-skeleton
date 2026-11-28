@@ -1,0 +1,284 @@
+{% doc %}
+  One highlight of the Featured highlights section: an icon (a nested,
+  static icon block) on a tile, a title and a short text. Animates in after
+  the one before it (the section's grid staggers its children).
+
+  @example
+  {% content_for 'block', type: '_highlight', id: 'highlight' %}
+{% enddoc %}
+
+{%- assign s = block.settings -%}
+
+<div
+  class="highlight spacing-style"
+  style="
+    {%- render 'spacing-style', settings: s -%}
+    {%- if s.tile_background != blank %}--highlight-tile: {{ s.tile_background }};{% endif -%}
+  "
+  {% render 'animation-attributes', animation: s.animation, delay: s.animation_delay %}
+  {{ block.shopify_attributes }}
+>
+  <div class="highlight__tile{% unless s.show_tile %} highlight__tile--plain{% endunless %}">
+    {% content_for 'block', type: 'icon', id: 'icon' %}
+  </div>
+  {%- if s.title != blank -%}
+    <h3 class="highlight__title type-heading type-{{ s.title_size | replace: '_', '-' }}">{{ s.title | escape }}</h3>
+  {%- endif -%}
+  {%- if s.text != blank -%}
+    <div class="highlight__text rte">{{ s.text }}</div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.highlight.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:settings.title",
+      "default": "Highlight"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:settings.text",
+      "default": "<p>Share what makes this product special.</p>"
+    },
+    {
+      "type": "select",
+      "id": "title_size",
+      "label": "t:settings.title_size",
+      "options": [
+        {
+          "value": "h4",
+          "label": "t:options.type_preset.h4"
+        },
+        {
+          "value": "h5",
+          "label": "t:options.type_preset.h5"
+        },
+        {
+          "value": "h6",
+          "label": "t:options.type_preset.h6"
+        }
+      ],
+      "default": "h6"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.icon_tile"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tile",
+      "label": "t:settings.show_tile",
+      "default": true
+    },
+    {
+      "visible_if": "{{ block.settings.show_tile }}",
+      "type": "color_background",
+      "id": "tile_background",
+      "label": "t:settings.tile_background",
+      "info": "t:settings.tile_background_info"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.animation"
+    },
+    {
+      "type": "select",
+      "id": "animation",
+      "label": "t:settings.animation",
+      "options": [
+        {
+          "value": "theme",
+          "label": "t:options.animation.theme"
+        },
+        {
+          "value": "none",
+          "label": "t:options.animation.none"
+        },
+        {
+          "value": "fade",
+          "label": "t:options.animation.fade"
+        },
+        {
+          "value": "rise",
+          "label": "t:options.animation.rise"
+        },
+        {
+          "value": "zoom",
+          "label": "t:options.animation.zoom"
+        },
+        {
+          "value": "slide-start",
+          "label": "t:options.animation.slide_start"
+        },
+        {
+          "value": "slide-end",
+          "label": "t:options.animation.slide_end"
+        },
+        {
+          "value": "fade-up",
+          "label": "t:options.animation.fade_up"
+        },
+        {
+          "value": "blur",
+          "label": "t:options.animation.blur"
+        },
+        {
+          "value": "clip-up",
+          "label": "t:options.animation.clip_up"
+        },
+        {
+          "value": "flip-up",
+          "label": "t:options.animation.flip_up"
+        },
+        {
+          "value": "reveal",
+          "label": "t:options.animation.reveal"
+        }
+      ],
+      "default": "theme"
+    },
+    {
+      "type": "range",
+      "id": "animation_delay",
+      "label": "t:settings.animation_delay",
+      "min": 0,
+      "max": 1000,
+      "step": 50,
+      "unit": "ms",
+      "default": 0,
+      "visible_if": "{{ block.settings.animation != 'none' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "label": "t:settings.padding_left",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "label": "t:settings.padding_right",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.padding_device == 'mobile' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.highlight.name",
+      "category": "t:categories.blocks.text",
+      "blocks": {
+        "icon": {
+          "type": "icon",
+          "static": true,
+          "settings": {
+            "icon": "sparkle",
+            "size_preset": "custom",
+            "size": 36
+          }
+        }
+      }
+    }
+  ]
+}
+{% endschema %}

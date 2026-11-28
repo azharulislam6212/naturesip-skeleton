@@ -217,6 +217,9 @@
     },
     "floating_image": {
       "name": "Floating image"
+    },
+    "highlight": {
+      "name": "Highlight"
     }
   },
   "categories": {
@@ -301,7 +304,10 @@
     "thumbnails": "Thumbnails",
     "border": "Border",
     "scroll_animation": "Scroll animation",
-    "position": "Position"
+    "position": "Position",
+    "image": "Image",
+    "waves": "Background waves",
+    "icon_tile": "Icon tile"
   },
   "options": {
     "alignment": {
@@ -692,7 +698,6 @@
       "bottom": "Bottom"
     },
     "scroll_animation": {
-
       "sequence": "Image sequence",
       "tilt": "3D tilt",
       "zoom": "Zoom",
@@ -751,7 +756,7 @@
       "name": "Custom liquid"
     },
     "feature_highlights": {
-      "name": "Feature highlights"
+      "name": "Featured highlights"
     },
     "featured_steps": {
       "name": "Featured steps"
@@ -1229,7 +1234,18 @@
     "sequence_digits": "Number format",
     "sequence_digits_info": "How numbers are written in the file names.",
     "sequence_video": "Video",
-    "sequence_video_info": "Short, muted. Export with a keyframe interval of 1 for smooth scrubbing."
+    "sequence_video_info": "Short, muted. Export with a keyframe interval of 1 for smooth scrubbing.",
+    "image_bleed": "Image stands on the bottom edge",
+    "zigzag": "Zigzag the highlights",
+    "zigzag_offset": "Zigzag step",
+    "uppercase_highlights": "Uppercase titles and text",
+    "show_waves": "Show waves",
+    "wave_opacity": "Wave opacity",
+    "wave_speed": "Wave loop duration",
+    "wave_speed_info": "Lower is faster. The waves stop for visitors who prefer reduced motion.",
+    "show_tile": "Show tile behind the icon",
+    "tile_background": "Tile background",
+    "tile_background_info": "Empty uses the heading gradient."
   },
   "settings_schema": {
     "animations": {

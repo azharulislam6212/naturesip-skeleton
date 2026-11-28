@@ -1,6 +1,8 @@
 {%- comment -%}
-  Feature highlights: a central image surrounded by "Icon with text" blocks,
-  split into a left and right column on desktop.
+  Featured highlights: a heading group, then a central image (a hand holding
+  the can) between two columns of highlight blocks (icon block, title and
+  text), set in a zigzag. Hatched waves drift behind it in an endless loop.
+  The highlights animate in one after another.
 {%- endcomment -%}
 
 {{ 'section-feature-highlights.css' | asset_url | stylesheet_tag }}
@@ -11,17 +13,33 @@
 -%}
 
 <section
-  class="section section-surface feature-highlights color-{{ s.color_scheme.id }} spacing-style"
-  style="{%- render 'spacing-style', settings: s -%} --highlight-rows: {{ rows }};"
+  class="section section-surface feature-highlights color-{{ s.color_scheme.id }} spacing-style{% if s.image_bleed %} feature-highlights--bleed{% endif %}{% if s.zigzag %} feature-highlights--zigzag{% endif %}{% if s.uppercase %} feature-highlights--uppercase{% endif %}"
+  style="
+    {%- render 'spacing-style', settings: s -%}
+    --highlight-rows: {{ rows }};
+    --highlight-offset: {{ s.zigzag_offset | divided_by: 16.0 }}rem;
+    --highlight-image-width: {{ s.image_width | divided_by: 16.0 }}rem;
+    --fh-padding-bottom: {{ s.padding_bottom }}px;
+    --fh-padding-bottom-mobile: {{ s.padding_bottom_mobile }}px;
+    --wave-opacity: {{ s.wave_opacity | divided_by: 100.0 }};
+    --wave-duration: {{ s.wave_speed }}s;
+  "
   {% render 'shape-attributes', settings: s %}
 >
   {% render 'background', settings: s %}
 
-  <div class="layout-stack" style="--gap: var(--space-2xl);">
+  {%- if s.show_waves -%}
+    <div class="feature-highlights__waves" aria-hidden="true">
+      <span class="feature-highlights__wave feature-highlights__wave--1"></span>
+      <span class="feature-highlights__wave feature-highlights__wave--2"></span>
+    </div>
+  {%- endif -%}
+
+  <div class="feature-highlights__inner layout-stack" style="--gap: var(--space-2xl);">
     {% content_for 'block', type: 'section-heading', id: 'heading' %}
     <div class="feature-highlights__grid" {% render 'animation-attributes', animation: 'none', stagger: true %}>
       <div class="feature-highlights__image" {% render 'animation-attributes', image: true %}>
-        {% render 'image', image: s.image, alt: s.image.alt, sizes: '(min-width: 990px) 33vw, 80vw', placeholder: 'product-apparel-2' %}
+        {% render 'image', image: s.image, alt: s.image.alt, sizes: '(min-width: 990px) 36vw, 80vw', placeholder: 'product-apparel-2' %}
       </div>
       {% content_for 'blocks' %}
     </div>
@@ -35,14 +53,97 @@
   "max_blocks": 8,
   "blocks": [
     {
-      "type": "icon-text"
+      "type": "_highlight"
+    },
+    {
+      "type": "@app"
     }
   ],
   "settings": [
     {
+      "type": "header",
+      "content": "t:headers.image"
+    },
+    {
       "type": "image_picker",
       "id": "image",
       "label": "t:settings.center_image"
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "label": "t:settings.image_width",
+      "min": 200,
+      "max": 640,
+      "step": 10,
+      "unit": "px",
+      "default": 540
+    },
+    {
+      "type": "checkbox",
+      "id": "image_bleed",
+      "label": "t:settings.image_bleed",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:headers.layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "zigzag",
+      "label": "t:settings.zigzag",
+      "default": true
+    },
+    {
+      "visible_if": "{{ section.settings.zigzag }}",
+      "type": "range",
+      "id": "zigzag_offset",
+      "label": "t:settings.zigzag_offset",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 112
+    },
+    {
+      "type": "checkbox",
+      "id": "uppercase",
+      "label": "t:settings.uppercase_highlights",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:headers.waves"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_waves",
+      "label": "t:settings.show_waves",
+      "default": true
+    },
+    {
+      "visible_if": "{{ section.settings.show_waves }}",
+      "type": "range",
+      "id": "wave_opacity",
+      "label": "t:settings.wave_opacity",
+      "min": 4,
+      "max": 40,
+      "step": 1,
+      "unit": "%",
+      "default": 12
+    },
+    {
+      "visible_if": "{{ section.settings.show_waves }}",
+      "type": "range",
+      "id": "wave_speed",
+      "label": "t:settings.wave_speed",
+      "info": "t:settings.wave_speed_info",
+      "min": 10,
+      "max": 120,
+      "step": 5,
+      "unit": "s",
+      "default": 40
     },
     {
       "type": "header",
@@ -112,7 +213,7 @@
           "label": "t:options.shape.scallop"
         }
       ],
-      "default": "none"
+      "default": "wave"
     },
     {
       "type": "select",
@@ -296,7 +397,8 @@
       "name": "t:sections.feature_highlights.name",
       "category": "t:categories.sections.storytelling",
       "settings": {
-        "shape_bottom": "wave"
+        "shape_top": "wave",
+        "shape_bottom": "none"
       },
       "blocks": {
         "heading": {
@@ -335,69 +437,129 @@
           ]
         },
         "item_1": {
-          "type": "icon-text",
+          "type": "_highlight",
           "settings": {
-            "icon": "bolt",
-            "frame": "square",
-            "frame_size": 56,
-            "layout": "vertical",
-            "alignment": "left",
-            "title_size": "h6"
+            "title": "Natural energy boost",
+            "text": "<p>Kombucha offers a clean, sustained energy boost without the jitters making it the perfect everyday drink.</p>",
+            "title_size": "h6",
+            "tile_background": "linear-gradient(180deg, rgba(250, 198, 122, 1), rgba(254, 138, 128, 1) 100%)",
+            "show_tile": true
+          },
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "static": true,
+              "settings": {
+                "icon": "bolt",
+                "size_preset": "custom",
+                "size": 36
+              }
+            }
           }
         },
         "item_2": {
-          "type": "icon-text",
+          "type": "_highlight",
           "settings": {
-            "icon": "heart",
-            "frame": "square",
-            "frame_size": 56,
-            "layout": "vertical",
-            "alignment": "left",
-            "title_size": "h6"
+            "title": "Probiotic gut health",
+            "text": "<p>Rich in live probiotics, kombucha supports a healthy digestive system and promotes better gut balance.</p>",
+            "title_size": "h6",
+            "tile_background": "linear-gradient(180deg, rgba(250, 198, 122, 1), rgba(254, 138, 128, 1) 100%)",
+            "show_tile": true
+          },
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "static": true,
+              "settings": {
+                "icon": "heart",
+                "size_preset": "custom",
+                "size": 36
+              }
+            }
           }
         },
         "item_3": {
-          "type": "icon-text",
+          "type": "_highlight",
           "settings": {
-            "icon": "sparkle",
-            "frame": "square",
-            "frame_size": 56,
-            "layout": "vertical",
-            "alignment": "left",
-            "title_size": "h6"
+            "title": "Antioxidant-rich formula",
+            "text": "<p>Packed with antioxidants, kombucha helps protect your body from free radicals naturally.</p>",
+            "title_size": "h6",
+            "tile_background": "linear-gradient(270deg, rgba(218, 73, 141, 1), rgba(242, 40, 135, 1) 100%)",
+            "show_tile": true
+          },
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "static": true,
+              "settings": {
+                "icon": "sparkle",
+                "size_preset": "custom",
+                "size": 36
+              }
+            }
           }
         },
         "item_4": {
-          "type": "icon-text",
+          "type": "_highlight",
           "settings": {
-            "icon": "leaf",
-            "frame": "square",
-            "frame_size": 56,
-            "layout": "vertical",
-            "alignment": "left",
-            "title_size": "h6"
+            "title": "Low-calorie refreshment",
+            "text": "<p>Indulge in the crisp, refreshing taste of kombucha without worrying about the calories.</p>",
+            "title_size": "h6",
+            "tile_background": "linear-gradient(270deg, rgba(218, 73, 141, 1), rgba(242, 40, 135, 1) 100%)",
+            "show_tile": true
+          },
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "static": true,
+              "settings": {
+                "icon": "drop",
+                "size_preset": "custom",
+                "size": 36
+              }
+            }
           }
         },
         "item_5": {
-          "type": "icon-text",
+          "type": "_highlight",
           "settings": {
-            "icon": "drop",
-            "frame": "square",
-            "frame_size": 56,
-            "layout": "vertical",
-            "alignment": "left",
-            "title_size": "h6"
+            "title": "Vegan-friendly drink",
+            "text": "<p>Kombucha is a proudly vegan-friendly option, made to support your ethical and health-conscious lifestyle.</p>",
+            "title_size": "h6",
+            "tile_background": "linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
+            "show_tile": true
+          },
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "static": true,
+              "settings": {
+                "icon": "leaf",
+                "size_preset": "custom",
+                "size": 36
+              }
+            }
           }
         },
         "item_6": {
-          "type": "icon-text",
+          "type": "_highlight",
           "settings": {
-            "icon": "ban",
-            "frame": "square",
-            "frame_size": 56,
-            "layout": "vertical",
-            "alignment": "left",
-            "title_size": "h6"
+            "title": "No artificial additives",
+            "text": "<p>With only pure, organic ingredients, kombucha contains no artificial preservatives, colors, or flavors.</p>",
+            "title_size": "h6",
+            "tile_background": "linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
+            "show_tile": true
+          },
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "static": true,
+              "settings": {
+                "icon": "ban",
+                "size_preset": "custom",
+                "size": 36
+              }
+            }
           }
         }
       },

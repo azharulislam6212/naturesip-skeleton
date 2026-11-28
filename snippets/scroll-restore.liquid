@@ -1,5 +1,15 @@
 {% doc %}
-  Render once inside <head>, as early as possible.
+  Puts the page back where it was on a reload or back/forward visit, without
+  showing the top of the page first. Render once inside <head>, as early as
+  possible.
+
+  The page stays hidden until it is in place. The position is applied at
+  DOMContentLoaded and held while the page settles (late images, fonts and
+  scripts that size sections can change the height), until the visitor
+  scrolls or four seconds pass. A Slideshow (hero) positions its fixed can
+  stage from its own script, so the page is only shown once the hero has
+  placed it (or after one second). Instant jumps only: a smooth scroll here
+  would play from the top down to the saved spot.
 
   @example
   {% render 'scroll-restore' %}
@@ -30,24 +40,52 @@
     history.scrollRestoration = 'manual';
     root.classList.add('is-restoring-scroll');
 
+    // The visitor takes over as soon as they scroll themselves.
+    let held = true;
+    const release = () => { held = false; };
+    for (const name of ['wheel', 'touchstart', 'keydown', 'pointerdown']) {
+      addEventListener(name, release, { once: true, passive: true, capture: true });
+    }
+
+    const place = () => {
+      if (held && Math.abs(scrollY - saved) > 1) scrollTo({ top: saved, left: 0, behavior: 'instant' });
+    };
+
     let shown = false;
     const show = () => {
       if (shown) return;
       shown = true;
+      place();
       root.classList.remove('is-restoring-scroll');
       document.dispatchEvent(new CustomEvent('theme:scroll-restored'));
     };
 
     // Rendered in <head>, so the document is always still loading here.
     document.addEventListener('DOMContentLoaded', () => {
-      scrollTo(0, saved);
-      show();
+      place();
+
+      const resize = new ResizeObserver(place);
+      resize.observe(document.body);
+      setTimeout(() => {
+        resize.disconnect();
+        held = false;
+      }, 4000);
+
+      const hero = document.querySelector('hero-slideshow');
+      if (!hero || hero.hasAttribute('data-staged')) {
+        requestAnimationFrame(show);
+        return;
+      }
+      const staged = new MutationObserver(() => {
+        if (!hero.hasAttribute('data-staged')) return;
+        staged.disconnect();
+        requestAnimationFrame(show);
+      });
+      staged.observe(hero, { attributes: true, attributeFilter: ['data-staged'] });
+      setTimeout(show, 1000);
     }, { once: true });
 
-    // Late images and fonts can change the height: correct once, unless the visitor scrolled.
-    addEventListener('load', () => {
-      if (scrollY === 0 || Math.abs(scrollY - saved) <= 2) scrollTo(0, saved);
-    }, { once: true });
+    addEventListener('load', place, { once: true });
 
     // Never leave the page hidden.
     setTimeout(show, 3000);

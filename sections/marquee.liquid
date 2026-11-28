@@ -1,28 +1,37 @@
 {%- comment -%}
-  Scrolling text: a looping ribbon of short messages. Pauses on hover, on
-  focus and with its pause button; static under prefers-reduced-motion.
+  Scrolling text: a looping ribbon of text and separator blocks. Pauses on
+  hover, on focus and with its pause button; static under prefers-reduced-motion.
 {%- endcomment -%}
 
 {{ 'section-marquee.css' | asset_url | stylesheet_tag }}
 
-{%- assign s = section.settings -%}
+{%- liquid
+  assign s = section.settings
+  if s.text_size == 'default'
+    assign list_class = 'marquee__list marquee__list--default'
+  else
+    assign list_class = 'marquee__list type-heading type-' | append: s.text_size | replace: '_', '-'
+  endif
+-%}
 <section
   class="section section--full-width marquee-section color-{{ s.color_scheme.id }} spacing-style"
   style="{%- render 'spacing-style', settings: s -%} --marquee-duration: {{ s.speed }}s; --marquee-tilt: {{ s.tilt }}deg;"
 >
+  <svg class="visually-hidden" aria-hidden="true" focusable="false">
+    <linearGradient id="marquee-burst-{{ section.id }}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FAC67A"/>
+      <stop offset="1" stop-color="#FE8A80"/>
+    </linearGradient>
+  </svg>
+
   <marquee-banner class="marquee{% if s.reverse %} marquee--reverse{% endif %}{% if s.bordered %} marquee--bordered{% endif %}">
     <div class="marquee__track">
-      <ul class="marquee__list type-heading type-{{ s.text_size | replace: '_', '-' }}" role="list">
+      <ul class="{{ list_class }}" role="list">
         {% content_for 'blocks' %}
       </ul>
-      <ul class="marquee__list type-heading type-{{ s.text_size | replace: '_', '-' }}" role="list" aria-hidden="true">
+      <ul class="{{ list_class }}" role="list" aria-hidden="true">
         {%- for block in section.blocks -%}
-          <li class="marquee__item">
-            <span>{{ block.settings.text }}</span>
-            {%- if s.separator != 'none' -%}
-              <span class="marquee__separator">{% render 'icon', name: s.separator %}</span>
-            {%- endif -%}
-          </li>
+          {% render 'marquee-item', block: block %}
         {%- endfor -%}
       </ul>
     </div>
@@ -38,18 +47,25 @@
 {
   "name": "t:sections.marquee.name",
   "class": "section-wrapper",
-  "max_blocks": 12,
+  "max_blocks": 24,
   "blocks": [
     {
-      "type": "_marquee-item"
+      "type": "_marquee-text"
+    },
+    {
+      "type": "_marquee-separator"
     }
   ],
   "settings": [
     {
       "type": "select",
       "id": "text_size",
-      "label": "t:settings.text_size",
+      "label": "t:settings.type_preset",
       "options": [
+        {
+          "value": "default",
+          "label": "t:options.type_preset.default"
+        },
         {
           "value": "h4",
           "label": "t:options.type_preset.h4"
@@ -63,39 +79,7 @@
           "label": "t:options.type_preset.h6"
         }
       ],
-      "default": "h5"
-    },
-    {
-      "type": "select",
-      "id": "separator",
-      "label": "t:settings.separator",
-      "options": [
-        {
-          "value": "none",
-          "label": "t:options.icon.none"
-        },
-        {
-          "value": "sparkle",
-          "label": "t:options.icon.sparkle"
-        },
-        {
-          "value": "star",
-          "label": "t:options.icon.star"
-        },
-        {
-          "value": "leaf",
-          "label": "t:options.icon.leaf"
-        },
-        {
-          "value": "heart",
-          "label": "t:options.icon.heart"
-        },
-        {
-          "value": "bolt",
-          "label": "t:options.icon.bolt"
-        }
-      ],
-      "default": "sparkle"
+      "default": "default"
     },
     {
       "type": "range",
@@ -119,9 +103,9 @@
       "label": "t:settings.tilt",
       "min": -4,
       "max": 4,
-      "step": 0.5,
+      "step": 0.1,
       "unit": "deg",
-      "default": -1
+      "default": 1.3
     },
     {
       "type": "checkbox",
@@ -208,31 +192,64 @@
     {
       "name": "t:sections.marquee.name",
       "category": "t:categories.sections.banners",
-      "blocks": [
-        {
-          "type": "_marquee-item",
+      "blocks": {
+        "text_1": {
+          "type": "_marquee-text",
           "settings": {
             "text": "t:defaults.marquee_1"
           }
         },
-        {
-          "type": "_marquee-item",
+        "separator_1": {
+          "type": "_marquee-separator"
+        },
+        "text_2": {
+          "type": "_marquee-text",
           "settings": {
             "text": "t:defaults.marquee_2"
           }
         },
-        {
-          "type": "_marquee-item",
+        "separator_2": {
+          "type": "_marquee-separator"
+        },
+        "text_3": {
+          "type": "_marquee-text",
           "settings": {
             "text": "t:defaults.marquee_3"
           }
         },
-        {
-          "type": "_marquee-item",
+        "separator_3": {
+          "type": "_marquee-separator"
+        },
+        "text_4": {
+          "type": "_marquee-text",
           "settings": {
             "text": "t:defaults.marquee_4"
           }
+        },
+        "separator_4": {
+          "type": "_marquee-separator"
+        },
+        "text_5": {
+          "type": "_marquee-text",
+          "settings": {
+            "text": "t:defaults.marquee_5"
+          }
+        },
+        "separator_5": {
+          "type": "_marquee-separator"
         }
+      },
+      "block_order": [
+        "text_1",
+        "separator_1",
+        "text_2",
+        "separator_2",
+        "text_3",
+        "separator_3",
+        "text_4",
+        "separator_4",
+        "text_5",
+        "separator_5"
       ]
     }
   ]

@@ -1417,55 +1417,89 @@
     "marquee": {
       "type": "marquee",
       "blocks": {
-        "m_1": {
-          "type": "_marquee-item",
+        "text_1": {
+          "type": "_marquee-text",
           "settings": {
-            "text": "135mg natural caffeine"
-          },
-          "blocks": {}
+            "text": "135MG Caffeine"
+          }
         },
-        "m_2": {
-          "type": "_marquee-item",
+        "separator_1": {
+          "type": "_marquee-separator",
           "settings": {
-            "text": "Sustainable production"
-          },
-          "blocks": {}
+            "icon": "burst",
+            "size": 28
+          }
         },
-        "m_3": {
-          "type": "_marquee-item",
+        "text_2": {
+          "type": "_marquee-text",
           "settings": {
-            "text": "9 essential amino acids"
-          },
-          "blocks": {}
+            "text": "Sustainable Production"
+          }
         },
-        "m_4": {
-          "type": "_marquee-item",
+        "separator_2": {
+          "type": "_marquee-separator",
           "settings": {
-            "text": "100% natural ingredients"
-          },
-          "blocks": {}
+            "icon": "burst",
+            "size": 28
+          }
         },
-        "m_5": {
-          "type": "_marquee-item",
+        "text_3": {
+          "type": "_marquee-text",
           "settings": {
-            "text": "Made from nature"
-          },
-          "blocks": {}
+            "text": "9 Essential Amino Acids"
+          }
+        },
+        "separator_3": {
+          "type": "_marquee-separator",
+          "settings": {
+            "icon": "burst",
+            "size": 28
+          }
+        },
+        "text_4": {
+          "type": "_marquee-text",
+          "settings": {
+            "text": "100% Natural Ingredients"
+          }
+        },
+        "separator_4": {
+          "type": "_marquee-separator",
+          "settings": {
+            "icon": "burst",
+            "size": 28
+          }
+        },
+        "text_5": {
+          "type": "_marquee-text",
+          "settings": {
+            "text": "Made From Nature"
+          }
+        },
+        "separator_5": {
+          "type": "_marquee-separator",
+          "settings": {
+            "icon": "burst",
+            "size": 28
+          }
         }
       },
       "block_order": [
-        "m_1",
-        "m_2",
-        "m_3",
-        "m_4",
-        "m_5"
+        "text_1",
+        "separator_1",
+        "text_2",
+        "separator_2",
+        "text_3",
+        "separator_3",
+        "text_4",
+        "separator_4",
+        "text_5",
+        "separator_5"
       ],
       "settings": {
-        "text_size": "h5",
-        "separator": "sparkle",
+        "text_size": "default",
         "speed": 35,
         "reverse": false,
-        "tilt": -1,
+        "tilt": 1.3,
         "bordered": true,
         "color_scheme": "scheme-5",
         "padding_device": "desktop",

@@ -1,0 +1,69 @@
+{% doc %}
+  A separator icon (or uploaded image) between marquee messages.
+
+  @example
+  {% content_for 'block', type: '_marquee-separator', id: 'separator' %}
+{% enddoc %}
+
+{% render 'marquee-item', block: block, editor: true %}
+
+{% schema %}
+{
+  "name": "t:blocks.marquee_separator.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "t:settings.icon",
+      "options": [
+        {
+          "value": "burst",
+          "label": "t:options.icon.burst"
+        },
+        {
+          "value": "sparkle",
+          "label": "t:options.icon.sparkle"
+        },
+        {
+          "value": "star",
+          "label": "t:options.icon.star"
+        },
+        {
+          "value": "leaf",
+          "label": "t:options.icon.leaf"
+        },
+        {
+          "value": "heart",
+          "label": "t:options.icon.heart"
+        },
+        {
+          "value": "bolt",
+          "label": "t:options.icon.bolt"
+        }
+      ],
+      "default": "burst"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:settings.custom_icon"
+    },
+    {
+      "type": "range",
+      "id": "size",
+      "label": "t:settings.icon_size",
+      "min": 12,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.marquee_separator.name"
+    }
+  ]
+}
+{% endschema %}

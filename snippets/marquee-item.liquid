@@ -1,0 +1,44 @@
+{% doc %}
+  One item of the marquee ribbon: a text or a separator block. Shared by the
+  block files and the section's duplicate (aria-hidden) loop.
+
+  @param {object} block - A '_marquee-text' or '_marquee-separator' block.
+  @param {boolean} [editor] - Output the theme editor attributes.
+
+  @example
+  {% render 'marquee-item', block: block, editor: true %}
+{% enddoc %}
+
+{%- assign s = block.settings -%}
+{%- if block.type == '_marquee-separator' -%}
+  <li
+    class="marquee__separator"
+    aria-hidden="true"
+    style="--separator-size: {{ s.size | divided_by: 16.0 }}rem;"
+    {% if editor %}
+      {{ block.shopify_attributes }}
+    {% endif %}
+  >
+    {%- if s.image != blank -%}
+      {{ s.image | image_url: width: 120 | image_tag: alt: '', loading: 'lazy', width: s.size, height: s.size }}
+    {%- elsif s.icon == 'burst' -%}
+      <svg class="marquee__burst" viewBox="0 0 30 30" fill="none" focusable="false">
+        <path
+          d="M13.993 1.521C14.315.651 15.546.651 15.869 1.521L19.093 10.234C19.194 10.508 19.41 10.723 19.683 10.825L28.396 14.049C29.267 14.371 29.267 15.602 28.396 15.924L19.683 19.148C19.41 19.25 19.194 19.466 19.093 19.739L15.869 28.452C15.546 29.323 14.315 29.323 13.993 28.452L10.769 19.739C10.668 19.466 10.452 19.25 10.178 19.148L1.465 15.924C.595 15.602.595 14.371 1.465 14.049L10.178 10.825C10.452 10.723 10.668 10.508 10.769 10.234Z"
+          fill="url(#marquee-burst-{{ section.id }})"
+        />
+      </svg>
+    {%- else -%}
+      {% render 'icon', name: s.icon %}
+    {%- endif -%}
+  </li>
+{%- elsif s.text != blank -%}
+  <li
+    class="marquee__text"
+    {% if editor %}
+      {{ block.shopify_attributes }}
+    {% endif %}
+  >
+    {{ s.text }}
+  </li>
+{%- endif -%}

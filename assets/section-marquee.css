@@ -3,6 +3,9 @@
   /* ---------- Marquee ---------- */
   /* Only clip sideways, so a tilted ribbon can poke into its neighbours. */
   .marquee-section {
+    --marquee-gap: 1.875rem;
+    --marquee-border-start: #fac67a;
+    --marquee-border-end: #fe8a80;
     overflow-x: clip;
     overflow-y: visible;
   }
@@ -20,9 +23,25 @@
     background-color: var(--color-background);
   }
 
-  .marquee--bordered {
-    border-block: 1px solid var(--color-border);
-    box-shadow: 0 6px 18px -14px var(--color-shadow);
+  /* Dashed hairlines, orange on top fading to coral below. */
+  .marquee--bordered::before,
+  .marquee--bordered::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    height: 1px;
+    background: repeating-linear-gradient(90deg, var(--line) 0 2px, transparent 2px 4px);
+    pointer-events: none;
+  }
+
+  .marquee--bordered::before {
+    --line: var(--marquee-border-start);
+    inset-block-start: 0;
+  }
+
+  .marquee--bordered::after {
+    --line: var(--marquee-border-end);
+    inset-block-end: 0;
   }
 
   .marquee__track {
@@ -44,24 +63,50 @@
   .marquee__list {
     display: flex;
     flex-shrink: 0;
+    gap: var(--marquee-gap);
     align-items: center;
     margin: 0;
-    padding: var(--space-sm) 0;
+    padding: 0.9375rem var(--marquee-gap) 0.9375rem 0;
     list-style: none;
     white-space: nowrap;
   }
 
-  .marquee__item {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-lg);
-    padding-inline-end: var(--space-lg);
+  /* Default type: the body font at ribbon size, as in the design. */
+  .marquee__list--default {
+    font-family: var(--font-body--family);
+    font-style: var(--font-body--style);
+    font-weight: var(--font-body--weight);
+    font-size: clamp(1.125rem, 1.55vw, 1.375rem);
+    line-height: 1.2;
+    color: var(--color-foreground);
   }
 
   .marquee__separator {
     display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: var(--separator-size, 1.75rem);
+    height: var(--separator-size, 1.75rem);
     color: var(--color-highlight);
-    --icon-size: 1.25em;
+    --icon-size: 100%;
+  }
+
+  .marquee__separator img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .marquee__burst {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    filter: drop-shadow(2px 2px 0 var(--color-foreground));
+  }
+
+  .marquee__burst path {
+    stroke: var(--color-foreground);
+    stroke-width: 1;
   }
 
   .marquee__toggle {

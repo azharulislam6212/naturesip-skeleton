@@ -15,9 +15,13 @@
     order: 2;
   }
 
+
+  /* Two columns from tablet up. The image column is its share (%) of the
+     row after the gap, so image + gap + content always fill the row. */
   @media (min-width: 750px) {
     .image-with-text__grid {
-      grid-template-columns: var(--iwt-media-width, 50%) minmax(0, 1fr);
+      --iwt-image-column: minmax(0, calc((100% - var(--iwt-gap, 4rem)) * var(--iwt-media-width, 50) / 100));
+      grid-template-columns: var(--iwt-image-column) minmax(0, 1fr);
       gap: var(--iwt-gap, 4rem);
     }
 
@@ -26,7 +30,7 @@
     }
 
     .image-with-text__grid--media-right {
-      grid-template-columns: minmax(0, 1fr) var(--iwt-media-width, 50%);
+      grid-template-columns: minmax(0, 1fr) var(--iwt-image-column);
     }
 
     .image-with-text__grid--media-right .image-with-text__media {
@@ -89,6 +93,44 @@
   .scroll-media--parallax .scroll-media__frame img {
     scale: calc(1 + 0.2 * var(--scroll-strength, 1));
     translate: 0 calc(var(--from) * 12%);
+  }
+
+  /* Slide in: from the outer edge of the page. */
+  .scroll-media--slide .scroll-media__frame {
+    translate: calc(var(--from) * -28%) 0;
+    opacity: calc(1 - var(--from) * 0.6);
+  }
+
+  .image-with-text__grid--media-right .scroll-media--slide .scroll-media__frame {
+    translate: calc(var(--from) * 28%) 0;
+  }
+
+  /* Rise: up from below while it fades in. */
+  .scroll-media--rise .scroll-media__frame {
+    translate: 0 calc(var(--from) * 30%);
+    opacity: calc(1 - var(--from) * 0.9);
+  }
+
+  /* Flip: turns towards the viewer around its vertical axis. */
+  .scroll-media--flip .scroll-media__frame {
+    transform: rotateY(calc(var(--from) * 70deg)) scale(calc(1 - var(--from) * 0.1));
+  }
+
+  /* Blur in: sharpens and settles. */
+  .scroll-media--blur .scroll-media__frame {
+    filter: blur(calc(var(--from) * 18px));
+    scale: calc(1 + var(--from) * 0.12);
+    opacity: calc(1 - var(--from) * 0.7);
+  }
+
+  /* Wipe: uncovered from the bottom up. */
+  .scroll-media--wipe .scroll-media__frame {
+    clip-path: inset(calc(var(--from) * 100%) 0 0 0 round var(--media-radius, 0px));
+  }
+
+  /* Skew: leans in and straightens. */
+  .scroll-media--skew .scroll-media__frame {
+    transform: skewY(calc(var(--from) * 8deg)) translateY(calc(var(--from) * 14%));
   }
 
   /* ---------- Image sequence (<image-sequence>) ---------- */
@@ -206,6 +248,8 @@
       clip-path: none;
       scale: none;
       translate: none;
+      filter: none;
+      opacity: 1;
     }
 
     .floating-image {

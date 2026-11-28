@@ -692,12 +692,19 @@
       "bottom": "Bottom"
     },
     "scroll_animation": {
+
+      "sequence": "Image sequence",
       "tilt": "3D tilt",
-      "zoom": "Zoom reveal",
+      "zoom": "Zoom",
       "rotate": "Turn",
       "parallax": "Parallax",
-      "none": "None",
-      "sequence": "Image sequence (rotating product)"
+      "slide": "Slide in",
+      "rise": "Rise",
+      "flip": "Flip",
+      "blur": "Blur in",
+      "wipe": "Wipe",
+      "skew": "Skew",
+      "none": "None"
     },
     "layer": {
       "front": "In front of content",
@@ -1200,10 +1207,10 @@
     "ribbon_color_scheme": "Ribbon color scheme",
     "custom_size": "Custom size",
     "icon_size_info": "\"Theme default\" follows Theme settings > Icons.",
-    "media_column_width": "Image column width",
+    "media_column_width": "Image width",
     "media_first_mobile": "Show image first on mobile",
     "scroll_animation": "Animation",
-    "scroll_animation_info": "Plays with the page scroll. Turned off for visitors who prefer reduced motion.",
+    "scroll_animation_info": "Follows the page scroll. Off for visitors who prefer reduced motion.",
     "animation_strength": "Strength",
     "image_width": "Width",
     "image_width_mobile": "Width on mobile",
@@ -1213,16 +1220,16 @@
     "loop_duration": "Loop duration",
     "scroll_parallax": "Scroll parallax",
     "scroll_parallax_info": "How far the image drifts while the page scrolls. 0 turns it off.",
-    "sequence_help": "Pre-rendered frames drawn one by one as the page scrolls, like a product turning. Upload the frames in Content > Files with numbered names (can-001.webp, can-002.webp…), or upload a video instead. Until then the image above shows.",
+    "sequence_help": "Frames drawn one by one as the page scrolls. Upload numbered frames to Content > Files (can-001.webp, can-002.webp…) or use a video.",
     "sequence_source": "Source",
-    "sequence_url": "First frame URL pattern",
-    "sequence_url_info": "Copy a frame link from Content > Files and put {n} where the number is, e.g. …/files/can-{n}.webp",
+    "sequence_url": "Frame URL",
+    "sequence_url_info": "A frame link from Content > Files with {n} in place of the number.",
     "sequence_count": "Number of frames",
     "sequence_start": "First frame number",
     "sequence_digits": "Number format",
-    "sequence_digits_info": "How the numbers are written in the file names.",
+    "sequence_digits_info": "How numbers are written in the file names.",
     "sequence_video": "Video",
-    "sequence_video_info": "Short and muted. Scrubbing is smoothest when every frame is a keyframe (export with a keyframe interval of 1)."
+    "sequence_video_info": "Short, muted. Export with a keyframe interval of 1 for smooth scrubbing."
   },
   "settings_schema": {
     "animations": {

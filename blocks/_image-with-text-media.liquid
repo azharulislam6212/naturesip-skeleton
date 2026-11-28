@@ -2,9 +2,10 @@
   The image of the Image with text section, animated with the page scroll:
   - Image sequence (<image-sequence>): pre-rendered frames, or a video, scrubbed
     by the scroll, as on hydroflowdrink.com (cans turning on a diagonal).
-  - 3D tilt, zoom reveal, turn or parallax (<scroll-media>) on a single image.
+  - On a single image (<scroll-media>): tilt, zoom, turn, parallax, slide,
+    rise, flip, blur, wipe or skew.
   Both live in assets/scroll-media.js. Static block of sections/image-with-text.
-
+  
   @example
   {% content_for 'block', type: '_image-with-text-media', id: 'media' %}
 {% enddoc %}
@@ -170,6 +171,30 @@
         {
           "value": "parallax",
           "label": "t:options.scroll_animation.parallax"
+        },
+        {
+          "value": "slide",
+          "label": "t:options.scroll_animation.slide"
+        },
+        {
+          "value": "rise",
+          "label": "t:options.scroll_animation.rise"
+        },
+        {
+          "value": "flip",
+          "label": "t:options.scroll_animation.flip"
+        },
+        {
+          "value": "blur",
+          "label": "t:options.scroll_animation.blur"
+        },
+        {
+          "value": "wipe",
+          "label": "t:options.scroll_animation.wipe"
+        },
+        {
+          "value": "skew",
+          "label": "t:options.scroll_animation.skew"
         },
         {
           "value": "none",

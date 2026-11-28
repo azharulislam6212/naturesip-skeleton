@@ -46,7 +46,10 @@
     assign classes = classes | append: ' text-shadow'
   endif
 
-  # Alignment: the block's own left, center or right, on desktop and mobile.
+  # Alignment. Left is the default and means "follow the parent": inside a
+  # group or section that sets an alignment (--stack-text-align and its
+  # align-items), the text takes the parent's. Centre or right is the block's
+  # own choice and always wins. Same rule for the mobile alignment.
   assign align = settings.alignment | default: 'left'
   assign align_mobile = settings.alignment_mobile | default: align
 -%}
@@ -58,8 +61,14 @@ class="{{ classes | strip }}"
 style="
   {%- render 'spacing-style', settings: settings -%}
   {%- render 'size-style', settings: settings -%}
-  --text-align: {% case align %}{% when 'center' %}center{% when 'right' %}end{% else %}start{% endcase %}; --align-self: {% case align %}{% when 'center' %}center{% when 'right' %}flex-end{% else %}flex-start{% endcase %};
-  --text-align-mobile: {% case align_mobile %}{% when 'center' %}center{% when 'right' %}end{% else %}start{% endcase %}; --align-self-mobile: {% case align_mobile %}{% when 'center' %}center{% when 'right' %}flex-end{% else %}flex-start{% endcase %};
+  {%- case align -%}
+    {%- when 'center' %}--text-align: center; --align-self: center;
+    {%- when 'right' %}--text-align: end; --align-self: flex-end;
+  {%- endcase -%}
+  {%- case align_mobile -%}
+    {%- when 'center' %}--text-align-mobile: center; --align-self-mobile: center;
+    {%- when 'right' %}--text-align-mobile: end; --align-self-mobile: flex-end;
+  {%- endcase -%}
   {%- if max_width != blank %}--max-width: {{ max_width }};{% endif -%}
   {%- if preset == 'custom' -%}
     --custom-family: var(--font-{{ settings.custom_font }}--family);

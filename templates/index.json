@@ -73,7 +73,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>",
-                "type_preset": "paragraph",
+                "type_preset": "default",
                 "custom_font": "body",
                 "custom_size": 24,
                 "custom_size_mobile": 20,
@@ -296,7 +296,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>",
-                "type_preset": "paragraph",
+                "type_preset": "default",
                 "custom_font": "body",
                 "custom_size": 24,
                 "custom_size_mobile": 20,
@@ -502,7 +502,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>Naturally caffeinated. Packed with antioxidants. Zero artificial junk. This is energy, redone right.</p>",
-                "type_preset": "paragraph",
+                "type_preset": "default",
                 "custom_font": "body",
                 "custom_size": 24,
                 "custom_size_mobile": 20,
@@ -754,7 +754,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>All the sweetness, none of the sugar guilt-free every sip.</p>",
-                "type_preset": "paragraph",
+                "type_preset": "default",
                 "custom_font": "body",
                 "custom_size": 24,
                 "custom_size_mobile": 20,
@@ -873,7 +873,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>Light on salt, big on refreshment.</p>",
-                "type_preset": "paragraph",
+                "type_preset": "default",
                 "custom_font": "body",
                 "custom_size": 24,
                 "custom_size_mobile": 20,
@@ -992,7 +992,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>Safe, clean, and gentle perfect for gluten-sensitive lifestyles.</p>",
-                "type_preset": "paragraph",
+                "type_preset": "default",
                 "custom_font": "body",
                 "custom_size": 24,
                 "custom_size_mobile": 20,
@@ -1111,7 +1111,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>Crafted from the finest organic ingredients nothing artificial, ever.</p>",
-                "type_preset": "paragraph",
+                "type_preset": "default",
                 "custom_font": "body",
                 "custom_size": 24,
                 "custom_size_mobile": 20,
@@ -1230,7 +1230,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>Deliciously light great taste without compromising your diet.</p>",
-                "type_preset": "paragraph",
+                "type_preset": "default",
                 "custom_font": "body",
                 "custom_size": 24,
                 "custom_size_mobile": 20,
@@ -1348,7 +1348,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>Clean energy, live probiotics and refreshing taste. Organic kombucha crafted for a healthier boost, body and mind.</p>",
-                "type_preset": "paragraph",
+                "type_preset": "default",
                 "custom_font": "body",
                 "custom_size": 24,
                 "custom_size_mobile": 20,
@@ -1597,7 +1597,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>Naturally fermented and packed with live probiotics, antioxidants and essential amino acids.</p><p>A smooth, clean energy lift with zero sugar crash.</p>",
-                "type_preset": "paragraph",
+                "type_preset": "default",
                 "custom_font": "body",
                 "custom_size": 24,
                 "custom_size_mobile": 20,
@@ -1975,7 +1975,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>Discover the benefits of kombucha packed with natural energy, probiotics and antioxidants.</p>",
-                "type_preset": "paragraph",
+                "type_preset": "default",
                 "custom_font": "body",
                 "custom_size": 24,
                 "custom_size_mobile": 20,
@@ -2283,7 +2283,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>A blend for every moment: an energy boost, digestive support or simply a flavorful treat.</p>",
-                "type_preset": "paragraph",
+                "type_preset": "default",
                 "custom_font": "body",
                 "custom_size": 24,
                 "custom_size_mobile": 20,
@@ -2476,7 +2476,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>Don't just take our word for it. Hear what our customers say.</p>",
-                "type_preset": "paragraph",
+                "type_preset": "default",
                 "custom_font": "body",
                 "custom_size": 24,
                 "custom_size_mobile": 20,

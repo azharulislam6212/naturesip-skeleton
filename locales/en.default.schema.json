@@ -603,6 +603,7 @@
     },
     "type_preset": {
       "custom": "Custom",
+      "default": "Default",
       "display_l": "Display large",
       "display_m": "Display medium",
       "display_s": "Display small",

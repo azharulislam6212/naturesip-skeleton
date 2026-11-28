@@ -14,7 +14,9 @@
   assign preset = settings.type_preset | default: 'paragraph'
   assign classes = class | append: ' text-block spacing-style size-style'
 
+  # 'default' adds no typography class: the text inherits its parent's style.
   case preset
+    when 'default'
     when 'paragraph'
       assign classes = classes | append: ' type-paragraph'
     when 'subheading'

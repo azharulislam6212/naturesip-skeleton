@@ -1,7 +1,9 @@
 {% doc %}
-  The image of the Image with text section. Scrubs an entrance with the page
-  scroll (<scroll-media>, assets/scroll-media.js): a 3D tilt, a zoom reveal,
-  a turn or parallax. Static block of sections/image-with-text.
+  The image of the Image with text section, animated with the page scroll:
+  - Image sequence (<image-sequence>): pre-rendered frames, or a video, scrubbed
+    by the scroll, as on hydroflowdrink.com (cans turning on a diagonal).
+  - 3D tilt, zoom reveal, turn or parallax (<scroll-media>) on a single image.
+  Both live in assets/scroll-media.js. Static block of sections/image-with-text.
 
   @example
   {% content_for 'block', type: '_image-with-text-media', id: 'media' %}
@@ -14,30 +16,70 @@
       assign ratio = '1'
     when 'portrait'
       assign ratio = '0.8'
+    when 'tall'
+      assign ratio = '0.75'
     when 'landscape'
       assign ratio = '1.33'
     else
       assign ratio = s.image.aspect_ratio | default: '1'
   endcase
   assign mobile_image = s.image_mobile | default: s.image
+
+  assign sequence_source = blank
+  if s.scroll_animation == 'sequence'
+    if s.sequence_source == 'video' and s.sequence_video != blank
+      assign sequence_source = 'video'
+    elsif s.sequence_source == 'frames' and s.sequence_url contains '{n}'
+      assign sequence_source = 'frames'
+    endif
+  endif
 -%}
 
+{%- capture picture -%}
+  {%- if s.image_mobile != blank -%}
+    <picture>
+      <source media="(max-width: 749px)" srcset="{{ mobile_image | image_url: width: 1200 }}">
+      {% render 'image', image: s.image, sizes: '(min-width: 990px) 50vw, 100vw', eager: s.priority, placeholder: 'lifestyle-1' %}
+    </picture>
+  {%- else -%}
+    {% render 'image', image: s.image, sizes: '(min-width: 990px) 50vw, 100vw', eager: s.priority, placeholder: 'lifestyle-1' %}
+  {%- endif -%}
+{%- endcapture -%}
+
 <div class="image-with-text__media spacing-style" style="{%- render 'spacing-style', settings: s -%}" {{ block.shopify_attributes }}>
-  <scroll-media
-    class="scroll-media scroll-media--{{ s.scroll_animation }}"
-    style="--ratio: {{ ratio }}; --media-radius: {{ s.radius | divided_by: 16.0 }}rem; --scroll-strength: {{ s.strength | divided_by: 100.0 }};"
-  >
-    <div class="scroll-media__frame media">
-      {%- if s.image_mobile != blank -%}
-        <picture>
-          <source media="(max-width: 749px)" srcset="{{ mobile_image | image_url: width: 1200 }}">
-          {% render 'image', image: s.image, sizes: '(min-width: 990px) 50vw, 100vw', eager: s.priority, placeholder: 'lifestyle-1' %}
-        </picture>
+  {%- if sequence_source != blank -%}
+    <image-sequence
+      class="image-sequence media"
+      style="--ratio: {{ ratio }}; --media-radius: {{ s.radius | divided_by: 16.0 }}rem;"
+      data-source="{{ sequence_source }}"
+      {% if sequence_source == 'frames' %}
+        data-url="{{ s.sequence_url | strip | escape }}"
+        data-count="{{ s.sequence_count }}"
+        data-start="{{ s.sequence_start }}"
+        data-digits="{{ s.sequence_digits }}"
+      {% endif %}
+    >
+      <div class="image-sequence__poster">{{ picture }}</div>
+      {%- if sequence_source == 'video' -%}
+        {{ s.sequence_video | video_tag: muted: true, playsinline: true, preload: 'auto', class: 'image-sequence__layer', image_size: '1200x' }}
       {%- else -%}
-        {% render 'image', image: s.image, sizes: '(min-width: 990px) 50vw, 100vw', eager: s.priority, placeholder: 'lifestyle-1' %}
+        <canvas class="image-sequence__layer" aria-hidden="true"></canvas>
       {%- endif -%}
-    </div>
-  </scroll-media>
+    </image-sequence>
+  {%- else -%}
+    {%- liquid
+      assign effect = s.scroll_animation
+      if effect == 'sequence'
+        assign effect = 'none'
+      endif
+    -%}
+    <scroll-media
+      class="scroll-media scroll-media--{{ effect }}"
+      style="--ratio: {{ ratio }}; --media-radius: {{ s.radius | divided_by: 16.0 }}rem; --scroll-strength: {{ s.strength | divided_by: 100.0 }};"
+    >
+      <div class="scroll-media__frame media">{{ picture }}</div>
+    </scroll-media>
+  {%- endif -%}
 </div>
 
 {% schema %}
@@ -73,6 +115,10 @@
           "label": "t:options.ratio.portrait"
         },
         {
+          "value": "tall",
+          "label": "t:options.ratio.tall"
+        },
+        {
           "value": "landscape",
           "label": "t:options.ratio.landscape"
         }
@@ -106,6 +152,10 @@
       "info": "t:settings.scroll_animation_info",
       "options": [
         {
+          "value": "sequence",
+          "label": "t:options.scroll_animation.sequence"
+        },
+        {
           "value": "tilt",
           "label": "t:options.scroll_animation.tilt"
         },
@@ -126,10 +176,10 @@
           "label": "t:options.scroll_animation.none"
         }
       ],
-      "default": "tilt"
+      "default": "sequence"
     },
     {
-      "visible_if": "{{ block.settings.scroll_animation != 'none' }}",
+      "visible_if": "{{ block.settings.scroll_animation != 'none' and block.settings.scroll_animation != 'sequence' }}",
       "type": "range",
       "id": "strength",
       "label": "t:settings.animation_strength",
@@ -138,6 +188,96 @@
       "step": 10,
       "unit": "%",
       "default": 100
+    },
+    {
+      "visible_if": "{{ block.settings.scroll_animation == 'sequence' }}",
+      "type": "paragraph",
+      "content": "t:settings.sequence_help"
+    },
+    {
+      "visible_if": "{{ block.settings.scroll_animation == 'sequence' }}",
+      "type": "select",
+      "id": "sequence_source",
+      "label": "t:settings.sequence_source",
+      "options": [
+        {
+          "value": "frames",
+          "label": "t:options.sequence_source.frames"
+        },
+        {
+          "value": "video",
+          "label": "t:options.sequence_source.video"
+        }
+      ],
+      "default": "frames"
+    },
+    {
+      "visible_if": "{{ block.settings.scroll_animation == 'sequence' and block.settings.sequence_source == 'frames' }}",
+      "type": "text",
+      "id": "sequence_url",
+      "label": "t:settings.sequence_url",
+      "info": "t:settings.sequence_url_info",
+      "placeholder": "https://cdn.shopify.com/s/files/…/can-{n}.webp"
+    },
+    {
+      "visible_if": "{{ block.settings.scroll_animation == 'sequence' and block.settings.sequence_source == 'frames' }}",
+      "type": "range",
+      "id": "sequence_count",
+      "label": "t:settings.sequence_count",
+      "min": 10,
+      "max": 300,
+      "step": 5,
+      "default": 120
+    },
+    {
+      "visible_if": "{{ block.settings.scroll_animation == 'sequence' and block.settings.sequence_source == 'frames' }}",
+      "type": "select",
+      "id": "sequence_start",
+      "label": "t:settings.sequence_start",
+      "options": [
+        {
+          "value": "0",
+          "label": "0"
+        },
+        {
+          "value": "1",
+          "label": "1"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "visible_if": "{{ block.settings.scroll_animation == 'sequence' and block.settings.sequence_source == 'frames' }}",
+      "type": "select",
+      "id": "sequence_digits",
+      "label": "t:settings.sequence_digits",
+      "info": "t:settings.sequence_digits_info",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:options.sequence_digits.none"
+        },
+        {
+          "value": "2",
+          "label": "01"
+        },
+        {
+          "value": "3",
+          "label": "001"
+        },
+        {
+          "value": "4",
+          "label": "0001"
+        }
+      ],
+      "default": "3"
+    },
+    {
+      "visible_if": "{{ block.settings.scroll_animation == 'sequence' and block.settings.sequence_source == 'video' }}",
+      "type": "video",
+      "id": "sequence_video",
+      "label": "t:settings.sequence_video",
+      "info": "t:settings.sequence_video_info"
     },
     {
       "type": "header",

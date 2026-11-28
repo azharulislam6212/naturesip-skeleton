@@ -2736,7 +2736,7 @@
           "settings": {
             "ratio": "square",
             "radius": 24,
-            "scroll_animation": "tilt",
+            "scroll_animation": "sequence",
             "strength": 100
           }
         },

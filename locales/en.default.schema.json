@@ -696,7 +696,8 @@
       "zoom": "Zoom reveal",
       "rotate": "Turn",
       "parallax": "Parallax",
-      "none": "None"
+      "none": "None",
+      "sequence": "Image sequence (rotating product)"
     },
     "layer": {
       "front": "In front of content",
@@ -708,6 +709,13 @@
       "spin": "Spin",
       "pulse": "Pulse",
       "none": "None"
+    },
+    "sequence_source": {
+      "frames": "Numbered frames",
+      "video": "Video"
+    },
+    "sequence_digits": {
+      "none": "1, 2, 3"
     }
   },
   "sections": {
@@ -1204,7 +1212,17 @@
     "loop_animation": "Loop animation",
     "loop_duration": "Loop duration",
     "scroll_parallax": "Scroll parallax",
-    "scroll_parallax_info": "How far the image drifts while the page scrolls. 0 turns it off."
+    "scroll_parallax_info": "How far the image drifts while the page scrolls. 0 turns it off.",
+    "sequence_help": "Pre-rendered frames drawn one by one as the page scrolls, like a product turning. Upload the frames in Content > Files with numbered names (can-001.webp, can-002.webp…), or upload a video instead. Until then the image above shows.",
+    "sequence_source": "Source",
+    "sequence_url": "First frame URL pattern",
+    "sequence_url_info": "Copy a frame link from Content > Files and put {n} where the number is, e.g. …/files/can-{n}.webp",
+    "sequence_count": "Number of frames",
+    "sequence_start": "First frame number",
+    "sequence_digits": "Number format",
+    "sequence_digits_info": "How the numbers are written in the file names.",
+    "sequence_video": "Video",
+    "sequence_video_info": "Short and muted. Scrubbing is smoothest when every frame is a keyframe (export with a keyframe interval of 1)."
   },
   "settings_schema": {
     "animations": {

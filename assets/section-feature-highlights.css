@@ -126,53 +126,38 @@
   }
 
   /* ---------- Highlight (blocks/_highlight.liquid) ---------- */
+  /* An icon block (with its own tile and gradient), then heading and text
+     blocks. Text set to the "Default" type preset takes the small size. */
   .highlight {
     display: grid;
     justify-items: start;
-    gap: var(--space-sm);
+    gap: var(--highlight-gap, 0.75rem);
     max-width: 21rem;
-  }
-
-  .highlight__tile {
-    display: grid;
-    place-items: center;
-    width: 3.75rem;
-    aspect-ratio: 1;
-    margin-block-end: var(--space-2xs);
-    border: 1px solid var(--color-shadow, #010507);
-    border-radius: 1rem;
-    background: var(--highlight-tile, var(--gradient-heading));
-    box-shadow: 3px 3px 0 var(--color-shadow, #010507);
-    color: var(--color-heading-stroke, #1a1020);
-  }
-
-  .highlight__tile--plain {
-    width: auto;
-    border: 0;
-    background: none;
-    box-shadow: none;
-  }
-
-  .highlight__tile .icon-block {
-    display: grid;
-    place-items: center;
-  }
-
-  .highlight__title {
-    max-width: 12em;
-    margin: 0;
-  }
-
-  .highlight__text {
     font-size: 0.875rem;
     line-height: var(--line-height-relaxed, 1.6);
   }
 
-  .highlight__text > :first-child {
+  .highlight > .icon-block {
+    margin-block-end: var(--space-2xs);
+  }
+
+  .highlight > .text-block {
+    margin: 0;
+  }
+
+  .highlight > .type-heading {
+    max-width: 12em;
+  }
+
+  .highlight .rte > :first-child {
     margin-block-start: 0;
   }
 
-  .feature-highlights--uppercase :is(.highlight__title, .highlight__text) {
+  .highlight .rte > :last-child {
+    margin-block-end: 0;
+  }
+
+  .feature-highlights--uppercase .highlight > .text-block {
     text-transform: uppercase;
   }
 

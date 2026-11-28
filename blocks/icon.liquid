@@ -1,6 +1,8 @@
 {% doc %}
   Icon block: an icon from the theme set or an uploaded image. Size: the
   theme default (Theme settings > Icons), small, medium, large or custom.
+  Optional tile behind it: its own background (colour or gradient), size,
+  corner radius, outline and offset shadow.
 
   @example
   {% content_for 'block', type: 'icon', id: 'icon' %}
@@ -31,8 +33,17 @@
 -%}
 
 <div
-  class="icon-block spacing-style"
-  style="{%- render 'spacing-style', settings: s -%} --icon-size: {{ size_css }}; {% if s.use_custom_color %}color: {{ s.color }};{% endif %}"
+  class="icon-block spacing-style{% if s.show_tile %} icon-block--tile{% if s.tile_border %} icon-block--tile-border{% endif %}{% if s.tile_shadow %} icon-block--tile-shadow{% endif %}{% endif %}"
+  style="
+    {%- render 'spacing-style', settings: s -%}
+    --icon-size: {{ size_css }};
+    {%- if s.use_custom_color %} color: {{ s.color }};{% endif -%}
+    {%- if s.show_tile %}
+      --tile-size: {{ s.tile_size | divided_by: 16.0 }}rem;
+      --tile-radius: {{ s.tile_radius | divided_by: 16.0 }}rem;
+      {%- if s.tile_background != blank %} --tile-background: {{ s.tile_background }};{% endif -%}
+    {%- endif -%}
+  "
   {% render 'animation-attributes', animation: s.animation, delay: s.animation_delay %}
   {{ block.shopify_attributes }}
 >
@@ -42,6 +53,28 @@
     {% render 'icon', name: s.icon %}
   {%- endif -%}
 </div>
+
+{% stylesheet %}
+@layer components {
+  .icon-block--tile {
+    display: grid;
+    place-items: center;
+    width: var(--tile-size, 3.75rem);
+    aspect-ratio: 1;
+    border-radius: var(--tile-radius, 1rem);
+    background: var(--tile-background, var(--gradient-heading));
+    color: var(--color-heading-stroke);
+  }
+
+  .icon-block--tile-border {
+    border: 1px solid var(--color-shadow);
+  }
+
+  .icon-block--tile-shadow {
+    box-shadow: 3px 3px 0 var(--color-shadow);
+  }
+}
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -201,6 +234,59 @@
       "label": "t:settings.icon_color",
       "default": "#69247C",
       "visible_if": "{{ block.settings.use_custom_color }}"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.icon_tile"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tile",
+      "label": "t:settings.show_tile",
+      "default": false
+    },
+    {
+      "visible_if": "{{ block.settings.show_tile }}",
+      "type": "color_background",
+      "id": "tile_background",
+      "label": "t:settings.tile_background",
+      "info": "t:settings.tile_background_info"
+    },
+    {
+      "visible_if": "{{ block.settings.show_tile }}",
+      "type": "range",
+      "id": "tile_size",
+      "label": "t:settings.tile_size",
+      "min": 32,
+      "max": 160,
+      "step": 2,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "visible_if": "{{ block.settings.show_tile }}",
+      "type": "range",
+      "id": "tile_radius",
+      "label": "t:settings.border_radius",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "visible_if": "{{ block.settings.show_tile }}",
+      "type": "checkbox",
+      "id": "tile_border",
+      "label": "t:settings.tile_border",
+      "default": true
+    },
+    {
+      "visible_if": "{{ block.settings.show_tile }}",
+      "type": "checkbox",
+      "id": "tile_shadow",
+      "label": "t:settings.tile_shadow",
+      "default": true
     },
     {
       "type": "header",

@@ -1,7 +1,8 @@
 {% doc %}
-  One highlight of the Featured highlights section: an icon (a nested,
-  static icon block) on a tile, a title and a short text. Animates in after
-  the one before it (the section's grid staggers its children).
+  One highlight of the Featured highlights section: an icon (a static icon
+  block, which carries its own tile and gradient), then any heading and
+  text blocks. Animates in after the one before it (the section's grid
+  staggers its children).
 
   @example
   {% content_for 'block', type: '_highlight', id: 'highlight' %}
@@ -11,77 +12,37 @@
 
 <div
   class="highlight spacing-style"
-  style="
-    {%- render 'spacing-style', settings: s -%}
-    {%- if s.tile_background != blank %}--highlight-tile: {{ s.tile_background }};{% endif -%}
-  "
+  style="{%- render 'spacing-style', settings: s -%} --highlight-gap: {{ s.gap | divided_by: 16.0 }}rem;"
   {% render 'animation-attributes', animation: s.animation, delay: s.animation_delay %}
   {{ block.shopify_attributes }}
 >
-  <div class="highlight__tile{% unless s.show_tile %} highlight__tile--plain{% endunless %}">
-    {% content_for 'block', type: 'icon', id: 'icon' %}
-  </div>
-  {%- if s.title != blank -%}
-    <h3 class="highlight__title type-heading type-{{ s.title_size | replace: '_', '-' }}">{{ s.title | escape }}</h3>
-  {%- endif -%}
-  {%- if s.text != blank -%}
-    <div class="highlight__text rte">{{ s.text }}</div>
-  {%- endif -%}
+  {% content_for 'block', type: 'icon', id: 'icon' %}
+  {% content_for 'blocks' %}
 </div>
+
 
 {% schema %}
 {
   "name": "t:blocks.highlight.name",
   "tag": null,
+  "blocks": [
+    {
+      "type": "heading"
+    },
+    {
+      "type": "text"
+    }
+  ],
   "settings": [
     {
-      "type": "text",
-      "id": "title",
-      "label": "t:settings.title",
-      "default": "Highlight"
-    },
-    {
-      "type": "richtext",
-      "id": "text",
-      "label": "t:settings.text",
-      "default": "<p>Share what makes this product special.</p>"
-    },
-    {
-      "type": "select",
-      "id": "title_size",
-      "label": "t:settings.title_size",
-      "options": [
-        {
-          "value": "h4",
-          "label": "t:options.type_preset.h4"
-        },
-        {
-          "value": "h5",
-          "label": "t:options.type_preset.h5"
-        },
-        {
-          "value": "h6",
-          "label": "t:options.type_preset.h6"
-        }
-      ],
-      "default": "h6"
-    },
-    {
-      "type": "header",
-      "content": "t:headers.icon_tile"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_tile",
-      "label": "t:settings.show_tile",
-      "default": true
-    },
-    {
-      "visible_if": "{{ block.settings.show_tile }}",
-      "type": "color_background",
-      "id": "tile_background",
-      "label": "t:settings.tile_background",
-      "info": "t:settings.tile_background_info"
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
     },
     {
       "type": "header",
@@ -274,10 +235,29 @@
           "settings": {
             "icon": "sparkle",
             "size_preset": "custom",
-            "size": 36
+            "size": 36,
+            "show_tile": true
+          }
+        },
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Highlight",
+            "tag": "h3",
+            "type_preset": "h6"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Share what makes this product special.</p>"
           }
         }
-      }
+      },
+      "block_order": [
+        "heading",
+        "text"
+      ]
     }
   ]
 }

@@ -307,7 +307,7 @@
     "position": "Position",
     "image": "Image",
     "waves": "Background wave",
-    "icon_tile": "Icon tile"
+    "icon_tile": "Tile"
   },
   "options": {
     "alignment": {
@@ -1246,7 +1246,10 @@
     "wave_speed_info": "Lower is faster. The wave stays still for visitors who prefer reduced motion.",
     "show_tile": "Show tile behind the icon",
     "tile_background": "Tile background",
-    "tile_background_info": "Empty uses the heading gradient."
+    "tile_background_info": "Empty uses the heading gradient.",
+    "tile_size": "Tile size",
+    "tile_border": "Outline",
+    "tile_shadow": "Offset shadow"
   },
   "settings_schema": {
     "animations": {

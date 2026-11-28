@@ -309,6 +309,24 @@
       </dialog>
     </search-modal>
   {%- endif -%}
+
+  {%- comment -%}
+    Solid header before the first paint. After a reload or back/forward
+    visit the page opens mid-way (snippets/scroll-restore.liquid); without
+    this the header would show transparent, with no background, until
+    assets/header.js loads, then switch with a visible fade.
+  {%- endcomment -%}
+  <script>
+    (() => {
+      const header = document.currentScript.closest('header-component');
+      const root = document.documentElement;
+      const y = Math.max(window.scrollY, Number(root.dataset.restoreY || 0));
+      if (!header || y <= header.offsetHeight) return;
+      header.setAttribute('data-scrolled', '');
+      const { scheme, transparentScheme } = header.dataset;
+      if (scheme && transparentScheme) header.classList.replace(transparentScheme, scheme);
+    })();
+  </script>
 </header-component>
 
 {% schema %}

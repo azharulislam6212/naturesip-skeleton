@@ -23,6 +23,9 @@ class HeaderComponent extends Component {
 
     const mode = this.dataset.sticky ?? 'none';
     if (mode !== 'none' || this.hasAttribute('data-transparent')) {
+      // Start from where the page opened (mid-way after a reload), so the
+      // first check sees no movement and never slides the header away.
+      this.#lastScroll = window.scrollY;
       this.listen(window, 'scroll', () => this.#onScroll(mode), { passive: true });
       this.#onScroll(mode);
     }
@@ -47,7 +50,10 @@ class HeaderComponent extends Component {
       this.#swapScheme(scrolled);
     }
 
-    if (mode === 'scroll-up') {
+    // While the scroll position is being restored (snippets/scroll-restore.liquid)
+    // the page moves on its own: the header stays put.
+    const restoring = document.documentElement.hasAttribute('data-scroll-held');
+    if (mode === 'scroll-up' && !restoring) {
       const hidden = scrolled && current > this.#lastScroll && !this.contains(document.activeElement);
       this.toggleAttribute('data-hidden', hidden);
     }

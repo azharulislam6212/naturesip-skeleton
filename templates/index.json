@@ -1652,13 +1652,7 @@
         },
         "f_1": {
           "type": "_highlight",
-          "settings": {
-            "title": "Natural energy boost",
-            "text": "<p>Kombucha offers a clean, sustained energy boost without the jitters making it the perfect everyday drink.</p>",
-            "title_size": "h6",
-            "tile_background": "linear-gradient(180deg, rgba(250, 198, 122, 1), rgba(254, 138, 128, 1) 100%)",
-            "show_tile": true
-          },
+          "settings": {},
           "blocks": {
             "icon": {
               "type": "icon",
@@ -1666,20 +1660,34 @@
               "settings": {
                 "icon": "bolt",
                 "size_preset": "custom",
-                "size": 36
+                "size": 36,
+                "show_tile": true,
+                "tile_background": "linear-gradient(180deg, rgba(250, 198, 122, 1), rgba(254, 138, 128, 1) 100%)"
+              }
+            },
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "Natural energy boost",
+                "tag": "h3",
+                "type_preset": "h6"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Kombucha offers a clean, sustained energy boost without the jitters making it the perfect everyday drink.</p>"
               }
             }
-          }
+          },
+          "block_order": [
+            "heading",
+            "text"
+          ]
         },
         "f_2": {
           "type": "_highlight",
-          "settings": {
-            "title": "Probiotic gut health",
-            "text": "<p>Rich in live probiotics, kombucha supports a healthy digestive system and promotes better gut balance.</p>",
-            "title_size": "h6",
-            "tile_background": "linear-gradient(180deg, rgba(250, 198, 122, 1), rgba(254, 138, 128, 1) 100%)",
-            "show_tile": true
-          },
+          "settings": {},
           "blocks": {
             "icon": {
               "type": "icon",
@@ -1687,20 +1695,34 @@
               "settings": {
                 "icon": "heart",
                 "size_preset": "custom",
-                "size": 36
+                "size": 36,
+                "show_tile": true,
+                "tile_background": "linear-gradient(180deg, rgba(250, 198, 122, 1), rgba(254, 138, 128, 1) 100%)"
+              }
+            },
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "Probiotic gut health",
+                "tag": "h3",
+                "type_preset": "h6"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Rich in live probiotics, kombucha supports a healthy digestive system and promotes better gut balance.</p>"
               }
             }
-          }
+          },
+          "block_order": [
+            "heading",
+            "text"
+          ]
         },
         "f_3": {
           "type": "_highlight",
-          "settings": {
-            "title": "Antioxidant-rich formula",
-            "text": "<p>Packed with antioxidants, kombucha helps protect your body from free radicals naturally.</p>",
-            "title_size": "h6",
-            "tile_background": "linear-gradient(270deg, rgba(218, 73, 141, 1), rgba(242, 40, 135, 1) 100%)",
-            "show_tile": true
-          },
+          "settings": {},
           "blocks": {
             "icon": {
               "type": "icon",
@@ -1708,20 +1730,34 @@
               "settings": {
                 "icon": "sparkle",
                 "size_preset": "custom",
-                "size": 36
+                "size": 36,
+                "show_tile": true,
+                "tile_background": "linear-gradient(270deg, rgba(218, 73, 141, 1), rgba(242, 40, 135, 1) 100%)"
+              }
+            },
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "Antioxidant-rich formula",
+                "tag": "h3",
+                "type_preset": "h6"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Packed with antioxidants, kombucha helps protect your body from free radicals naturally.</p>"
               }
             }
-          }
+          },
+          "block_order": [
+            "heading",
+            "text"
+          ]
         },
         "f_4": {
           "type": "_highlight",
-          "settings": {
-            "title": "Low-calorie refreshment",
-            "text": "<p>Indulge in the crisp, refreshing taste of kombucha without worrying about the calories.</p>",
-            "title_size": "h6",
-            "tile_background": "linear-gradient(270deg, rgba(218, 73, 141, 1), rgba(242, 40, 135, 1) 100%)",
-            "show_tile": true
-          },
+          "settings": {},
           "blocks": {
             "icon": {
               "type": "icon",
@@ -1729,20 +1765,34 @@
               "settings": {
                 "icon": "drop",
                 "size_preset": "custom",
-                "size": 36
+                "size": 36,
+                "show_tile": true,
+                "tile_background": "linear-gradient(270deg, rgba(218, 73, 141, 1), rgba(242, 40, 135, 1) 100%)"
+              }
+            },
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "Low-calorie refreshment",
+                "tag": "h3",
+                "type_preset": "h6"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Indulge in the crisp, refreshing taste of kombucha without worrying about the calories.</p>"
               }
             }
-          }
+          },
+          "block_order": [
+            "heading",
+            "text"
+          ]
         },
         "f_5": {
           "type": "_highlight",
-          "settings": {
-            "title": "Vegan-friendly drink",
-            "text": "<p>Kombucha is a proudly vegan-friendly option, made to support your ethical and health-conscious lifestyle.</p>",
-            "title_size": "h6",
-            "tile_background": "linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
-            "show_tile": true
-          },
+          "settings": {},
           "blocks": {
             "icon": {
               "type": "icon",
@@ -1750,20 +1800,34 @@
               "settings": {
                 "icon": "leaf",
                 "size_preset": "custom",
-                "size": 36
+                "size": 36,
+                "show_tile": true,
+                "tile_background": "linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)"
+              }
+            },
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "Vegan-friendly drink",
+                "tag": "h3",
+                "type_preset": "h6"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Kombucha is a proudly vegan-friendly option, made to support your ethical and health-conscious lifestyle.</p>"
               }
             }
-          }
+          },
+          "block_order": [
+            "heading",
+            "text"
+          ]
         },
         "f_6": {
           "type": "_highlight",
-          "settings": {
-            "title": "No artificial additives",
-            "text": "<p>With only pure, organic ingredients, kombucha contains no artificial preservatives, colors, or flavors.</p>",
-            "title_size": "h6",
-            "tile_background": "linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
-            "show_tile": true
-          },
+          "settings": {},
           "blocks": {
             "icon": {
               "type": "icon",
@@ -1771,10 +1835,30 @@
               "settings": {
                 "icon": "ban",
                 "size_preset": "custom",
-                "size": 36
+                "size": 36,
+                "show_tile": true,
+                "tile_background": "linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)"
+              }
+            },
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "No artificial additives",
+                "tag": "h3",
+                "type_preset": "h6"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>With only pure, organic ingredients, kombucha contains no artificial preservatives, colors, or flavors.</p>"
               }
             }
-          }
+          },
+          "block_order": [
+            "heading",
+            "text"
+          ]
         }
       },
       "block_order": [

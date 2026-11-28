@@ -12,8 +12,14 @@
     The content stays invisible until then (the page background shows, never
     a white flash), at most 500 ms.
   - Holds the spot while the page settles (stylesheets, images, fonts,
-    scripts that size sections) until the visitor scrolls, clicks or types,
-    or 2 s after load. Instant jumps only, never a smooth scroll.
+    scripts that size sections): every frame, before it is painted, the spot
+    is checked and corrected, so no shift, even of a few pixels, is ever
+    seen. Until the visitor scrolls, clicks or types, or 4 s after load.
+    Instant jumps only, never a smooth scroll.
+  - Tells the rest of the theme: html[data-restore-y] (the saved position,
+    so the header can show solid before the first paint) and
+    html[data-scroll-held] while the spot is held (the sticky header does
+    not hide on these programmatic moves).
   - Off in the theme editor: there Shopify itself scrolls the preview to the
     section being edited. A normal visit starts at the top or at its #anchor.
 
@@ -90,6 +96,8 @@
 
     history.scrollRestoration = 'manual';
     root.classList.add('is-restoring-scroll');
+    root.dataset.restoreY = String(state.y);
+    root.setAttribute('data-scroll-held', '');
 
     const target = () => {
       const anchor = state.anchor && document.getElementById(state.anchor);
@@ -110,13 +118,22 @@
       return true;
     };
 
-    // Re-places the page whenever its height changes; resize observations
-    // run before the next paint, so the correction is never seen.
-    let settle = null;
+    // While held: check the spot every frame, before it is painted, and
+    // correct any drift (stylesheets, images, fonts, scripts sizing sections).
+    let frame = 0;
+    const hold = () => {
+      place('frame');
+      if (held) frame = requestAnimationFrame(hold);
+    };
     const watch = () => {
-      if (settle || !document.body) return;
-      settle = new ResizeObserver(() => place('resize'));
-      settle.observe(document.body);
+      if (!frame && document.body) frame = requestAnimationFrame(hold);
+    };
+    const stop = (reason) => {
+      if (!held) return;
+      held = false;
+      cancelAnimationFrame(frame);
+      root.removeAttribute('data-scroll-held');
+      log('released:', reason);
     };
 
     let shown = false;
@@ -143,12 +160,8 @@
     }, 500);
 
     // The visitor takes over as soon as they scroll, click or type.
-    const release = (event) => {
-      if (held) log('released by', event.type);
-      held = false;
-    };
     for (const name of ['wheel', 'touchstart', 'keydown', 'pointerdown']) {
-      addEventListener(name, release, { once: true, passive: true, capture: true });
+      addEventListener(name, (event) => stop(event.type), { once: true, passive: true, capture: true });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -162,10 +175,8 @@
       place('load');
       setTimeout(() => {
         place('settled');
-        settle?.disconnect();
-        held = false;
-        log('done');
-      }, 2000);
+        stop('settled');
+      }, 4000);
     }, { once: true });
   })();
 </script>

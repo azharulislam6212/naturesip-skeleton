@@ -1,22 +1,30 @@
 {% doc %}
-  Puts the page back where it was on a reload or back/forward visit, without
-  showing the top of the page first. Render once inside <head>, as early as
-  possible.
+  Keeps the visitor exactly where they were when the page is reloaded or
+  revisited with back/forward. Render once inside <head>, as early as
+  possible, before any stylesheet or script.
 
-  The page stays hidden until it is in place. The position is applied at
-  DOMContentLoaded and held while the page settles (late images, fonts and
-  scripts that size sections can change the height), until the visitor
-  scrolls or four seconds pass. A Slideshow (hero) positions its fixed can
-  stage from its own script, so the page is only shown once the hero has
-  placed it (or after one second). Instant jumps only: a smooth scroll here
-  would play from the top down to the saved spot.
+  How it stays stable:
+  - Saves the spot relative to a section (the first section still on screen
+    and how far into it the viewport is), not as a raw pixel offset. Fonts,
+    images, split text or a changed announcement bar above that section can
+    change the page height; the section-relative spot still lands on the
+    same content.
+  - Restores while the page is still being parsed: as soon as the section
+    exists and the page is long enough, before the first paint in most
+    cases. Until then the content is invisible for a moment (the page
+    background still shows), at most 500 ms; never a white flash.
+  - Holds the spot while the page settles (images, fonts, scripts that size
+    sections) until the visitor scrolls, clicks or types, or 2 seconds after
+    load. Only instant jumps: no smooth scroll from the top.
+  - Browsers restore scroll themselves (and differently); that is turned
+    off for these visits only. A normal visit to a page starts at the top,
+    or at its #anchor.
 
   @example
   {% render 'scroll-restore' %}
 {% enddoc %}
 
 <style>
-  /* Hide the content while it is moved into place. */
   html.is-restoring-scroll body > * {
     visibility: hidden;
   }
@@ -24,70 +32,111 @@
 <script>
   (() => {
     const key = 'theme:scroll:' + location.pathname + location.search;
-    let saved = 0;
+    const root = document.documentElement;
 
+    /** The first section whose bottom is still on screen, and how far down it the viewport starts. */
+    const save = () => {
+      try {
+        let anchor = '';
+        let offset = 0;
+        for (const section of document.querySelectorAll('.shopify-section')) {
+          const box = section.getBoundingClientRect();
+          if (box.bottom > 0 && box.height > 0) {
+            anchor = section.id;
+            offset = Math.round(-box.top);
+            break;
+          }
+        }
+        sessionStorage.setItem(key, JSON.stringify({ y: Math.round(scrollY), anchor, offset }));
+      } catch (e) {}
+    };
+    addEventListener('pagehide', save);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') save();
+    });
+
+    let state = null;
     try {
-      addEventListener('pagehide', () => sessionStorage.setItem(key, String(Math.round(scrollY))));
-      saved = Number(sessionStorage.getItem(key)) || 0;
+      state = JSON.parse(sessionStorage.getItem(key) || 'null');
     } catch (e) {
       return;
     }
 
     const type = performance.getEntriesByType('navigation')[0]?.type;
-    if (saved <= 0 || location.hash || (type !== 'reload' && type !== 'back_forward')) return;
+    if (!state || state.y <= 0 || location.hash || (type !== 'reload' && type !== 'back_forward')) return;
 
-    const root = document.documentElement;
     history.scrollRestoration = 'manual';
     root.classList.add('is-restoring-scroll');
 
-    // The visitor takes over as soon as they scroll themselves.
-    let held = true;
-    const release = () => { held = false; };
-    for (const name of ['wheel', 'touchstart', 'keydown', 'pointerdown']) {
-      addEventListener(name, release, { once: true, passive: true, capture: true });
-    }
+    const target = () => {
+      const anchor = state.anchor && document.getElementById(state.anchor);
+      return anchor ? Math.max(0, Math.round(anchor.getBoundingClientRect().top + scrollY + state.offset)) : state.y;
+    };
 
+    // Puts the page in place; false while the page is not yet long enough.
+    let held = true;
     const place = () => {
-      if (held && Math.abs(scrollY - saved) > 1) scrollTo({ top: saved, left: 0, behavior: 'instant' });
+      if (!held) return true;
+      if (state.anchor && !document.getElementById(state.anchor)) return false;
+      const top = target();
+      if (top > root.scrollHeight - innerHeight + 1) return false;
+      if (Math.abs(scrollY - top) > 1) scrollTo({ top, left: 0, behavior: 'instant' });
+      return true;
     };
 
     let shown = false;
     const show = () => {
       if (shown) return;
       shown = true;
-      place();
+      parsing.disconnect();
       root.classList.remove('is-restoring-scroll');
       document.dispatchEvent(new CustomEvent('theme:scroll-restored'));
     };
 
-    // Rendered in <head>, so the document is always still loading here.
-    document.addEventListener('DOMContentLoaded', () => {
+    // Re-places the page whenever its height changes (stylesheets applying,
+    // images, fonts); resize observations run before the next paint.
+    let settle = null;
+    const watch = () => {
+      if (settle || !document.body) return;
+      settle = new ResizeObserver(() => place());
+      settle.observe(document.body);
+    };
+
+    // While the HTML is parsed: place the page the moment it can be placed.
+    const parsing = new MutationObserver(() => {
+      watch();
+      if (place()) show();
+    });
+    parsing.observe(root, { childList: true, subtree: true });
+
+    // Whatever happens, never leave the page hidden for long.
+    setTimeout(() => {
       place();
+      show();
+    }, 500);
 
-      const resize = new ResizeObserver(place);
-      resize.observe(document.body);
-      setTimeout(() => {
-        resize.disconnect();
-        held = false;
-      }, 4000);
+    // The visitor takes over as soon as they scroll, click or type.
+    const release = () => {
+      held = false;
+    };
+    for (const name of ['wheel', 'touchstart', 'keydown', 'pointerdown']) {
+      addEventListener(name, release, { once: true, passive: true, capture: true });
+    }
 
-      const hero = document.querySelector('hero-slideshow');
-      if (!hero || hero.hasAttribute('data-staged')) {
-        requestAnimationFrame(show);
-        return;
-      }
-      const staged = new MutationObserver(() => {
-        if (!hero.hasAttribute('data-staged')) return;
-        staged.disconnect();
-        requestAnimationFrame(show);
-      });
-      staged.observe(hero, { attributes: true, attributeFilter: ['data-staged'] });
-      setTimeout(show, 1000);
+    // Hold the spot while the page settles.
+    document.addEventListener('DOMContentLoaded', () => {
+      watch();
+      place();
+      show();
+      document.fonts?.ready.then(place);
     }, { once: true });
-
-    addEventListener('load', place, { once: true });
-
-    // Never leave the page hidden.
-    setTimeout(show, 3000);
+    addEventListener('load', () => {
+      place();
+      setTimeout(() => {
+        place();
+        settle?.disconnect();
+        held = false;
+      }, 2000);
+    }, { once: true });
   })();
 </script>

@@ -1803,8 +1803,9 @@
         "zigzag_offset": 112,
         "uppercase": true,
         "show_waves": true,
-        "wave_opacity": 12,
-        "wave_speed": 40,
+        "wave_position": 29,
+        "wave_opacity": 10,
+        "wave_speed": 20,
         "image_width": 540
       }
     },

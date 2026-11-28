@@ -4,8 +4,6 @@
   /* Only clip sideways, so a tilted ribbon can poke into its neighbours. */
   .marquee-section {
     --marquee-gap: 1.875rem;
-    --marquee-border-start: #fac67a;
-    --marquee-border-end: #fe8a80;
     overflow-x: clip;
     overflow-y: visible;
   }
@@ -17,7 +15,8 @@
     margin-block-end: 0;
   }
 
-  /* The ribbon sits above a neighbour's shape divider (which is z-index: 1). */
+  /* The ribbon has its own colour scheme (class color-*, which paints its
+     background) and sits above a neighbour's shape divider (z-index: 1). */
   .marquee {
     position: relative;
     z-index: 2;
@@ -26,28 +25,9 @@
     overflow: hidden;
     rotate: var(--marquee-tilt, 0deg);
     margin-inline: -1rem;
-    background-color: var(--color-background);
-  }
-
-  /* Dashed hairlines, orange on top fading to coral below. */
-  .marquee--bordered::before,
-  .marquee--bordered::after {
-    content: '';
-    position: absolute;
-    inset-inline: 0;
-    height: 1px;
-    background: repeating-linear-gradient(90deg, var(--line) 0 2px, transparent 2px 4px);
-    pointer-events: none;
-  }
-
-  .marquee--bordered::before {
-    --line: var(--marquee-border-start);
-    inset-block-start: 0;
-  }
-
-  .marquee--bordered::after {
-    --line: var(--marquee-border-end);
-    inset-block-end: 0;
+    border-block-start: var(--marquee-border-top, 0px) var(--marquee-border-style, solid) var(--marquee-border-top-color, transparent);
+    border-block-end: var(--marquee-border-bottom, 0px) var(--marquee-border-style, solid) var(--marquee-border-bottom-color, transparent);
+    color: var(--color-foreground);
   }
 
   .marquee__track {
@@ -75,15 +55,14 @@
     white-space: nowrap;
   }
 
-  /* Default type: the body font at ribbon size. Text and heading blocks set
-     to the "Default" type preset take this (or the section's preset). */
-  .marquee__list--default {
+  /* Ribbon type: the body font at ribbon size. Text and heading blocks set
+     to the "Default" type preset take it; any other preset overrides it. */
+  .marquee__list {
     font-family: var(--font-body--family);
     font-style: var(--font-body--style);
     font-weight: var(--font-body--weight);
     font-size: clamp(1.125rem, 1.55vw, 1.375rem);
     line-height: 1.2;
-    color: var(--color-foreground);
   }
 
   /* Text, heading and icon blocks inside the ribbon: one line each, no

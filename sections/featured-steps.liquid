@@ -8,7 +8,7 @@
 {%- assign s = section.settings -%}
 <section
   class="section section-surface featured-steps color-{{ s.color_scheme.id }} spacing-style"
-  style="{%- render 'spacing-style', settings: s -%} --steps-columns: {{ s.columns }};"
+  style="{%- render 'spacing-style', settings: s -%} --steps-columns: {{ s.columns }}; --steps-columns-tablet: {{ s.columns_tablet }}; --steps-columns-mobile: {{ s.columns_mobile }};"
   {% render 'shape-attributes', settings: s %}
   {% if s.stagger %}
     data-stagger
@@ -57,6 +57,31 @@
       "max": 6,
       "step": 1,
       "default": 5
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "t:settings.columns_tablet",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "t:settings.columns_mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "2"
     },
     {
       "type": "checkbox",
@@ -382,7 +407,7 @@
               "type": "icon",
               "settings": {
                 "icon": "ban",
-                "size": 64
+                "size_preset": "large"
               }
             },
             "heading": {
@@ -421,7 +446,7 @@
               "type": "icon",
               "settings": {
                 "icon": "drop",
-                "size": 64
+                "size_preset": "large"
               }
             },
             "heading": {
@@ -460,7 +485,7 @@
               "type": "icon",
               "settings": {
                 "icon": "leaf",
-                "size": 64
+                "size_preset": "large"
               }
             },
             "heading": {
@@ -499,7 +524,7 @@
               "type": "icon",
               "settings": {
                 "icon": "sparkle",
-                "size": 64
+                "size_preset": "large"
               }
             },
             "heading": {
@@ -538,7 +563,7 @@
               "type": "icon",
               "settings": {
                 "icon": "bolt",
-                "size": 64
+                "size_preset": "large"
               }
             },
             "heading": {

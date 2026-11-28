@@ -1,20 +1,45 @@
 {% doc %}
-  Icon block: an icon from the theme set or an uploaded image.
+  Icon block: an icon from the theme set or an uploaded image. Size: the
+  theme default (Theme settings > Icons), small, medium, large or custom.
 
   @example
   {% content_for 'block', type: 'icon', id: 'icon' %}
 {% enddoc %}
 
+{%- liquid
+  assign s = block.settings
+  assign preset = s.size_preset | default: 'theme'
+  if preset == 'theme'
+    assign preset = settings.icon_size | default: 'medium'
+    assign custom_px = settings.icon_size_custom
+  else
+    assign custom_px = s.size
+  endif
+
+  # Pixel sizes of the scale; keep in step with snippets/theme-styles.liquid.
+  case preset
+    when 'small'
+      assign size_px = 28
+    when 'large'
+      assign size_px = 64
+    when 'custom'
+      assign size_px = custom_px
+    else
+      assign size_px = 40
+  endcase
+  assign size_css = size_px | divided_by: 16.0 | append: 'rem'
+-%}
+
 <div
   class="icon-block spacing-style"
-  style="{%- render 'spacing-style', settings: block.settings -%} --icon-size: {{ block.settings.size }}px; {% if block.settings.use_custom_color %}color: {{ block.settings.color }};{% endif %}"
-  {% render 'animation-attributes', animation: block.settings.animation, delay: block.settings.animation_delay %}
+  style="{%- render 'spacing-style', settings: s -%} --icon-size: {{ size_css }}; {% if s.use_custom_color %}color: {{ s.color }};{% endif %}"
+  {% render 'animation-attributes', animation: s.animation, delay: s.animation_delay %}
   {{ block.shopify_attributes }}
 >
-  {%- if block.settings.image != blank -%}
-    {{ block.settings.image | image_url: width: 160 | image_tag: width: block.settings.size, height: block.settings.size, alt: '', loading: 'lazy', class: 'icon' }}
+  {%- if s.image != blank -%}
+    {{ s.image | image_url: width: 320 | image_tag: width: size_px, height: size_px, alt: '', loading: 'lazy', class: 'icon' }}
   {%- else -%}
-    {% render 'icon', name: block.settings.icon %}
+    {% render 'icon', name: s.icon %}
   {%- endif -%}
 </div>
 
@@ -125,14 +150,44 @@
       "label": "t:settings.custom_icon"
     },
     {
+      "type": "select",
+      "id": "size_preset",
+      "label": "t:settings.icon_size",
+      "info": "t:settings.icon_size_info",
+      "options": [
+        {
+          "value": "theme",
+          "label": "t:options.icon_size.theme"
+        },
+        {
+          "value": "small",
+          "label": "t:options.size.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:options.size.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:options.size.large"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.size.custom"
+        }
+      ],
+      "default": "theme"
+    },
+    {
       "type": "range",
       "id": "size",
-      "label": "t:settings.icon_size",
+      "label": "t:settings.custom_size",
       "min": 16,
       "max": 120,
       "step": 2,
       "unit": "px",
-      "default": 32
+      "default": 32,
+      "visible_if": "{{ block.settings.size_preset == 'custom' }}"
     },
     {
       "type": "checkbox",

@@ -292,7 +292,8 @@
     "gallery": "Gallery",
     "media": "Media",
     "purchase_options": "Purchase options",
-    "thumbnails": "Thumbnails"
+    "thumbnails": "Thumbnails",
+    "border": "Border"
   },
   "options": {
     "alignment": {
@@ -549,7 +550,8 @@
     "size": {
       "large": "Large",
       "medium": "Medium",
-      "small": "Small"
+      "small": "Small",
+      "custom": "Custom"
     },
     "sticky": {
       "always": "Always",
@@ -661,6 +663,20 @@
       "slider": "Slider",
       "grid": "Grid",
       "stacked": "Stacked"
+    },
+    "border_position": {
+      "none": "None",
+      "top": "Top",
+      "bottom": "Bottom",
+      "both": "Top and bottom"
+    },
+    "border_style": {
+      "solid": "Solid",
+      "dashed": "Dashed",
+      "dotted": "Dotted"
+    },
+    "icon_size": {
+      "theme": "Theme default"
     }
   },
   "sections": {
@@ -1133,7 +1149,15 @@
     "sticky_summary": "Stick to the top while scrolling (desktop)",
     "summary_width": "Summary width",
     "show_thumbnails": "Show thumbnails",
-    "marquee_type_info": "Text and heading blocks set to the \"Default\" type preset use this size."
+    "border_position": "Border",
+    "border_style": "Border style",
+    "border_thickness": "Border thickness",
+    "border_color_top": "Top border color",
+    "border_color_bottom": "Bottom border color",
+    "section_color_scheme": "Section color scheme",
+    "ribbon_color_scheme": "Ribbon color scheme",
+    "custom_size": "Custom size",
+    "icon_size_info": "\"Theme default\" follows Theme settings > Icons."
   },
   "settings_schema": {
     "animations": {
@@ -1517,6 +1541,11 @@
         "text": "Count (e.g. 4 colors)"
       },
       "limit": "Swatches before \"+ more\""
+    },
+    "icons": {
+      "name": "Icons",
+      "info": "Default size for icon blocks set to \"Theme default\". Small is 28px, medium 40px, large 64px.",
+      "size": "Icon size"
     }
   },
   "carousel": {

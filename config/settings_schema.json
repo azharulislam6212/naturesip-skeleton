@@ -1742,6 +1742,47 @@
     ]
   },
   {
+    "name": "t:settings_schema.icons.name",
+    "settings": [
+      {
+        "type": "select",
+        "id": "icon_size",
+        "label": "t:settings_schema.icons.size",
+        "info": "t:settings_schema.icons.info",
+        "options": [
+          {
+            "value": "small",
+            "label": "t:options.size.small"
+          },
+          {
+            "value": "medium",
+            "label": "t:options.size.medium"
+          },
+          {
+            "value": "large",
+            "label": "t:options.size.large"
+          },
+          {
+            "value": "custom",
+            "label": "t:options.size.custom"
+          }
+        ],
+        "default": "medium"
+      },
+      {
+        "visible_if": "{{ settings.icon_size == 'custom' }}",
+        "type": "range",
+        "id": "icon_size_custom",
+        "label": "t:settings.custom_size",
+        "min": 16,
+        "max": 120,
+        "step": 2,
+        "unit": "px",
+        "default": 40
+      }
+    ]
+  },
+  {
     "name": "t:settings_schema.cards.name",
     "settings": [
       {

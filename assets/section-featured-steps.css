@@ -31,7 +31,7 @@
 
   .featured-steps__list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--steps-columns-mobile, 2), minmax(0, 1fr));
     gap: var(--space-xl) var(--space-md);
   }
 
@@ -41,7 +41,7 @@
 
   @media (min-width: 750px) {
     .featured-steps__list {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(var(--steps-columns-tablet, 3), minmax(0, 1fr));
     }
   }
 

@@ -306,7 +306,7 @@
     "scroll_animation": "Scroll animation",
     "position": "Position",
     "image": "Image",
-    "waves": "Background wave",
+    "waves": "Background waves",
     "icon_tile": "Icon tile"
   },
   "options": {
@@ -1239,11 +1239,10 @@
     "zigzag": "Zigzag the highlights",
     "zigzag_offset": "Zigzag step",
     "uppercase_highlights": "Uppercase titles and text",
-    "show_waves": "Show wave",
-    "wave_position": "Wave position from top",
+    "show_waves": "Show waves",
     "wave_opacity": "Wave opacity",
     "wave_speed": "Wave loop duration",
-    "wave_speed_info": "Lower is faster. The wave stays still for visitors who prefer reduced motion.",
+    "wave_speed_info": "Lower is faster. The waves stop for visitors who prefer reduced motion.",
     "show_tile": "Show tile behind the icon",
     "tile_background": "Tile background",
     "tile_background_info": "Empty uses the heading gradient."

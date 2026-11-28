@@ -47,6 +47,7 @@ const REGISTRY = {
   'marquee-banner': { module: '@theme/store-utilities', load: 'interaction' },
   'share-copy': { module: '@theme/store-utilities', load: 'visible' },
   'hero-slideshow': { module: '@theme/hero-slideshow', load: 'eager' },
+  'scroll-media': { module: '@theme/scroll-media', load: 'visible' },
 };
 
 /** @type {Map<string, Promise<unknown>>} */

@@ -211,6 +211,12 @@
     },
     "product_media_gallery": {
       "name": "Media gallery"
+    },
+    "image_with_text_media": {
+      "name": "Image"
+    },
+    "floating_image": {
+      "name": "Floating image"
     }
   },
   "categories": {
@@ -293,7 +299,9 @@
     "media": "Media",
     "purchase_options": "Purchase options",
     "thumbnails": "Thumbnails",
-    "border": "Border"
+    "border": "Border",
+    "scroll_animation": "Scroll animation",
+    "position": "Position"
   },
   "options": {
     "alignment": {
@@ -677,6 +685,29 @@
     },
     "icon_size": {
       "theme": "Theme default"
+    },
+    "vertical": {
+      "top": "Top",
+      "middle": "Middle",
+      "bottom": "Bottom"
+    },
+    "scroll_animation": {
+      "tilt": "3D tilt",
+      "zoom": "Zoom reveal",
+      "rotate": "Turn",
+      "parallax": "Parallax",
+      "none": "None"
+    },
+    "layer": {
+      "front": "In front of content",
+      "back": "Behind content"
+    },
+    "loop_animation": {
+      "float": "Float",
+      "sway": "Sway",
+      "spin": "Spin",
+      "pulse": "Pulse",
+      "none": "None"
     }
   },
   "sections": {
@@ -896,6 +927,9 @@
         "wave_scallop": "Scallop",
         "travel_four": "Next 4 sections"
       }
+    },
+    "image_with_text": {
+      "name": "Image with text"
     }
   },
   "settings": {
@@ -1157,7 +1191,20 @@
     "section_color_scheme": "Section color scheme",
     "ribbon_color_scheme": "Ribbon color scheme",
     "custom_size": "Custom size",
-    "icon_size_info": "\"Theme default\" follows Theme settings > Icons."
+    "icon_size_info": "\"Theme default\" follows Theme settings > Icons.",
+    "media_column_width": "Image column width",
+    "media_first_mobile": "Show image first on mobile",
+    "scroll_animation": "Animation",
+    "scroll_animation_info": "Plays with the page scroll. Turned off for visitors who prefer reduced motion.",
+    "animation_strength": "Strength",
+    "image_width": "Width",
+    "image_width_mobile": "Width on mobile",
+    "show_on_mobile": "Show on mobile",
+    "layer": "Layer",
+    "loop_animation": "Loop animation",
+    "loop_duration": "Loop duration",
+    "scroll_parallax": "Scroll parallax",
+    "scroll_parallax_info": "How far the image drifts while the page scrolls. 0 turns it off."
   },
   "settings_schema": {
     "animations": {

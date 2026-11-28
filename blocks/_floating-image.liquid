@@ -1,0 +1,173 @@
+{% doc %}
+  A decorative image floating over its section: placed by percentage, with a
+  loop animation (float, sway, spin or pulse) and optional scroll parallax.
+  Decorative only: empty alt, hidden from assistive technology.
+
+  @example
+  {% content_for 'block', type: '_floating-image', id: 'floating-image' %}
+{% enddoc %}
+
+{%- assign s = block.settings -%}
+
+<scroll-media
+  class="floating-image floating-image--{{ s.layer }}{% unless s.show_mobile %} floating-image--desktop{% endunless %}"
+  data-range="through"
+  style="
+    --float-x: {{ s.horizontal_position }}%;
+    --float-y: {{ s.vertical_position }}%;
+    --float-width: {{ s.width | divided_by: 16.0 }}rem;
+    --float-width-mobile: {{ s.width_mobile | divided_by: 16.0 }}rem;
+    --float-parallax: {{ s.parallax }}px;
+    --float-duration: {{ s.speed }}s;
+  "
+  aria-hidden="true"
+  {{ block.shopify_attributes }}
+>
+  <div class="floating-image__motion floating-image__motion--{{ s.animation }}">
+    {%- if s.image != blank -%}
+      {{ s.image | image_url: width: 800 | image_tag: alt: '', loading: 'lazy', widths: '200, 400, 600, 800', sizes: '(min-width: 750px) 20vw, 30vw', class: 'floating-image__img' }}
+    {%- else -%}
+      {{ 'image' | placeholder_svg_tag: 'floating-image__img floating-image__placeholder' }}
+    {%- endif -%}
+  </div>
+</scroll-media>
+
+{% schema %}
+{
+  "name": "t:blocks.floating_image.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:settings.image"
+    },
+    {
+      "type": "range",
+      "id": "width",
+      "label": "t:settings.image_width",
+      "min": 40,
+      "max": 400,
+      "step": 4,
+      "unit": "px",
+      "default": 208
+    },
+    {
+      "type": "range",
+      "id": "width_mobile",
+      "label": "t:settings.image_width_mobile",
+      "min": 24,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "default": 96
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mobile",
+      "label": "t:settings.show_on_mobile",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:headers.position"
+    },
+    {
+      "type": "range",
+      "id": "horizontal_position",
+      "label": "t:settings.horizontal_position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 88
+    },
+    {
+      "type": "range",
+      "id": "vertical_position",
+      "label": "t:settings.vertical_position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 80
+    },
+    {
+      "type": "select",
+      "id": "layer",
+      "label": "t:settings.layer",
+      "options": [
+        {
+          "value": "front",
+          "label": "t:options.layer.front"
+        },
+        {
+          "value": "back",
+          "label": "t:options.layer.back"
+        }
+      ],
+      "default": "front"
+    },
+    {
+      "type": "header",
+      "content": "t:headers.animation"
+    },
+    {
+      "type": "select",
+      "id": "animation",
+      "label": "t:settings.loop_animation",
+      "options": [
+        {
+          "value": "float",
+          "label": "t:options.loop_animation.float"
+        },
+        {
+          "value": "sway",
+          "label": "t:options.loop_animation.sway"
+        },
+        {
+          "value": "spin",
+          "label": "t:options.loop_animation.spin"
+        },
+        {
+          "value": "pulse",
+          "label": "t:options.loop_animation.pulse"
+        },
+        {
+          "value": "none",
+          "label": "t:options.loop_animation.none"
+        }
+      ],
+      "default": "sway"
+    },
+    {
+      "visible_if": "{{ block.settings.animation != 'none' }}",
+      "type": "range",
+      "id": "speed",
+      "label": "t:settings.loop_duration",
+      "min": 2,
+      "max": 30,
+      "step": 1,
+      "unit": "s",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "parallax",
+      "label": "t:settings.scroll_parallax",
+      "info": "t:settings.scroll_parallax_info",
+      "min": 0,
+      "max": 240,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.floating_image.name",
+      "category": "t:categories.blocks.media"
+    }
+  ]
+}
+{% endschema %}

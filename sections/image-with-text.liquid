@@ -1,0 +1,523 @@
+{%- comment -%}
+  Image with text: a large image (static `_image-with-text-media` block) that
+  animates in with the page scroll, beside heading, text and button blocks.
+  Floating images (`_floating-image` blocks) sit anywhere over the section
+  with their own loop animation and scroll parallax.
+{%- endcomment -%}
+
+{{ 'section-image-with-text.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign s = section.settings
+  case s.content_alignment
+    when 'center'
+      assign stack_align = 'center'
+      assign text_align = 'center'
+    when 'right'
+      assign stack_align = 'flex-end'
+      assign text_align = 'end'
+    else
+      assign stack_align = 'flex-start'
+      assign text_align = 'start'
+  endcase
+-%}
+
+<section
+  class="section section-surface image-with-text color-{{ s.color_scheme.id }} spacing-style"
+  style="
+    {%- render 'spacing-style', settings: s -%}
+    --iwt-media-width: {{ s.media_width }}%;
+    --iwt-gap: {{ s.gap | divided_by: 16.0 }}rem;
+    --iwt-gap-mobile: {{ s.gap_mobile | divided_by: 16.0 }}rem;
+  "
+  {% render 'shape-attributes', settings: s %}
+>
+  {% render 'background', settings: s %}
+
+  <div class="image-with-text__grid image-with-text__grid--media-{{ s.media_position }} image-with-text__grid--{{ s.vertical_alignment }}{% unless s.media_first_mobile %} image-with-text__grid--text-first-mobile{% endunless %}">
+    {% content_for 'block', type: '_image-with-text-media', id: 'media' %}
+
+    <div
+      class="image-with-text__content layout-stack"
+      style="
+        --align: {{ stack_align }};
+        --gap: {{ s.content_gap }}px;
+        --gap-mobile: {{ s.content_gap_mobile }}px;
+        --stack-text-align: {{ text_align }};
+      "
+      {% render 'animation-attributes', animation: 'none', stagger: true %}
+    >
+      {% content_for 'blocks' %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.image_with_text.name",
+  "class": "section-wrapper",
+  "blocks": [
+    {
+      "type": "heading"
+    },
+    {
+      "type": "text"
+    },
+    {
+      "type": "button"
+    },
+    {
+      "type": "_floating-image"
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:headers.layout"
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "t:settings.media_position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:options.side.left"
+        },
+        {
+          "value": "right",
+          "label": "t:options.side.right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "media_width",
+      "label": "t:settings.media_column_width",
+      "min": 30,
+      "max": 70,
+      "step": 1,
+      "unit": "%",
+      "default": 49
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment",
+      "label": "t:settings.vertical_alignment",
+      "options": [
+        {
+          "value": "start",
+          "label": "t:options.vertical.top"
+        },
+        {
+          "value": "center",
+          "label": "t:options.vertical.middle"
+        },
+        {
+          "value": "end",
+          "label": "t:options.vertical.bottom"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.column_gap",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "label": "t:settings.column_gap_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "checkbox",
+      "id": "media_first_mobile",
+      "label": "t:settings.media_first_mobile",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:headers.content"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "t:settings.content_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:options.text_align.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.text_align.center"
+        },
+        {
+          "value": "right",
+          "label": "t:options.text_align.right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "content_gap_mobile",
+      "label": "t:settings.gap_mobile",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "t:headers.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "t:settings.background_image"
+    },
+    {
+      "type": "range",
+      "id": "background_image_opacity",
+      "label": "t:settings.background_image_opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ section.settings.background_image != blank }}"
+    },
+    {
+      "type": "select",
+      "id": "shape_top",
+      "label": "t:settings.shape_top",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.shape.none"
+        },
+        {
+          "value": "wave",
+          "label": "t:options.shape.wave"
+        },
+        {
+          "value": "waves",
+          "label": "t:options.shape.waves"
+        },
+        {
+          "value": "curve",
+          "label": "t:options.shape.curve"
+        },
+        {
+          "value": "arch",
+          "label": "t:options.shape.arch"
+        },
+        {
+          "value": "slant",
+          "label": "t:options.shape.slant"
+        },
+        {
+          "value": "triangle",
+          "label": "t:options.shape.triangle"
+        },
+        {
+          "value": "zigzag",
+          "label": "t:options.shape.zigzag"
+        },
+        {
+          "value": "scallop",
+          "label": "t:options.shape.scallop"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "shape_bottom",
+      "label": "t:settings.shape_bottom",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.shape.none"
+        },
+        {
+          "value": "wave",
+          "label": "t:options.shape.wave"
+        },
+        {
+          "value": "waves",
+          "label": "t:options.shape.waves"
+        },
+        {
+          "value": "curve",
+          "label": "t:options.shape.curve"
+        },
+        {
+          "value": "arch",
+          "label": "t:options.shape.arch"
+        },
+        {
+          "value": "slant",
+          "label": "t:options.shape.slant"
+        },
+        {
+          "value": "triangle",
+          "label": "t:options.shape.triangle"
+        },
+        {
+          "value": "zigzag",
+          "label": "t:options.shape.zigzag"
+        },
+        {
+          "value": "scallop",
+          "label": "t:options.shape.scallop"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "shape_size",
+      "label": "t:settings.shape_size",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:options.shape_size.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:options.shape_size.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:options.shape_size.large"
+        }
+      ],
+      "default": "medium",
+      "visible_if": "{{ section.settings.shape_top != 'none' or section.settings.shape_bottom != 'none' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.section_width.header"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:sections.all.section_width.label",
+      "default": "inherit",
+      "options": [
+        {
+          "value": "inherit",
+          "label": "t:sections.all.section_width.options__1.label"
+        },
+        {
+          "value": "full",
+          "label": "t:sections.all.section_width.options__2.label"
+        },
+        {
+          "value": "wide",
+          "label": "t:sections.all.section_width.options__3.label"
+        },
+        {
+          "value": "standard",
+          "label": "t:sections.all.section_width.options__4.label"
+        },
+        {
+          "value": "narrow",
+          "label": "t:sections.all.section_width.options__5.label"
+        },
+        {
+          "value": "custom",
+          "label": "t:sections.all.section_width.options__6.label"
+        }
+      ]
+    },
+    {
+      "visible_if": "{{ section.settings.section_width == 'custom' }}",
+      "type": "range",
+      "id": "section_custom_width",
+      "label": "t:sections.all.section_width.custom.label",
+      "min": 600,
+      "max": 2000,
+      "step": 20,
+      "unit": "px",
+      "default": 1280
+    },
+    {
+      "type": "header",
+      "content": "t:headers.padding"
+    },
+    {
+      "type": "select",
+      "id": "padding_device",
+      "label": "t:settings.device",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:options.device.desktop"
+        },
+        {
+          "value": "mobile",
+          "label": "t:options.device.mobile"
+        }
+      ],
+      "default": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:settings.padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:settings.padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.padding_device == 'mobile' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.image_with_text.name",
+      "category": "t:categories.sections.storytelling",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "The refreshing energy boost",
+            "tag": "h2",
+            "type_preset": "display_m",
+            "text_color": "gradient",
+            "stroke": true,
+            "stroke_width": 1.5,
+            "stroke_color": "#1a1020",
+            "shadow": true,
+            "shadow_offset": 3,
+            "shadow_color": "#1a1020",
+            "alignment": "left",
+            "alignment_mobile": "left"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Naturally fermented and packed with live probiotics, antioxidants &amp; essential amino acids</p><p>NatureSip delivers a smooth, clean energy lift with zero sugar crash. Perfect for any time of day.</p>",
+            "type_preset": "custom",
+            "custom_font": "body",
+            "custom_size": 16,
+            "custom_size_mobile": 14,
+            "custom_case": "uppercase",
+            "alignment": "left",
+            "alignment_mobile": "left"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "label": "Try NatureSip",
+            "link": "shopify://collections/all",
+            "style": "primary",
+            "icon": "bag",
+            "size": "medium"
+          }
+        },
+        "floating_image": {
+          "type": "_floating-image",
+          "settings": {
+            "horizontal_position": 88,
+            "vertical_position": 80,
+            "width": 208,
+            "width_mobile": 96,
+            "animation": "sway",
+            "speed": 6,
+            "parallax": 60,
+            "layer": "front",
+            "show_mobile": true
+          }
+        },
+        "media": {
+          "type": "_image-with-text-media",
+          "static": true,
+          "settings": {
+            "ratio": "square",
+            "radius": 24,
+            "scroll_animation": "tilt",
+            "strength": 100
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "text",
+        "button",
+        "floating_image"
+      ]
+    }
+  ]
+}
+{% endschema %}

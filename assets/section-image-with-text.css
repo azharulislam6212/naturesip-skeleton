@@ -1,0 +1,196 @@
+/* Section: image with text (sections/image-with-text.liquid). */
+@layer sections {
+  /* ---------- Layout ---------- */
+  .image-with-text__grid {
+    display: grid;
+    gap: var(--iwt-gap-mobile, 2rem);
+    align-items: center;
+  }
+
+  .image-with-text__grid > * {
+    min-width: 0;
+  }
+
+  .image-with-text__grid--text-first-mobile .image-with-text__media {
+    order: 2;
+  }
+
+  @media (min-width: 750px) {
+    .image-with-text__grid {
+      grid-template-columns: var(--iwt-media-width, 50%) minmax(0, 1fr);
+      gap: var(--iwt-gap, 4rem);
+    }
+
+    .image-with-text__grid--text-first-mobile .image-with-text__media {
+      order: 0;
+    }
+
+    .image-with-text__grid--media-right {
+      grid-template-columns: minmax(0, 1fr) var(--iwt-media-width, 50%);
+    }
+
+    .image-with-text__grid--media-right .image-with-text__media {
+      order: 2;
+    }
+
+    .image-with-text__grid--start { align-items: start; }
+    .image-with-text__grid--end { align-items: end; }
+  }
+
+  /* ---------- Scroll-scrubbed image (assets/scroll-media.js) ---------- */
+  /* --progress runs 0 → 1 as the image scrolls in; without JavaScript (or
+     with reduced motion) it is 1, the resting state. --scroll-strength scales
+     how far each effect starts from rest. */
+  .scroll-media {
+    --p: var(--progress, 1);
+    --from: calc((1 - var(--p)) * var(--scroll-strength, 1));
+    display: block;
+    perspective: 1400px;
+  }
+
+  .scroll-media__frame {
+    aspect-ratio: var(--ratio, 1);
+    border-radius: var(--media-radius, var(--radius-media));
+    will-change: transform;
+  }
+
+  .scroll-media__frame img,
+  .scroll-media__frame svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* 3D tilt: the card lies back and turned, then stands up flat. */
+  .scroll-media--tilt .scroll-media__frame {
+    transform-origin: 50% 100%;
+    transform:
+      translateY(calc(var(--from) * 12%))
+      rotateX(calc(var(--from) * 32deg))
+      rotateZ(calc(var(--from) * -6deg))
+      scale(calc(1 - var(--from) * 0.2));
+  }
+
+  /* Zoom reveal: the frame opens from an inset while the photo zooms out. */
+  .scroll-media--zoom .scroll-media__frame {
+    clip-path: inset(calc(var(--from) * 14%) round var(--media-radius, 0px));
+  }
+
+  .scroll-media--zoom .scroll-media__frame img {
+    scale: calc(1 + var(--from) * 0.35);
+  }
+
+  /* Turn: the card swings in from a slight angle. */
+  .scroll-media--rotate .scroll-media__frame {
+    transform: rotate(calc(var(--from) * -14deg)) scale(calc(1 - var(--from) * 0.18));
+  }
+
+  /* Parallax: the photo drifts inside its frame. */
+  .scroll-media--parallax .scroll-media__frame img {
+    scale: calc(1 + 0.2 * var(--scroll-strength, 1));
+    translate: 0 calc(var(--from) * 12%);
+  }
+
+  /* ---------- Floating images (blocks/_floating-image.liquid) ---------- */
+  .floating-image {
+    position: absolute;
+    inset-block-start: var(--float-y, 80%);
+    inset-inline-start: var(--float-x, 88%);
+    z-index: 0;
+    display: block;
+    width: var(--float-width-mobile, 6rem);
+    translate: -50% calc(-50% + (0.5 - var(--progress, 0.5)) * var(--float-parallax, 0px));
+    pointer-events: none;
+  }
+
+  .floating-image--front {
+    z-index: 3;
+  }
+
+  /* Behind: under the content, above the section background. */
+  .floating-image--back {
+    z-index: 0;
+  }
+
+  /* Content and image sit on layer 1: floating images go behind (0) or in
+     front (3) of them. The section isolates its stacking context. */
+  .image-with-text__media,
+  .image-with-text__content > :not(.floating-image) {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (min-width: 750px) {
+    .floating-image {
+      width: var(--float-width, 12rem);
+    }
+  }
+
+  @media (max-width: 749px) {
+    .floating-image--desktop {
+      display: none;
+    }
+  }
+
+  .floating-image__img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .floating-image__placeholder {
+    aspect-ratio: 1;
+    opacity: 0.4;
+  }
+
+  .floating-image__motion--float {
+    animation: floating-image-float var(--float-duration, 6s) ease-in-out infinite;
+  }
+
+  .floating-image__motion--sway {
+    transform-origin: 50% 100%;
+    animation: floating-image-sway var(--float-duration, 6s) ease-in-out infinite;
+  }
+
+  .floating-image__motion--spin {
+    animation: floating-image-spin var(--float-duration, 6s) linear infinite;
+  }
+
+  .floating-image__motion--pulse {
+    animation: floating-image-pulse var(--float-duration, 6s) ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-media__frame,
+    .scroll-media__frame img,
+    .floating-image,
+    .floating-image__motion {
+      animation: none;
+      transform: none;
+      clip-path: none;
+      scale: none;
+      translate: none;
+    }
+
+    .floating-image {
+      translate: -50% -50%;
+    }
+  }
+}
+
+@keyframes floating-image-float {
+  50% { transform: translateY(-8%); }
+}
+
+@keyframes floating-image-sway {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg); }
+}
+
+@keyframes floating-image-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes floating-image-pulse {
+  50% { transform: scale(1.08); }
+}

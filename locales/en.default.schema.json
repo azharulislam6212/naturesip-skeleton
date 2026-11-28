@@ -782,8 +782,8 @@
     "quick_view_dialog": {
       "name": "Quick view dialog"
     },
-    "section": {
-      "name": "Section",
+    "custom_section": {
+      "name": "Custom section",
       "presets": {
         "faq": "FAQ",
         "hero": "Hero",

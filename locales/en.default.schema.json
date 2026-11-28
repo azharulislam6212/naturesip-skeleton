@@ -51,12 +51,6 @@
     "image": {
       "name": "Image"
     },
-    "marquee_separator": {
-      "name": "Separator"
-    },
-    "marquee_text": {
-      "name": "Text"
-    },
     "menu": {
       "name": "Menu"
     },
@@ -260,12 +254,6 @@
     "heading": "Tell your <em>story</em>",
     "heading_html": "<p>Heading</p>",
     "highlights_heading": "Features you'll <em>love</em>",
-    "marquee_1": "135MG Caffeine",
-    "marquee_2": "Sustainable Production",
-    "marquee_3": "9 Essential Amino Acids",
-    "marquee_4": "100% Natural Ingredients",
-    "marquee_5": "Made From Nature",
-    "marquee_text": "Add text here",
     "menu_heading": "Quick links",
     "newsletter_heading": "Join the <em>club</em>",
     "newsletter_text": "<p>Get early access to new flavors and members-only offers.</p>",
@@ -440,7 +428,6 @@
       "arrow": "Arrow",
       "bag": "Bag",
       "ban": "Ban",
-      "burst": "Burst",
       "basket": "Basket",
       "bolt": "Bolt",
       "calendar": "Calendar",
@@ -890,7 +877,8 @@
         "wave_arch": "Arch",
         "wave_slant": "Slant",
         "wave_zigzag": "Zigzag",
-        "wave_scallop": "Scallop"
+        "wave_scallop": "Scallop",
+        "travel_four": "Next 4 sections"
       }
     }
   },
@@ -1144,7 +1132,8 @@
     "show_title": "Show title",
     "sticky_summary": "Stick to the top while scrolling (desktop)",
     "summary_width": "Summary width",
-    "show_thumbnails": "Show thumbnails"
+    "show_thumbnails": "Show thumbnails",
+    "marquee_type_info": "Text and heading blocks set to the \"Default\" type preset use this size."
   },
   "settings_schema": {
     "animations": {

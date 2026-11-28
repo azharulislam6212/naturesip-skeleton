@@ -1,6 +1,8 @@
 {%- comment -%}
-  Scrolling text: a looping ribbon of text and separator blocks. Pauses on
-  hover, on focus and with its pause button; static under prefers-reduced-motion.
+  Scrolling ribbon of theme blocks: text, heading and icon. Their output is
+  captured once and printed twice, so the second copy (aria-hidden, inert)
+  joins the first into a seamless loop. Pauses on hover; static under
+  prefers-reduced-motion. A keyboard-only pause button appears on focus.
 {%- endcomment -%}
 
 {{ 'section-marquee.css' | asset_url | stylesheet_tag }}
@@ -13,32 +15,19 @@
     assign list_class = 'marquee__list type-heading type-' | append: s.text_size | replace: '_', '-'
   endif
 -%}
+{%- capture items -%}{% content_for 'blocks' %}{%- endcapture -%}
+
 <section
   class="section section--full-width marquee-section color-{{ s.color_scheme.id }} spacing-style"
   style="{%- render 'spacing-style', settings: s -%} --marquee-duration: {{ s.speed }}s; --marquee-tilt: {{ s.tilt }}deg;"
 >
-  <svg class="visually-hidden" aria-hidden="true" focusable="false">
-    <linearGradient id="marquee-burst-{{ section.id }}" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#FAC67A"/>
-      <stop offset="1" stop-color="#FE8A80"/>
-    </linearGradient>
-  </svg>
-
   <marquee-banner class="marquee{% if s.reverse %} marquee--reverse{% endif %}{% if s.bordered %} marquee--bordered{% endif %}">
     <div class="marquee__track">
-      <ul class="{{ list_class }}" role="list">
-        {% content_for 'blocks' %}
-      </ul>
-      <ul class="{{ list_class }}" role="list" aria-hidden="true">
-        {%- for block in section.blocks -%}
-          {% render 'marquee-item', block: block %}
-        {%- endfor -%}
-      </ul>
+      <div class="{{ list_class }}">{{ items }}</div>
+      <div class="{{ list_class }}" aria-hidden="true" inert>{{ items }}</div>
     </div>
-    <button class="icon-button marquee__toggle" type="button" ref="toggle" aria-pressed="false">
-      <span class="marquee__toggle-pause">{% render 'icon', name: 'pause' %}</span>
-      <span class="marquee__toggle-play">{% render 'icon', name: 'play' %}</span>
-      <span class="visually-hidden">{{ 'accessibility.pause_animation' | t }}</span>
+    <button class="marquee__toggle" type="button" ref="toggle" aria-pressed="false">
+      {{- 'accessibility.pause_animation' | t -}}
     </button>
   </marquee-banner>
 </section>
@@ -50,10 +39,13 @@
   "max_blocks": 24,
   "blocks": [
     {
-      "type": "_marquee-text"
+      "type": "text"
     },
     {
-      "type": "_marquee-separator"
+      "type": "heading"
+    },
+    {
+      "type": "icon"
     }
   ],
   "settings": [
@@ -79,7 +71,8 @@
           "label": "t:options.type_preset.h6"
         }
       ],
-      "default": "default"
+      "default": "default",
+      "info": "t:settings.marquee_type_info"
     },
     {
       "type": "range",
@@ -194,62 +187,97 @@
       "category": "t:categories.sections.banners",
       "blocks": {
         "text_1": {
-          "type": "_marquee-text",
+          "type": "text",
           "settings": {
-            "text": "t:defaults.marquee_1"
+            "text": "<p>135MG Caffeine</p>",
+            "type_preset": "default",
+            "animation": "none"
           }
         },
-        "separator_1": {
-          "type": "_marquee-separator"
+        "icon_1": {
+          "type": "icon",
+          "settings": {
+            "icon": "sparkle",
+            "size": 28,
+            "animation": "none"
+          }
         },
         "text_2": {
-          "type": "_marquee-text",
+          "type": "text",
           "settings": {
-            "text": "t:defaults.marquee_2"
+            "text": "<p>Sustainable Production</p>",
+            "type_preset": "default",
+            "animation": "none"
           }
         },
-        "separator_2": {
-          "type": "_marquee-separator"
+        "icon_2": {
+          "type": "icon",
+          "settings": {
+            "icon": "sparkle",
+            "size": 28,
+            "animation": "none"
+          }
         },
         "text_3": {
-          "type": "_marquee-text",
+          "type": "text",
           "settings": {
-            "text": "t:defaults.marquee_3"
+            "text": "<p>9 Essential Amino Acids</p>",
+            "type_preset": "default",
+            "animation": "none"
           }
         },
-        "separator_3": {
-          "type": "_marquee-separator"
+        "icon_3": {
+          "type": "icon",
+          "settings": {
+            "icon": "sparkle",
+            "size": 28,
+            "animation": "none"
+          }
         },
         "text_4": {
-          "type": "_marquee-text",
+          "type": "text",
           "settings": {
-            "text": "t:defaults.marquee_4"
+            "text": "<p>100% Natural Ingredients</p>",
+            "type_preset": "default",
+            "animation": "none"
           }
         },
-        "separator_4": {
-          "type": "_marquee-separator"
+        "icon_4": {
+          "type": "icon",
+          "settings": {
+            "icon": "sparkle",
+            "size": 28,
+            "animation": "none"
+          }
         },
         "text_5": {
-          "type": "_marquee-text",
+          "type": "text",
           "settings": {
-            "text": "t:defaults.marquee_5"
+            "text": "<p>Made From Nature</p>",
+            "type_preset": "default",
+            "animation": "none"
           }
         },
-        "separator_5": {
-          "type": "_marquee-separator"
+        "icon_5": {
+          "type": "icon",
+          "settings": {
+            "icon": "sparkle",
+            "size": 28,
+            "animation": "none"
+          }
         }
       },
       "block_order": [
         "text_1",
-        "separator_1",
+        "icon_1",
         "text_2",
-        "separator_2",
+        "icon_2",
         "text_3",
-        "separator_3",
+        "icon_3",
         "text_4",
-        "separator_4",
+        "icon_4",
         "text_5",
-        "separator_5"
+        "icon_5"
       ]
     }
   ]

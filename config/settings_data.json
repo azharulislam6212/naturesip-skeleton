@@ -9,6 +9,9 @@
  */
 {
   "current": {
+    "type_heading_font": "rajdhani_n6",
+    "type_body_font": "roboto_n5",
+    "type_accent_font": "quantico_n7",
     "animations_text": "mask",
     "social_x_link": "https://x.com/shopify",
     "social_facebook_link": "https://facebook.com/shopify",

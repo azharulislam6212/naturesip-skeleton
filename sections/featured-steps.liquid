@@ -1,13 +1,13 @@
 {%- comment -%}
-  Feature steps: a heading group, then a row of "Icon with text" blocks joined
-  by hand-drawn connectors, with an optional stagger and wavy bottom edge.
+  Featured steps: a heading group, then a row of steps (icon, heading and
+  text blocks) joined by hand-drawn arrows, with an optional stagger.
 {%- endcomment -%}
 
-{{ 'section-feature-steps.css' | asset_url | stylesheet_tag }}
+{{ 'section-featured-steps.css' | asset_url | stylesheet_tag }}
 
 {%- assign s = section.settings -%}
 <section
-  class="section section-surface feature-steps color-{{ s.color_scheme.id }} spacing-style"
+  class="section section-surface featured-steps color-{{ s.color_scheme.id }} spacing-style"
   style="{%- render 'spacing-style', settings: s -%} --steps-columns: {{ s.columns }};"
   {% render 'shape-attributes', settings: s %}
   {% if s.stagger %}
@@ -20,15 +20,15 @@
   {% render 'background', settings: s %}
 
   {%- if s.decor_start != blank -%}
-    {% render 'image', image: s.decor_start, alt: '', sizes: '120px', max_width: 360, class: 'feature-steps__decor feature-steps__decor--start' %}
+    {% render 'image', image: s.decor_start, alt: '', sizes: '120px', max_width: 360, class: 'featured-steps__decor featured-steps__decor--start' %}
   {%- endif -%}
   {%- if s.decor_end != blank -%}
-    {% render 'image', image: s.decor_end, alt: '', sizes: '120px', max_width: 360, class: 'feature-steps__decor feature-steps__decor--end' %}
+    {% render 'image', image: s.decor_end, alt: '', sizes: '120px', max_width: 360, class: 'featured-steps__decor featured-steps__decor--end' %}
   {%- endif -%}
 
-  <div class="feature-steps__inner">
+  <div class="featured-steps__inner">
     {% content_for 'block', type: 'section-heading', id: 'heading' %}
-    <div class="feature-steps__list" {% render 'animation-attributes', animation: 'none', stagger: true %}>
+    <div class="featured-steps__list" {% render 'animation-attributes', animation: 'none', stagger: true %}>
       {% content_for 'blocks' %}
     </div>
   </div>
@@ -36,12 +36,12 @@
 
 {% schema %}
 {
-  "name": "t:sections.feature_steps.name",
+  "name": "t:sections.featured_steps.name",
   "class": "section-wrapper",
   "max_blocks": 8,
   "blocks": [
     {
-      "type": "icon-text"
+      "type": "_featured-step"
     }
   ],
   "settings": [
@@ -190,6 +190,10 @@
         {
           "value": "scallop",
           "label": "t:options.shape.scallop"
+        },
+        {
+          "value": "ripple",
+          "label": "t:options.shape.ripple"
         }
       ],
       "default": "none"
@@ -301,7 +305,7 @@
       "max": 200,
       "step": 4,
       "unit": "px",
-      "default": 80,
+      "default": 0,
       "visible_if": "{{ section.settings.padding_device == 'desktop' }}"
     },
     {
@@ -329,10 +333,11 @@
   ],
   "presets": [
     {
-      "name": "t:sections.feature_steps.name",
+      "name": "t:sections.featured_steps.name",
       "category": "t:categories.sections.storytelling",
       "settings": {
-        "shape_bottom": "wave"
+        "shape_bottom": "ripple",
+        "padding_bottom": 0
       },
       "blocks": {
         "heading": {
@@ -358,7 +363,7 @@
               "type": "text",
               "settings": {
                 "text": "t:defaults.section_text",
-                "type_preset": "subheading",
+                "type_preset": "paragraph",
                 "alignment": "center",
                 "alignment_mobile": "center",
                 "max_width_preset": "large"
@@ -371,34 +376,199 @@
           ]
         },
         "step_1": {
-          "type": "icon-text",
-          "settings": {
-            "icon": "leaf"
-          }
+          "type": "_featured-step",
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "settings": {
+                "icon": "ban",
+                "size": 64
+              }
+            },
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "t:defaults.feature_title",
+                "tag": "h3",
+                "type_preset": "h5",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "animation": "none",
+                "text_animation": "none"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "t:defaults.feature_text",
+                "type_preset": "paragraph",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "animation": "none"
+              }
+            }
+          },
+          "block_order": [
+            "icon",
+            "heading",
+            "text"
+          ]
         },
         "step_2": {
-          "type": "icon-text",
-          "settings": {
-            "icon": "drop"
-          }
+          "type": "_featured-step",
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "settings": {
+                "icon": "drop",
+                "size": 64
+              }
+            },
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "t:defaults.feature_title",
+                "tag": "h3",
+                "type_preset": "h5",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "animation": "none",
+                "text_animation": "none"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "t:defaults.feature_text",
+                "type_preset": "paragraph",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "animation": "none"
+              }
+            }
+          },
+          "block_order": [
+            "icon",
+            "heading",
+            "text"
+          ]
         },
         "step_3": {
-          "type": "icon-text",
-          "settings": {
-            "icon": "shield"
-          }
+          "type": "_featured-step",
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "settings": {
+                "icon": "leaf",
+                "size": 64
+              }
+            },
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "t:defaults.feature_title",
+                "tag": "h3",
+                "type_preset": "h5",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "animation": "none",
+                "text_animation": "none"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "t:defaults.feature_text",
+                "type_preset": "paragraph",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "animation": "none"
+              }
+            }
+          },
+          "block_order": [
+            "icon",
+            "heading",
+            "text"
+          ]
         },
         "step_4": {
-          "type": "icon-text",
-          "settings": {
-            "icon": "sparkle"
-          }
+          "type": "_featured-step",
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "settings": {
+                "icon": "sparkle",
+                "size": 64
+              }
+            },
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "t:defaults.feature_title",
+                "tag": "h3",
+                "type_preset": "h5",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "animation": "none",
+                "text_animation": "none"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "t:defaults.feature_text",
+                "type_preset": "paragraph",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "animation": "none"
+              }
+            }
+          },
+          "block_order": [
+            "icon",
+            "heading",
+            "text"
+          ]
         },
         "step_5": {
-          "type": "icon-text",
-          "settings": {
-            "icon": "bolt"
-          }
+          "type": "_featured-step",
+          "blocks": {
+            "icon": {
+              "type": "icon",
+              "settings": {
+                "icon": "bolt",
+                "size": 64
+              }
+            },
+            "heading": {
+              "type": "heading",
+              "settings": {
+                "heading": "t:defaults.feature_title",
+                "tag": "h3",
+                "type_preset": "h5",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "animation": "none",
+                "text_animation": "none"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "t:defaults.feature_text",
+                "type_preset": "paragraph",
+                "alignment": "center",
+                "alignment_mobile": "center",
+                "animation": "none"
+              }
+            }
+          },
+          "block_order": [
+            "icon",
+            "heading",
+            "text"
+          ]
         }
       },
       "block_order": [

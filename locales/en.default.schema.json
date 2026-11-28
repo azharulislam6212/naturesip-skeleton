@@ -42,6 +42,9 @@
     "icon": {
       "name": "Icon"
     },
+    "featured_step": {
+      "name": "Step"
+    },
     "icon_text": {
       "name": "Icon text"
     },
@@ -537,6 +540,7 @@
       "arch": "Arch",
       "curve": "Curve",
       "none": "None",
+      "ripple": "Ripple",
       "scallop": "Scallop",
       "slant": "Slant",
       "triangle": "Triangle",
@@ -693,8 +697,8 @@
     "feature_highlights": {
       "name": "Feature highlights"
     },
-    "feature_steps": {
-      "name": "Feature steps"
+    "featured_steps": {
+      "name": "Featured steps"
     },
     "featured_collection": {
       "name": "Featured collection"
